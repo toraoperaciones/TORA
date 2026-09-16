@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TORA
 
-## Getting Started
+Infraestructura de viajes corporativos para el mercado mexicano. Plataforma B2B
+multi-tenant: las empresas gestionan vuelos, hoteles, autos y stands de ferias
+desde un solo panel, con billetera pre-fondeada vía SPEI y CFDI consolidado
+mensual.
 
-First, run the development server:
+## Stack
+
+- **Next.js 15** (App Router, TypeScript, RSC por defecto)
+- **Tailwind CSS v4** (tokens en `@theme`, `app/globals.css`)
+- **shadcn/ui** + **Lucide React**
+- **Supabase** (PostgreSQL + Auth + Storage + RLS)
+- **TanStack Query**, **react-hook-form**, **zod**
+- **pnpm**
+
+## Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.local.example .env.local   # llenar con credenciales de Supabase
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Base de datos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Abrir el **SQL Editor** de Supabase y pegar el contenido completo de
+   `supabase/migrations/0001_init.sql`. Ejecutar. (Es idempotente: puede
+   correrse dos veces para verificar.)
+2. Cargar datos demo:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm seed   # tsx scripts/seed.ts — 3 tenants, 7 usuarios, 8 trips, credenciales impresas
+```
 
-## Learn More
+Credenciales demo (password `Tora2025!`): `admin@tora.mx` (TORA_ADMIN),
+`ops@tora.mx` (TORA_OPS), `finanzas@tora.mx` (TORA_FINANCE),
+`admin@aceronorte.mx` / `finanzas@aceronorte.mx` (Acero del Norte),
+`admin@vcm.mx` / `finanzas@vcm.mx` (Viajes Corporativos MX).
 
-To learn more about Next.js, take a look at the following resources:
+## Desarrollo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev       # http://localhost:3000
+pnpm build     # build de producción + typecheck
+pnpm lint      # eslint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Fases del MVP
 
-## Deploy on Vercel
+- **Fase 1** ✅ Scaffold + design system (tokens, fuentes, layout raíz, logo).
+- **Fase 2** ✅ Capa de persistencia (migración SQL + RLS, clientes Supabase, seed).
+- **Fase 3** ✅ Auth + middleware + layout shell (login/register/pending, sidebar por rol, 4 portales).
+- **Fase 4** ✅ Portal CLIENT (dashboard, billetera SPEI, trips, selección de opciones vía RPC, facturas).
+- **Fase 5** ✅ Portal OPS (bandeja, quote builder con markup, gestión de viajes, incidentes, clientes).
+- **Fase 6** ✅ Portal FINANCE (validación SPEI con auto-confirmación, dashboard financiero, líneas de crédito, facturas).
+- **Fase 7** ✅ Portal ADMIN (tenants + detalle, usuarios con activación de pendientes vía RPC `activate_user`, pipeline Kanban drag-free, subida manual de facturas al bucket `invoices`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Cómo aplicar la migración 0005 (ADMIN)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Copia el contenido de `supabase/migrations/0005_admin.sql` en el SQL Editor de Supabase → Run. Es idempotente: se puede correr 2 veces sin errores. Crea la tabla `pipeline_leads`, el bucket privado `invoices` y las RPCs `activate_user`, `update_user_role`, `toggle_user_status`, `toggle_tenant_status`, `create_tenant`, `invite_user`, `suspend_tenant`.
