@@ -44,12 +44,13 @@ Leyenda: ✅ verificado por E2E automatizado · 👁️ verificado manualmente �
 
 ## Flujo D — Registro → activación
 
-- [x] Registro público crea `auth.users` + perfil `pending_approval` con `tenant_id=NULL` (trigger `handle_new_user` — verificado por el seed).
+- [x] Registro público crea `auth.users` + perfil `pending_approval` con `tenant_id=NULL` (trigger `handle_new_user`).
 - [x] Middleware confina usuarios no activos a `/pending` (verificado en smoke de redirecciones).
 - [x] TORA_ADMIN activa usuario en `/admin/users` → RPC `activate_user` valida CLIENT_* ⇒ tenant.
-- [ ] E2E completo registro → activación → login del usuario nuevo con su portal (requiere "Confirm email" desactivado en Auth).
+- [x] E2E completo registro → activación → login del usuario nuevo con su portal — **12/12 checks en producción** (`https://tora-six.vercel.app`): registro por UI → `/pending` + fila `pending_approval` en BD → activación por TORA_ADMIN (rol CLIENT_ADMIN, tenant Acero del Norte, verificado en BD) → login del usuario nuevo → `/dashboard` con trips de Acero vía RLS → limpieza total del usuario de prueba.
+  - Defecto encontrado y corregido durante esta verificación: `/admin/users` crasheaba en el build de producción al renderizar un pendiente (props no serializables de Server a Client Component, digest `4132371063`); fix en commit `a934e14`.
 
-**Parcial ✅ (piezas verificadas individualmente). E2E completo del ciclo: ⏳.**
+**Verificado ✅ end-to-end en producción (12/12 checks E2E).**
 
 ## Flujo E — Facturación mensual
 
