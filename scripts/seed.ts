@@ -21,7 +21,7 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   console.error(
     "\n✗ Faltan variables de entorno.\n" +
-      "  Copia .env.local.example → .env.local y llena:\n" +
+      "  Copia .env.example → .env.local y llena:\n" +
       "    NEXT_PUBLIC_SUPABASE_URL\n" +
       "    SUPABASE_SERVICE_ROLE_KEY\n"
   );

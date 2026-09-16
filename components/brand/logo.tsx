@@ -1,5 +1,9 @@
-// TODO: Reemplazar por /brand/tora-symbol.svg cuando esté disponible
-// (ver "Notas de implementación" al final del archivo).
+// El símbolo oficial vive en /public/brand/tora-symbol.png (600×400, fondo
+// opaco — sin canal alfa). TODO(phase-2): reemplazar por SVG oficial
+// (vectorial + transparencia) para soportar la variante inverse en fondos
+// oscuros y afinar el crop del lockup.
+
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -31,7 +35,9 @@ const WORDMARK_COLOR: Record<LogoVariant, string> = {
 
 /**
  * Símbolo TORA — 4 curvas paralelas (pistas de aterrizaje / movimiento).
- * SVG inline aproximado mientras llegan los vectoriales oficiales.
+ * Usa el PNG oficial sobre superficies claras (primary/mono). El asset viene
+ * con fondo opaco, así que en fondos oscuros (inverse) se conserva el SVG
+ * inline aproximado con trazo offwhite hasta contar con la versión con alfa.
  */
 export function ToraSymbol({
   size = "md",
@@ -43,45 +49,38 @@ export function ToraSymbol({
   className?: string;
 }) {
   const px = SYMBOL_PX[size];
-  const stroke =
-    variant === "inverse" ? "var(--color-offwhite)" : "var(--color-navy)";
 
+  if (variant === "inverse") {
+    const stroke = "var(--color-offwhite)";
+    return (
+      <svg
+        width={px}
+        height={px}
+        viewBox="0 0 32 32"
+        fill="none"
+        role="img"
+        aria-label="TORA"
+        className={cn("shrink-0", className)}
+      >
+        {/* 4 curvas paralelas que insinúan una T en movimiento */}
+        <path d="M6 8c7 0 14 0 20 0" stroke={stroke} strokeWidth={2.6} strokeLinecap="round" />
+        <path d="M9 14c5.5 0 11 0 16 0" stroke={stroke} strokeWidth={2.6} strokeLinecap="round" />
+        <path d="M9 20c5 0 10 0 15 0" stroke={stroke} strokeWidth={2.6} strokeLinecap="round" />
+        <path d="M9 26c4.5 0 9 0 13.5 0" stroke={stroke} strokeWidth={2.6} strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // PNG oficial 600×400 → se preserva la proporción 3:2 relativa al alto.
   return (
-    <svg
-      width={px}
+    <Image
+      src="/brand/tora-symbol.png"
+      alt="TORA"
+      width={Math.round(px * 1.5)}
       height={px}
-      viewBox="0 0 32 32"
-      fill="none"
-      role="img"
-      aria-label="TORA"
+      priority
       className={cn("shrink-0", className)}
-    >
-      {/* 4 curvas paralelas que insinúan una T en movimiento */}
-      <path
-        d="M6 8c7 0 14 0 20 0"
-        stroke={stroke}
-        strokeWidth={2.6}
-        strokeLinecap="round"
-      />
-      <path
-        d="M9 14c5.5 0 11 0 16 0"
-        stroke={stroke}
-        strokeWidth={2.6}
-        strokeLinecap="round"
-      />
-      <path
-        d="M9 20c5 0 10 0 15 0"
-        stroke={stroke}
-        strokeWidth={2.6}
-        strokeLinecap="round"
-      />
-      <path
-        d="M9 26c4.5 0 9 0 13.5 0"
-        stroke={stroke}
-        strokeWidth={2.6}
-        strokeLinecap="round"
-      />
-    </svg>
+    />
   );
 }
 
@@ -98,6 +97,10 @@ export interface LogoProps {
  * El wordmark respeta el brand book: Space Grotesk, uppercase,
  * tracking 0.14em, bold. La variante `mono` es negra por definición
  * del brand book (impresos); en UI usar `primary` o `inverse`.
+ *
+ * El lockup completo rasterizado está disponible en
+ * `/brand/tora-logo-primary.png` (600×400) para contextos que
+ * requieran el lockup como imagen (og:image, PDFs, impresos).
  */
 export function Logo({
   variant = "primary",
@@ -131,15 +134,3 @@ export function Logo({
     </span>
   );
 }
-
-/*
- * Notas de implementación
- * ───────────────────────
- * Cuando el símbolo vectorial oficial esté en /public/brand/tora-symbol.svg,
- * sustituir el <svg> dentro de ToraSymbol por:
- *
- *   <Image src={`/brand/tora-symbol-${variant}.svg`} width={px} height={px} alt="TORA" />
- *
- * El resto del lockup (wordmark, espaciados, variantes) no cambia:
- * ToraSymbol es la única pieza que encapsula el arte del símbolo.
- */

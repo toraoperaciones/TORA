@@ -1,60 +1,101 @@
 # TORA
 
-Infraestructura de viajes corporativos para el mercado mexicano. Plataforma B2B
-multi-tenant: las empresas gestionan vuelos, hoteles, autos y stands de ferias
-desde un solo panel, con billetera pre-fondeada vía SPEI y CFDI consolidado
-mensual.
+Plataforma **multi-tenant B2B** de gestión de viajes corporativos para el mercado mexicano. El cliente pre-fondea una billetera (SPEI), OPS cotiza, TESORERÍA valida depósitos y otorga crédito, y ADMIN administra clientes, usuarios y facturación — todo con aislamiento por tenant vía Row Level Security.
 
 ## Stack
 
-- **Next.js 15** (App Router, TypeScript, RSC por defecto)
-- **Tailwind CSS v4** (tokens en `@theme`, `app/globals.css`)
-- **shadcn/ui** + **Lucide React**
-- **Supabase** (PostgreSQL + Auth + Storage + RLS)
-- **TanStack Query**, **react-hook-form**, **zod**
-- **pnpm**
+| Capa | Tecnología |
+|---|---|
+| Framework | Next.js 15 (App Router), React 19, Server Components por defecto |
+| Lenguaje | TypeScript (strict) |
+| Estilos | Tailwind CSS v4 + shadcn/ui (design system propio: Chalk White / Navy Ink) |
+| Backend | Supabase — Postgres + RLS, Auth (email/password), Storage |
+| Mutaciones | RPCs transaccionales en Postgres (`security definer`) |
+| Estado cliente | TanStack Query |
+| Formularios | React Hook Form + Zod |
+| Fechas | date-fns + date-fns-tz (`America/Mexico_City`) |
+| Infra | Vercel |
 
-## Instalación
+## Roles
+
+| Rol | Portal | Qué hace |
+|---|---|---|
+| `CLIENT_ADMIN` | `/dashboard` | Solicita viajes, selecciona cotizaciones, administra wallet |
+| `CLIENT_FINANCE` | `/dashboard` | Ve wallet y facturas de su empresa, sube comprobantes SPEI |
+| `TORA_OPS` | `/ops/inbox` | Cotiza (Quote Builder), gestiona trips e incidentes |
+| `TORA_FINANCE` | `/finance/deposits` | Valida depósitos, administra líneas de crédito, facturas |
+| `TORA_ADMIN` | `/admin/tenants` | Tenants, activación de usuarios, pipeline comercial, facturación |
+
+## Setup local
 
 ```bash
+# 1. Instalar dependencias
 pnpm install
-cp .env.local.example .env.local   # llenar con credenciales de Supabase
+
+# 2. Configurar variables de entorno
+cp .env.example .env.local   # y llenar las credenciales de Supabase
+pnpm env:check               # verifica que las 4 obligatorias estén
+
+# 3. Aplicar migraciones (idempotentes, en orden 0001→0008)
+pnpm db:migrate              # vía Management API, o manual con docs/MIGRATION.md
+
+# 4. Verificar el schema
+pnpm db:verify
+
+# 5. Poblar datos de demo (3 tenants, 7 usuarios, trips, wallet, facturas, leads)
+pnpm seed                    # todos los usuarios usan la contraseña Tora2025!
+
+# 6. Arrancar
+pnpm dev                     # http://localhost:3000
 ```
 
-## Base de datos
+Scripts útiles: `pnpm build` · `pnpm lint` · `pnpm exec tsc --noEmit` · `pnpm db:migrate -- --force` (re-ejecuta migraciones para probar idempotencia).
 
-1. Abrir el **SQL Editor** de Supabase y pegar el contenido completo de
-   `supabase/migrations/0001_init.sql`. Ejecutar. (Es idempotente: puede
-   correrse dos veces para verificar.)
-2. Cargar datos demo:
+Documentación: [Arquitectura](docs/ARCHITECTURE.md) · [Migraciones](docs/MIGRATION.md) · [Deploy](docs/DEPLOY.md) · [Aceptación](docs/ACCEPTANCE.md)
 
-```bash
-pnpm seed   # tsx scripts/seed.ts — 3 tenants, 7 usuarios, 8 trips, credenciales impresas
+## Deploy
+
+Guía completa en [`docs/DEPLOY.md`](docs/DEPLOY.md): push a GitHub, import en Vercel con las 6 variables de entorno, actualización de Auth URLs, smoke test post-deploy, rollback y logs.
+
+## Estructura del proyecto
+
+```
+├── app/
+│   ├── (auth)/            # login · register · pending
+│   ├── (client)/          # portal CLIENT: dashboard, trips, wallet, invoices
+│   ├── (ops)/             # portal OPS: inbox, Quote Builder, incidents, clients
+│   ├── (finance)/         # portal FINANCE: deposits, dashboard, credit, invoices
+│   ├── (admin)/           # portal ADMIN: tenants, users, pipeline, invoices
+│   ├── api/               # route handlers (signed URLs, selección de trip)
+│   └── auth/callback/     # intercambio de código de Supabase Auth
+├── components/
+│   ├── admin/ finance/ ops/ trips/ wallet/   # por dominio
+│   ├── brand/             # logo y símbolo (assets en public/brand/)
+│   ├── layout/            # sidebar por rol + portal shell
+│   └── ui/                # shadcn/ui normalizados
+├── lib/
+│   ├── auth/              # roles, guards, contexto de tenant
+│   ├── business/          # lógica pura: markup, crédito, wallet, máquina de trips
+│   └── supabase/          # clients (server / browser / admin / middleware)
+├── supabase/migrations/   # 0001→0008 (schema, RPCs, incidentes, crédito, admin, hardening)
+├── scripts/               # seed, env:check, db:migrate, db:verify
+└── docs/                  # ARCHITECTURE · MIGRATION · DEPLOY · ACCEPTANCE · brand/
 ```
 
-Credenciales demo (password `Tora2025!`): `admin@tora.mx` (TORA_ADMIN),
-`ops@tora.mx` (TORA_OPS), `finanzas@tora.mx` (TORA_FINANCE),
-`admin@aceronorte.mx` / `finanzas@aceronorte.mx` (Acero del Norte),
-`admin@vcm.mx` / `finanzas@vcm.mx` (Viajes Corporativos MX).
+## Flujos end-to-end
 
-## Desarrollo
+Los 4 flujos de negocio + facturación, con su estado de verificación: [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md).
 
-```bash
-pnpm dev       # http://localhost:3000
-pnpm build     # build de producción + typecheck
-pnpm lint      # eslint
-```
+- **A — Saldo:** solicitud → cotización → selección → cobro de wallet → booking confirmado.
+- **B — SPEI:** selección sin saldo → comprobante → validación de TESORERÍA → auto-confirmación.
+- **C — Crédito:** selección sin saldo → aprobación de línea → cargo a 30 días → booking confirmado.
+- **D — Registro → activación:** registro público → `pending_approval` → alta manual de TORA_ADMIN.
 
-## Fases del MVP
+## Roadmap — Fase 2
 
-- **Fase 1** ✅ Scaffold + design system (tokens, fuentes, layout raíz, logo).
-- **Fase 2** ✅ Capa de persistencia (migración SQL + RLS, clientes Supabase, seed).
-- **Fase 3** ✅ Auth + middleware + layout shell (login/register/pending, sidebar por rol, 4 portales).
-- **Fase 4** ✅ Portal CLIENT (dashboard, billetera SPEI, trips, selección de opciones vía RPC, facturas).
-- **Fase 5** ✅ Portal OPS (bandeja, quote builder con markup, gestión de viajes, incidentes, clientes).
-- **Fase 6** ✅ Portal FINANCE (validación SPEI con auto-confirmación, dashboard financiero, líneas de crédito, facturas).
-- **Fase 7** ✅ Portal ADMIN (tenants + detalle, usuarios con activación de pendientes vía RPC `activate_user`, pipeline Kanban drag-free, subida manual de facturas al bucket `invoices`).
-
-## Cómo aplicar la migración 0005 (ADMIN)
-
-Copia el contenido de `supabase/migrations/0005_admin.sql` en el SQL Editor de Supabase → Run. Es idempotente: se puede correr 2 veces sin errores. Crea la tabla `pipeline_leads`, el bucket privado `invoices` y las RPCs `activate_user`, `update_user_role`, `toggle_user_status`, `toggle_tenant_status`, `create_tenant`, `invite_user`, `suspend_tenant`.
+- Integraciones reales: Google OAuth, notificaciones (email/push), conciliación bancaria automática.
+- Cobro automático de interés de mora (hoy es cálculo de referencia, no cobro).
+- Conversión de lead → tenant en una sola transacción (`converted_tenant_id` ya existe).
+- Drag-and-drop en el pipeline (dnd-kit) y polling en `/pending` para refresco de activación.
+- Suite E2E permanente en CI (los 3 flujos de negocio ya probados con Playwright headless).
+- SVG oficial de marca con transparencia y canal alfa para la variante `inverse`.

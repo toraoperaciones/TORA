@@ -128,7 +128,7 @@ export function LoginForm() {
             {submitting ? "Ingresando…" : "Ingresar"}
           </Button>
 
-          {/* TODO (Fase de OAuth): habilitar Google con signInWithOAuth → /auth/callback */}
+          {/* TODO(phase-2): habilitar Google con signInWithOAuth → /auth/callback */}
           <Button
             type="button"
             variant="outline"

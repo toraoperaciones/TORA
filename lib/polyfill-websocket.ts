@@ -10,7 +10,6 @@
  *   import "./polyfill-websocket";
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import WebSocket from "ws";
 
 if (typeof globalThis.WebSocket === "undefined") {
