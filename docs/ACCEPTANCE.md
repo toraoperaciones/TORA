@@ -3,6 +3,8 @@
 Checklist de aceptación con el estado real de verificación.
 **Evidencia E2E:** Playwright headless contra el dev server + aserciones directas en la BD (PostgREST con service role) — corridas el 2026-09-16 con las 8 migraciones aplicadas y el seed cargado.
 
+**Historial de producción:** los flujos A–D se verificaron E2E en la producción previa (`https://tora-six.vercel.app`) con este mismo código base; el deploy actual (`https://tora-eta.vercel.app`, proyecto `tora-eta`, team `tora12`) está verificado con smoke 6/6 de los 4 portales + health endpoint (2026-09-17).
+
 Leyenda: ✅ verificado por E2E automatizado · 👁️ verificado manualmente · ⏳ pendiente de verificación.
 
 ## Precondiciones

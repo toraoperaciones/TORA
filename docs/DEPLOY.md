@@ -1,5 +1,8 @@
 # Deploy a Vercel
 
+> **Producción actual:** `https://tora-eta.vercel.app` — proyecto `tora-eta`, team `tora12` de Vercel.
+> El proyecto/dominio anterior (`tora-six`) fue retirado; `site_url` y la allow-list de Supabase ya están migradas al nuevo dominio (localhost preservado para desarrollo).
+
 ## Pre-requisitos
 
 - Repo en GitHub (remoto `origin` configurado).
