@@ -6,27 +6,29 @@ import { cn, formatMXN } from "@/lib/utils";
 import { Sparkline } from "@/components/charts/sparkline";
 
 /**
- * KPI de dinero (saldo, SPEI, crédito). Forest + glow: dinero en juego.
- * El número cuenta de 0 al valor real (600ms, respeta reduced-motion).
+ * KPI genérico (gasto del mes, próximos viajes). Sin acento forest:
+ * solo el saldo y el dinero liquidado lo llevan.
  */
-export function BalanceCard({
-  balance,
-  label = "Saldo disponible",
+export function KpiCard({
+  label,
+  value,
   sparkline,
+  isMoney = false,
   className,
 }: {
-  balance: number;
-  label?: string;
+  label: string;
+  value: number;
   sparkline?: number[];
+  isMoney?: boolean;
   className?: string;
 }) {
-  const animated = useCountUp(balance);
+  const animated = useCountUp(value);
 
   return (
     <div
-      data-money
+      data-metric
       className={cn(
-        "rounded-lg border border-forest/20 bg-navy-lift p-6 shadow-glow",
+        "rounded-lg border border-border-subtle bg-navy-lift p-6",
         className
       )}
     >
@@ -34,11 +36,11 @@ export function BalanceCard({
         {label}
       </p>
       <p className="mt-2 font-display text-display-m tabular-nums text-text-primary">
-        {formatMXN(animated)}
+        {isMoney ? formatMXN(animated) : Math.round(animated).toString()}
       </p>
       {sparkline && sparkline.length >= 2 ? (
-        <div className="mt-3 text-forest">
-          <Sparkline points={sparkline} tone="money" />
+        <div className="mt-3 text-text-secondary">
+          <Sparkline points={sparkline} tone={isMoney ? "money" : "navy"} />
         </div>
       ) : null}
     </div>

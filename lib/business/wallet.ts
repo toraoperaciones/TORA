@@ -58,3 +58,111 @@ export async function getMonthlySpend(tenantId: string): Promise<number> {
   if (error) throw new Error(`[getMonthlySpend] ${error.message}`);
   return (data ?? []).reduce((acc, row) => acc + Number(row.amount), 0);
 }
+
+export interface WalletSeriesPoint {
+  date: string; // YYYY-MM-DD (MX)
+  amount: number;
+}
+
+/**
+ * Serie diaria de charges completados (últimos N días, MX).
+ * Para sparklines — fechas contiguas con 0 en días sin actividad.
+ */
+export async function getSpendSeries(
+  tenantId: string,
+  days = 14
+): Promise<WalletSeriesPoint[]> {
+  const supabase = await createClient();
+
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-CA", { timeZone: "America/Mexico_City" });
+
+  const todayMX = new Date();
+  const start = new Date(todayMX);
+  start.setDate(start.getDate() - (days - 1));
+
+  const { data, error } = await supabase
+    .from("wallet_transactions")
+    .select("amount, created_at")
+    .eq("tenant_id", tenantId)
+    .eq("type", "charge")
+    .eq("status", "completed")
+    .gte("created_at", `${fmt(start)}T00:00:00-06:00`);
+
+  if (error) throw new Error(`[getSpendSeries] ${error.message}`);
+
+  const byDay = new Map<string, number>();
+  for (const row of data ?? []) {
+    const day = new Date(row.created_at as string).toLocaleDateString("en-CA", {
+      timeZone: "America/Mexico_City",
+    });
+    byDay.set(day, (byDay.get(day) ?? 0) + Number(row.amount));
+  }
+
+  const points: WalletSeriesPoint[] = [];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const date = fmt(d);
+    points.push({ date, amount: byDay.get(date) ?? 0 });
+  }
+  return points;
+}
+
+export interface SpendCategory {
+  serviceType: string; // flight | hotel | car | stand | mixed
+  total: number;
+}
+
+/**
+ * Gasto del mes por categoría — datos REALES derivados de la BD:
+ * charges (completed) del mes unidos a trips por la referencia
+ * `TRIP-<id8>` que select_trip_options escribe en wallet_transactions.
+ * Sin datos → lista vacía (el dashboard muestra empty state honesto).
+ */
+export async function getSpendByCategory(
+  tenantId: string
+): Promise<SpendCategory[]> {
+  const supabase = await createClient();
+
+  const todayMX = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/Mexico_City",
+  });
+  const [year, month] = todayMX.split("-");
+  const monthStartISO = `${year}-${month}-01T00:00:00-06:00`;
+
+  const [chargesRes, tripsRes] = await Promise.all([
+    supabase
+      .from("wallet_transactions")
+      .select("amount, reference")
+      .eq("tenant_id", tenantId)
+      .eq("type", "charge")
+      .eq("status", "completed")
+      .gte("created_at", monthStartISO),
+    supabase.from("trips").select("id, service_type"),
+  ]);
+
+  if (chargesRes.error)
+    throw new Error(`[getSpendByCategory] ${chargesRes.error.message}`);
+
+  const serviceById = new Map<string, string>();
+  for (const trip of tripsRes.data ?? []) {
+    serviceById.set((trip as { id: string }).id.slice(0, 8), (trip as { service_type: string }).service_type);
+  }
+
+  const totals = new Map<string, number>();
+  for (const charge of (chargesRes.data ?? []) as Array<{
+    amount: string;
+    reference: string | null;
+  }>) {
+    const ref = charge.reference ?? "";
+    const tripId8 = ref.startsWith("TRIP-") ? ref.slice(5) : "";
+    const serviceType =
+      (tripId8 && serviceById.get(tripId8)) || "mixed";
+    totals.set(serviceType, (totals.get(serviceType) ?? 0) + Number(charge.amount));
+  }
+
+  return [...totals.entries()]
+    .map(([serviceType, total]) => ({ serviceType, total }))
+    .sort((a, b) => b.total - a.total);
+}
