@@ -9,7 +9,7 @@ import { Logo } from "@/components/brand/logo";
 export default function PendingPage() {
   return (
     <div className="flex flex-col items-center gap-6 border-border-subtle rounded-lg bg-navy-lift p-8 text-center shadow-sm">
-      <Logo size="lg" />
+      <Logo variant="lockup" theme="light" size="lg" />
       <div className="flex flex-col gap-2">
         <h1 className="font-display text-h2 text-text-primary">Cuenta en revisión</h1>
         <p className="prose-tora text-body-s text-text-secondary">

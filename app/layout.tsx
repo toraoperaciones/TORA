@@ -31,6 +31,19 @@ export const metadata: Metadata = {
   title: "TORA — Infraestructura de viajes corporativos",
   description:
     "Plataforma B2B multi-tenant para gestionar vuelos, hoteles, autos y stands de ferias con billetera pre-fondeada y CFDI consolidado.",
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+  },
+  openGraph: {
+    title: "TORA — Infraestructura de viajes corporativos",
+    description:
+      "Vuelos, hoteles, autos y stands de ferias con billetera pre-fondeada y CFDI consolidado.",
+    images: ["/brand/og.png"],
+    type: "website",
+  },
 };
 
 /**

@@ -75,7 +75,7 @@ export function RegisterForm() {
     <Card className="border-border-subtle bg-navy-lift shadow-none">
       <CardHeader className="items-center text-center">
         <div className="mb-2 flex justify-center">
-          <Logo size="lg" />
+          <Logo variant="lockup" theme="light" size="lg" />
         </div>
         <CardTitle className="font-display text-h2 text-text-primary">
           Crea tu cuenta

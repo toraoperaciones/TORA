@@ -262,7 +262,11 @@ export function Sidebar({ role, fullName, email, className }: SidebarProps) {
         )}
       >
         <Link href="/" aria-label="TORA" className="min-w-0">
-          <Logo variant="inverse" size="md" withWordmark={!collapsed} />
+          {collapsed ? (
+            <Logo variant="symbol" theme="light" size="md" withWordmark={false} />
+          ) : (
+            <Logo variant="lockup" theme="light" size="md" />
+          )}
         </Link>
         {!collapsed && (
           <button
@@ -385,7 +389,7 @@ export function SidebarNavSheetContent({
   return (
     <div className="flex h-full flex-col bg-navy-deep text-text-primary">
       <div className="flex h-16 items-center border-b border-border-hairline px-5">
-        <Logo variant="inverse" size="md" />
+        <Logo variant="lockup" theme="light" size="md" />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4">
         <div className="mb-4 flex items-center gap-3 px-3">

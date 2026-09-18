@@ -51,7 +51,7 @@ export function PortalShell({
         >
           <Menu className="h-5 w-5" aria-hidden />
         </button>
-        <Logo variant="inverse" size="sm" />
+        <Logo variant="lockup" theme="light" size="sm" />
         <span className="h-5 w-5" aria-hidden />
       </header>
 
