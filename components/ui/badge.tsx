@@ -1,47 +1,43 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
-import { Slot } from "radix-ui"
+import * as React from "react";
 
-const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary:
-          "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        destructive:
-          "bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
-        outline:
-          "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 [a&]:hover:underline",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+import { cn } from "@/lib/utils";
+
+/**
+ * Badge TORA — sin rojo. neutral/warning = opacidad + peso;
+ * success = forest (solo estados con dinero confirmado).
+ * Los Badges montados en la app usan los presets de status-badge.
+ */
+const BADGE_STYLES = {
+  neutral: "bg-layer-3 text-text-secondary border border-border-subtle",
+  success: "bg-forest/10 text-forest border border-forest/20",
+  warning: "bg-layer-2 text-text-primary font-semibold border border-border-default",
+  muted: "bg-layer-1 text-text-tertiary border border-transparent",
+  outline: "bg-transparent text-text-secondary border border-border-default",
+  secondary: "bg-layer-3 text-text-secondary border border-border-subtle",
+} as const;
+
+type BadgeTone = keyof typeof BADGE_STYLES;
 
 function Badge({
   className,
-  variant = "default",
-  asChild = false,
+  variant = "neutral",
+  dot = false,
   ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "span"
-
+}: React.ComponentProps<"span"> & { variant?: BadgeTone; dot?: boolean }) {
   return (
-    <Comp
+    <span
       data-slot="badge"
-      data-variant={variant}
-      className={cn(badgeVariants({ variant }), className)}
+      className={cn(
+        "inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium whitespace-nowrap",
+        BADGE_STYLES[variant],
+        className
+      )}
       {...props}
-    />
-  )
+    >
+      {dot && <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />}
+      {props.children}
+    </span>
+  );
 }
 
-export { Badge, badgeVariants }
+export { Badge, type BadgeTone };

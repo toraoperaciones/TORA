@@ -1,9 +1,11 @@
 import { cn } from "@/lib/utils";
 
-function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+/** Skeleton TORA — shimmer sobre capas de opacidad, sin gradientes de color. */
+function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-[rgba(26,43,74,0.06)]", className)}
+      data-slot="skeleton"
+      className={cn("animate-shimmer rounded-md", className)}
       {...props}
     />
   );

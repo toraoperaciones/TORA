@@ -1,31 +1,60 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /*
- * TORA Design System — tokens en @theme (Tailwind v4).
- * Fuente de verdad absoluta. No añadir colores, tipografías, espaciados,
- * radios ni sombras fuera de este bloque sin aprobación explícita.
+ * TORA Design System — "El estándar silencioso"
+ * Dark-first institucional. Jerarquía por opacidad, no por color.
+ * El forest SOLO aparece donde hay dinero en juego.
+ * Fuente de verdad absoluta: no añadir tokens fuera de este bloque.
  */
 
 @theme {
-  /* ─── Colores ─────────────────────────────────────────────── */
-  --color-navy: #1a2b4a;
-  --color-navy-hover: #152340;
-  --color-navy-active: #0f1a33;
+  /* ─── Superficies (dark default) ────────────────────────────── */
+  --color-navy: #1a2b4a; /* superficie primaria / marca */
+  --color-navy-deep: #131f38; /* página + sidebar */
+  --color-navy-lift: #21345c; /* cards elevadas */
+  --color-navy-hover: #2a3f6b; /* hover */
+  --color-navy-active: #0f1a33; /* pressed / pozos */
+
   --color-offwhite: #f5f5f0;
+  --color-surface: #ffffff;
   --color-graphite: #4a4a4a;
+
+  /* ─── Dinero (único acento) ─────────────────────────────────── */
   --color-forest: #2e7d5b;
   --color-forest-hover: #266a4d;
-  --color-surface: #ffffff;
-  --color-border-subtle: rgb(26 43 74 / 0.08);
-  --color-border-default: rgb(26 43 74 / 0.16);
-  --color-text-muted: rgb(74 74 74 / 0.6);
 
-  /* ─── Tipografía ──────────────────────────────────────────── */
+  /* ─── Jerarquía por capas de opacidad ───────────────────────── */
+  --color-layer-1: rgb(245 245 240 / 0.03);
+  --color-layer-2: rgb(245 245 240 / 0.05);
+  --color-layer-3: rgb(245 245 240 / 0.08);
+  --color-layer-4: rgb(245 245 240 / 0.12);
+  --color-layer-5: rgb(245 245 240 / 0.16);
+
+  /* ─── Bordes ────────────────────────────────────────────────── */
+  --color-border-hairline: rgb(245 245 240 / 0.06);
+  --color-border-subtle: rgb(245 245 240 / 0.1);
+  --color-border-default: rgb(245 245 240 / 0.16);
+  --color-border-emphasis: rgb(245 245 240 / 0.28);
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
+  --color-text-primary: #f5f5f0;
+  --color-text-secondary: rgb(245 245 240 / 0.72);
+  --color-text-tertiary: rgb(245 245 240 / 0.52);
+  --color-text-muted: rgb(245 245 240 / 0.36);
+
+  /* ─── CTA (invierte con el tema) ────────────────────────────── */
+  --color-cta: #f5f5f0;
+  --color-cta-foreground: #1a2b4a;
+
+  /* ─── Tipografía ────────────────────────────────────────────── */
   --font-display: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif,
     system-ui, sans-serif;
   --font-body: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, "SF Mono",
+    monospace;
 
-  /* Escala tipográfica — base 16px, ratio 1.25 */
+  /* Escala tipográfica — base 16px */
   --text-display-xl: 4.5rem;
   --text-display-xl--line-height: 1.1;
   --text-display-xl--letter-spacing: -0.02em;
@@ -86,7 +115,7 @@
   --text-overline--letter-spacing: 0.08em;
   --text-overline--font-weight: 600;
 
-  /* ─── Espaciado — base 8px ────────────────────────────────── */
+  /* ─── Espaciado — base 8px ──────────────────────────────────── */
   --spacing-1: 0.5rem;
   --spacing-2: 1rem;
   --spacing-3: 1.5rem;
@@ -96,55 +125,92 @@
   --spacing-7: 6rem;
   --spacing-8: 8rem;
 
-  /* ─── Radios ──────────────────────────────────────────────── */
+  /* ─── Radios ────────────────────────────────────────────────── */
   --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 24px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
 
-  /* ─── Sombras — tinte Navy, nunca negro puro ──────────────── */
-  --shadow-xs: 0 1px 2px rgb(26 43 74 / 0.04);
-  --shadow-sm: 0 2px 4px rgb(26 43 74 / 0.06);
-  --shadow-md: 0 4px 12px rgb(26 43 74 / 0.08);
-  --shadow-lg: 0 12px 32px rgb(26 43 74 / 0.1);
-  --shadow-xl: 0 24px 64px rgb(26 43 74 / 0.12);
+  /* ─── Sombras — solo elevación flotante ─────────────────────── */
+  --shadow-modal: 0 24px 64px -12px rgb(0 0 0 / 0.5);
+  --shadow-popover: 0 8px 32px -8px rgb(0 0 0 / 0.4);
+  --shadow-glow: 0 0 32px rgb(46 125 91 / 0.15);
 
-  /* ─── Motion ──────────────────────────────────────────────── */
-  --ease-tora: cubic-bezier(0.2, 0, 0, 1);
+  /* ─── Motion ────────────────────────────────────────────────── */
+  --ease-tora: cubic-bezier(0.16, 1, 0.3, 1); /* out-expo */
   --duration-fast: 120ms;
   --duration-base: 200ms;
-  --duration-slow: 320ms;
+  --duration-slow: 300ms;
 
-  /* ─── Layout ──────────────────────────────────────────────── */
+  /* ─── Layout ────────────────────────────────────────────────── */
   --container-content: 1280px;
 }
 
 /*
- * Puente shadcn/ui → tokens TORA.
- * Mapea las variables que los componentes de components/ui esperan
- * hacia el design system, sin introducir colores nuevos.
+ * Puente shadcn/ui → tokens TORA (dark default).
+ * Los componentes existentes heredan el tema por variables CSS.
  */
 :root {
   --radius: 8px;
-  --background: var(--color-offwhite);
-  --foreground: var(--color-navy);
-  --card: var(--color-surface);
-  --card-foreground: var(--color-navy);
-  --popover: var(--color-surface);
-  --popover-foreground: var(--color-navy);
-  --primary: var(--color-navy);
-  --primary-foreground: var(--color-offwhite);
-  --secondary: var(--color-offwhite);
-  --secondary-foreground: var(--color-navy);
-  --muted: var(--color-offwhite);
-  --muted-foreground: var(--color-text-muted);
-  --accent: var(--color-offwhite);
-  --accent-foreground: var(--color-navy);
-  --destructive: var(--color-navy);
+  --background: var(--color-navy-deep);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-navy-lift);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-navy);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-cta);
+  --primary-foreground: var(--color-cta-foreground);
+  --secondary: var(--color-layer-3);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-layer-2);
+  --muted-foreground: var(--color-text-tertiary);
+  --accent: var(--color-layer-3);
+  --accent-foreground: var(--color-text-primary);
+  --destructive: var(--color-text-primary);
   --border: var(--color-border-subtle);
   --input: var(--color-border-default);
-  --ring: var(--color-navy);
+  --ring: var(--color-cta);
+}
+
+/* ─── Light mode ─────────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-navy-deep: #ffffff; /* sidebar/página clara */
+  --color-navy-lift: #ffffff; /* cards */
+  --color-navy-active: #ebebe6;
+  --color-surface: #ffffff;
+
+  --color-layer-1: rgb(26 43 74 / 0.03);
+  --color-layer-2: rgb(26 43 74 / 0.05);
+  --color-layer-3: rgb(26 43 74 / 0.08);
+  --color-layer-4: rgb(26 43 74 / 0.12);
+  --color-layer-5: rgb(26 43 74 / 0.16);
+
+  --color-border-hairline: rgb(26 43 74 / 0.08);
+  --color-border-subtle: rgb(26 43 74 / 0.12);
+  --color-border-default: rgb(26 43 74 / 0.18);
+  --color-border-emphasis: rgb(26 43 74 / 0.3);
+
+  --color-text-primary: #1a2b4a;
+  --color-text-secondary: rgb(26 43 74 / 0.72);
+  --color-text-tertiary: rgb(26 43 74 / 0.54);
+  --color-text-muted: rgb(26 43 74 / 0.38);
+
+  --color-cta: #1a2b4a;
+  --color-cta-foreground: #f5f5f0;
+
+  --background: #f5f5f0;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --muted: rgb(26 43 74 / 0.04);
+  --accent: rgb(26 43 74 / 0.06);
+}
+
+/* Página clara: el body no es blanco puro sino offwhite */
+[data-theme="light"] body {
+  background-color: #f5f5f0;
 }
 
 @theme inline {
@@ -170,16 +236,27 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  [data-theme="light"] {
+    color-scheme: light;
+  }
+
   * {
     @apply border-border-subtle outline-ring/50;
   }
 
   html {
     -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    @apply bg-offwhite font-body text-navy antialiased;
+    @apply bg-navy-deep font-body text-text-primary antialiased;
     font-feature-settings: "cv11", "ss01";
   }
 
@@ -199,30 +276,106 @@
     @apply font-body text-h4;
   }
 
-  /* Todo número monetario / dato financiero: dígitos tabulares */
-  .tabular-nums {
+  /* Todo número monetario / métrico: dígitos tabulares */
+  .tabular-nums,
+  [data-money],
+  [data-metric] {
     font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum", "ss01";
   }
 
-  /* Focus ring global: 0 0 0 2px offwhite, 0 0 0 4px navy */
+  /* Focus ring disciplinado */
   :focus-visible {
     outline: none;
     box-shadow:
-      0 0 0 2px var(--color-offwhite),
-      0 0 0 4px var(--color-navy);
+      0 0 0 2px var(--color-navy-deep),
+      0 0 0 4px var(--color-cta);
+    border-radius: var(--radius-md);
   }
 
   ::selection {
-    background-color: var(--color-navy);
-    color: var(--color-offwhite);
+    background-color: var(--color-cta);
+    color: var(--color-cta-foreground);
   }
 
   ::placeholder {
     color: var(--color-text-muted);
   }
 
+  /* Scrollbar sutil */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-subtle);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-default);
+  }
+
   /* Longitud de línea máxima para texto corrido */
   .prose-tora {
     max-width: 75ch;
+  }
+
+  /* Reduced motion: sin transiciones decorativas */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Noise sutil para fondos hero */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* Radial depth muy sutil para heros */
+  .bg-radial-depth {
+    background: radial-gradient(
+      ellipse at top,
+      var(--color-layer-2) 0%,
+      transparent 60%
+    );
+  }
+
+  /* Skeleton shimmer */
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-layer-1) 0%,
+      var(--color-layer-3) 50%,
+      var(--color-layer-1) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s var(--ease-tora) infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
   }
 }
