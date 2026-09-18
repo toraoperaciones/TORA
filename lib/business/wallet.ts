@@ -1,3 +1,4 @@
+import { cdmxDateStartIso, cdmxMonthStartIso } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -41,19 +42,13 @@ export async function getBalance(tenantId: string): Promise<number> {
 export async function getMonthlySpend(tenantId: string): Promise<number> {
   const supabase = await createClient();
 
-  const todayMX = new Date().toLocaleDateString("en-CA", {
-    timeZone: "America/Mexico_City",
-  });
-  const [year, month] = todayMX.split("-");
-  const monthStartISO = `${year}-${month}-01T00:00:00-06:00`;
-
   const { data, error } = await supabase
     .from("wallet_transactions")
     .select("amount")
     .eq("tenant_id", tenantId)
     .eq("type", "charge")
     .eq("status", "completed")
-    .gte("created_at", monthStartISO);
+    .gte("created_at", cdmxMonthStartIso());
 
   if (error) throw new Error(`[getMonthlySpend] ${error.message}`);
   return (data ?? []).reduce((acc, row) => acc + Number(row.amount), 0);
@@ -80,6 +75,7 @@ export async function getSpendSeries(
   const todayMX = new Date();
   const start = new Date(todayMX);
   start.setDate(start.getDate() - (days - 1));
+  const seriesStart = cdmxDateStartIso(start);
 
   const { data, error } = await supabase
     .from("wallet_transactions")
@@ -87,7 +83,7 @@ export async function getSpendSeries(
     .eq("tenant_id", tenantId)
     .eq("type", "charge")
     .eq("status", "completed")
-    .gte("created_at", `${fmt(start)}T00:00:00-06:00`);
+    .gte("created_at", seriesStart);
 
   if (error) throw new Error(`[getSpendSeries] ${error.message}`);
 
@@ -125,12 +121,6 @@ export async function getSpendByCategory(
 ): Promise<SpendCategory[]> {
   const supabase = await createClient();
 
-  const todayMX = new Date().toLocaleDateString("en-CA", {
-    timeZone: "America/Mexico_City",
-  });
-  const [year, month] = todayMX.split("-");
-  const monthStartISO = `${year}-${month}-01T00:00:00-06:00`;
-
   const [chargesRes, tripsRes] = await Promise.all([
     supabase
       .from("wallet_transactions")
@@ -138,7 +128,7 @@ export async function getSpendByCategory(
       .eq("tenant_id", tenantId)
       .eq("type", "charge")
       .eq("status", "completed")
-      .gte("created_at", monthStartISO),
+      .gte("created_at", cdmxMonthStartIso()),
     supabase.from("trips").select("id, service_type"),
   ]);
 

@@ -1,38 +1,15 @@
+import { TRIP_MILESTONES } from "@/lib/business/trip-machine";
 import { cn } from "@/lib/utils";
 
 /**
- * Riel del viaje — la firma visual de TORA. Traduce la máquina de estados
- * real (lib/business/trip-machine.ts) a una secuencia de 5 hitos:
- * Solicitud → Opciones → Selección → Pago → Viaje.
+ * Riel del viaje — la firma visual de TORA. Consume los hitos de la máquina
+ * de estados real (lib/business/trip-machine.ts): Solicitud → Opciones →
+ * Selección → Pago → Viaje. Server Component: cero JS, cero motion.
  *
- * Server Component: cero JS, cero motion — la estructura ES la información.
  * El nodo "Viaje" lleva forest solo cuando el dinero ya se liquidó
  * (confirmed/completed) — regla de marca: verde = dinero en juego.
  * cancelled/refunded rompen el riel y vuelven al mensaje honesto.
  */
-
-interface Step {
-  label: string;
-  hint: string;
-}
-
-const STEPS: Step[] = [
-  { label: "Solicitud", hint: "Operaciones está cotizando tu viaje." },
-  { label: "Opciones", hint: "Recibiste opciones; compara y elige." },
-  { label: "Selección", hint: "Elige la opción que prefieras." },
-  { label: "Pago", hint: "Fondea tu billetera o espera tu crédito." },
-  { label: "Viaje", hint: "Reservado. Los vouchers llegan por correo." },
-];
-
-/** Estado de máquina → índice del hito alcanzado. */
-const STATUS_STEP: Record<string, number> = {
-  pending_quote: 0,
-  options_sent: 1,
-  awaiting_selection: 2,
-  awaiting_payment: 3,
-  confirmed: 4,
-  completed: 4,
-};
 
 /** La única pareja de estados donde el dinero ya se liquidó. */
 const SETTLED = new Set(["confirmed", "completed"]);
@@ -44,10 +21,10 @@ export function TripRail({
   status: string;
   departureDate: string;
 }) {
-  const current = STATUS_STEP[status];
+  const current = TRIP_MILESTONES.findIndex((m) => m.status === status);
 
   // Estados terminales fuera del flujo: el riel no aplica; mensaje directo.
-  if (current === undefined) {
+  if (current === -1) {
     return (
       <p className="text-body-s text-text-secondary">
         {status === "cancelled"
@@ -61,18 +38,18 @@ export function TripRail({
 
   return (
     <ol className="flex flex-col">
-      {STEPS.map((step, i) => {
+      {TRIP_MILESTONES.map((milestone, i) => {
         const done = i < current;
         const active = i === current;
-        const isViaje = i === STEPS.length - 1;
+        const isViaje = i === TRIP_MILESTONES.length - 1;
         // Forest solo en el hito final con dinero liquidado.
         const money = isViaje && settled;
         return (
           <li
-            key={step.label}
-            className={cn("relative flex gap-3 pb-5", i === STEPS.length - 1 && "pb-0")}
+            key={milestone.status}
+            className={cn("relative flex gap-3 pb-5", isViaje && "pb-0")}
           >
-            {i < STEPS.length - 1 && (
+            {i < TRIP_MILESTONES.length - 1 && (
               <span
                 aria-hidden
                 className={cn(
@@ -100,7 +77,7 @@ export function TripRail({
                   money && "text-forest"
                 )}
               >
-                {step.label}
+                {milestone.label}
                 {active && (
                   <span className="ml-2 font-mono text-caption text-text-tertiary">
                     {isViaje ? departureDate : "en curso"}
@@ -108,7 +85,7 @@ export function TripRail({
                 )}
               </p>
               {active && (
-                <p className="mt-0.5 text-caption text-text-secondary">{step.hint}</p>
+                <p className="mt-0.5 text-caption text-text-secondary">{milestone.hint}</p>
               )}
             </div>
           </li>

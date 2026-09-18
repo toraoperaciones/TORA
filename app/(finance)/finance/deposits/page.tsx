@@ -39,7 +39,7 @@ export default async function FinanceDepositsPage() {
       .select("id, amount, validated_at, tenants:tenant_id (name)")
       .eq("type", "deposit")
       .eq("status", "completed")
-      .gte("validated_at", `${today}T00:00:00-06:00`)
+      .gte("validated_at", today)
       .order("validated_at", { ascending: false })
       .limit(10),
   ]);

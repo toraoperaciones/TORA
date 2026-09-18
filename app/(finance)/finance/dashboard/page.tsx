@@ -16,6 +16,7 @@ import {
   type PendingCharge,
 } from "@/lib/business/credit";
 import { getBalance } from "@/lib/business/wallet";
+import { cdmxMonthStartIso } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 import { formatMXN } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -49,11 +50,7 @@ export const metadata: Metadata = pageMetadata("Dashboard");
 export default async function FinanceDashboardPage() {
   const supabase = await createClient();
 
-  const todayMX = new Date().toLocaleDateString("en-CA", {
-    timeZone: "America/Mexico_City",
-  });
-  const [year, month] = todayMX.split("-");
-  const monthStart = `${year}-${month}-01T00:00:00-06:00`;
+  const monthStart = cdmxMonthStartIso();
 
   const [tenantsRes, depositsRes, chargesRes, optionsRes, linesRes, pendingRes] =
     await Promise.all([
