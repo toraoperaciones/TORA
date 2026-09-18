@@ -34,6 +34,8 @@ export function OptionCard({
 }) {
   const router = useRouter();
   const [selecting, setSelecting] = useState(false);
+  // Check persistente en el lugar: sobrevive al router.refresh() de la página.
+  const [justConfirmed, setJustConfirmed] = useState(false);
 
   const details = option.details
     ? Object.entries(option.details)
@@ -71,6 +73,7 @@ export function OptionCard({
           </span>,
           { duration: 4000 }
         );
+        setJustConfirmed(true);
       } else {
         toast.success("Opción seleccionada.");
       }
@@ -133,6 +136,7 @@ export function OptionCard({
               Seleccionada
             </Button>
           )}
+          {justConfirmed && <AnimatedCheck />}
         </div>
       </CardContent>
     </Card>

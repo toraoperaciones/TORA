@@ -112,8 +112,8 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
       </span>,
       { duration: 4000 }
     );
-    setSuccess(true);
-    setTimeout(() => setSuccess(false), 4000);
+    setSuccess(true); // persistente hasta navegación/refresh
+    setSubmitting(false);
     setFile(null);
     reset();
     router.refresh();
@@ -175,14 +175,17 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            disabled={submitting}
-            variant={success ? "success" : "default"}
-            className="font-display font-semibold"
-          >
-            {submitting ? "Enviando…" : success ? "Enviado" : "Enviar comprobante"}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              type="submit"
+              disabled={submitting}
+              variant={success ? "success" : "default"}
+              className="font-display font-semibold"
+            >
+              {submitting ? "Enviando…" : success ? "Enviado" : "Enviar comprobante"}
+            </Button>
+            {success && <AnimatedCheck />}
+          </div>
         </form>
       </CardContent>
     </Card>

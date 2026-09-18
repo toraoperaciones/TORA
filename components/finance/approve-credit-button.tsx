@@ -39,6 +39,8 @@ export function ApproveCreditButton({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  // Check persistente en el lugar: sobrevive al router.refresh() del listado.
+  const [approved, setApproved] = useState(false);
   const [limit, setLimit] = useState("");
 
   async function handleApprove() {
@@ -68,7 +70,8 @@ export function ApproveCreditButton({
       </span>,
       { duration: 4000 }
     );
-    setOpen(false);
+    setApproved(true);
+    // El dialog queda abierto con el check visible; el usuario lo cierra.
     router.refresh();
   }
 
@@ -122,6 +125,7 @@ export function ApproveCreditButton({
           <Button onClick={handleApprove} disabled={saving} className="font-display font-semibold">
             {saving ? "Aprobando…" : "Aprobar"}
           </Button>
+          {approved && <AnimatedCheck />}
         </DialogFooter>
       </DialogContent>
     </Dialog>
