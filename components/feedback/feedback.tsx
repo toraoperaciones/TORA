@@ -1,7 +1,9 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { EmptySearch } from "@/components/illustrations/illustrations";
@@ -20,6 +22,10 @@ export function PortalErrorView({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
+
   return (
     <div className="flex flex-col items-center gap-5 rounded-lg border border-border bg-card px-6 py-14 text-center">
       <AlertCircle className="h-7 w-7 text-muted-foreground" aria-hidden />
