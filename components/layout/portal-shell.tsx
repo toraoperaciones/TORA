@@ -7,7 +7,8 @@ import { useState } from "react";
 
 import { CommandPalette } from "@/components/layout/command-palette";
 import { Logo } from "@/components/brand/logo";
-import { Sidebar, SidebarNavSheetContent } from "@/components/layout/sidebar";
+import { Sidebar } from "@/components/layout/sidebar";
+import { SidebarNavSheetContent } from "@/components/layout/sidebar-sheet";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import type { Role } from "@/lib/auth/roles";
 import { EASE_TORA } from "@/lib/motion";

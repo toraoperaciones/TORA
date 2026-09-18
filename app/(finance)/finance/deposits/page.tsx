@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { DepositRow, type DepositRowData } from "@/components/finance/deposit-row";
 import { EmptyWallet } from "@/components/illustrations/illustrations";
+import { MoneyHero } from "@/components/ui/money-hero";
 import {
   Table,
   TableBody,
@@ -70,22 +71,18 @@ export default async function FinanceDepositsPage() {
       </div>
 
       {/* Nivel 1 — HERO: total pendiente de validar. */}
-      <div
-        data-money
-        className="rounded-lg border border-forest/20 bg-navy-lift p-8 shadow-glow"
+      <MoneyHero
+        label="Pendiente de validar"
+        amount={pendingTotal}
+        scale="l"
+        animated={false}
       >
-        <p className="text-caption uppercase tracking-wider text-text-tertiary">
-          Pendiente de validar
-        </p>
-        <p className="mt-2 font-display text-display-l tabular-nums text-text-primary">
-          {formatMXN(pendingTotal)}
-        </p>
         <p className="mt-2 text-body-s text-text-secondary">
           {deposits.length === 0
             ? "Nada en cola — todo validado."
             : `${deposits.length} depósito${deposits.length === 1 ? "" : "s"} en cola · FIFO`}
         </p>
-      </div>
+      </MoneyHero>
 
       <div className="rounded-lg border border-border-subtle bg-navy-lift">
         {deposits.length === 0 ? (

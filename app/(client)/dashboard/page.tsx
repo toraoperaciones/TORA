@@ -11,7 +11,7 @@ import {
 } from "@/components/illustrations/illustrations";
 import { Stagger, StaggerItem } from "@/components/layout/stagger";
 import { StatusBadge } from "@/components/trips/status-badge";
-import { BalanceCard } from "@/components/wallet/balance-card";
+import { MoneyHero } from "@/components/ui/money-hero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientContext } from "@/lib/auth/tenant";
@@ -127,10 +127,11 @@ export default async function DashboardPage() {
       {/* Nivel 1 — HERO: el saldo domina la pantalla. */}
       <Stagger className="grid gap-4 lg:grid-cols-3">
         <StaggerItem className="lg:col-span-2">
-          <BalanceCard
-            balance={balance}
+          <MoneyHero
+            label="Saldo disponible"
+            amount={balance}
+            scale="xl"
             sparkline={seriesPoints}
-            hero
             className="h-full"
           />
         </StaggerItem>

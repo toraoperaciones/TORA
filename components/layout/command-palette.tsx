@@ -5,7 +5,7 @@ import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { NAV_BY_ROLE } from "@/components/layout/sidebar";
+import { NAV_BY_ROLE } from "@/lib/navigation";
 import {
   Dialog,
   DialogContent,

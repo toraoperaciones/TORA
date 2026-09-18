@@ -1,5 +1,5 @@
+import { MoneyHero } from "@/components/ui/money-hero";
 import { ReceiptUpload } from "@/components/wallet/receipt-upload";
-import { BalanceCard } from "@/components/wallet/balance-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -89,7 +89,7 @@ export default async function WalletPage({
     <div className="flex flex-col gap-8">
       <h1>Billetera</h1>
 
-      <BalanceCard balance={balance} label="Saldo actual" />
+      <MoneyHero label="Saldo actual" amount={balance} scale="m" />
 
       {ctx.role === "CLIENT_ADMIN" && <ReceiptUpload tenantId={tenantId} />}
 
