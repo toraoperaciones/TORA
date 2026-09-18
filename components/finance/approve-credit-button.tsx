@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { approveCreditForTripAction } from "@/app/(finance)/finance/actions";
-import { AnimatedCheck } from "@/components/ui/animated-check";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,20 +26,16 @@ import { formatMXN } from "@/lib/utils";
  */
 export function ApproveCreditButton({
   tripId,
-  tenantName,
   destination,
   chargeAmount,
 }: {
   tripId: string;
-  tenantName: string;
   destination: string;
   chargeAmount: number;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  // Check persistente en el lugar: sobrevive al router.refresh() del listado.
-  const [approved, setApproved] = useState(false);
   const [limit, setLimit] = useState("");
 
   async function handleApprove() {
@@ -64,8 +59,11 @@ export function ApproveCreditButton({
     }
 
     toast.success("Crédito aprobado. Reserva confirmada.", { duration: 4000 });
-    setApproved(true);
-    // El dialog queda abierto con el check visible; el usuario lo cierra.
+    // Confirmación duradera: el banner vive fuera de la cola (que se remonta
+    // en el refresh); el check en el dialog muere con el <li>.
+    window.dispatchEvent(
+      new CustomEvent("tora:credit-approved", { detail: { destination } })
+    );
     router.refresh();
   }
 
@@ -79,7 +77,7 @@ export function ApproveCreditButton({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="font-display text-h4 text-text-primary">
-            Aprobar crédito — {tenantName}
+            Aprobar crédito — {destination}
           </DialogTitle>
           <DialogDescription className="text-body-s text-text-secondary">
             Cubre el cargo de {formatMXN(chargeAmount)} del trip a {destination} y
@@ -119,7 +117,6 @@ export function ApproveCreditButton({
           <Button onClick={handleApprove} disabled={saving} className="font-display font-semibold">
             {saving ? "Aprobando…" : "Aprobar"}
           </Button>
-          {approved && <AnimatedCheck />}
         </DialogFooter>
       </DialogContent>
     </Dialog>

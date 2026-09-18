@@ -1,4 +1,5 @@
 import { ApproveCreditButton } from "@/components/finance/approve-credit-button";
+import { CreditApprovalBanner } from "@/components/finance/credit-approval-banner";
 import { SuspendTenantButton } from "@/components/finance/suspend-tenant-button";
 import { CreditLineDialog } from "@/components/finance/credit-line-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -134,6 +135,8 @@ export default async function FinanceCreditPage() {
     <div className="flex flex-col gap-8">
       <h1>Líneas de crédito</h1>
 
+      <CreditApprovalBanner />
+
       {awaitingTrips.length > 0 && (
         <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
           <h2 className="font-display text-h4 text-text-primary">
@@ -157,12 +160,11 @@ export default async function FinanceCreditPage() {
                     Cargo pendiente: {formatMXN(t.charge_amount)}
                   </p>
                 </div>
-                <ApproveCreditButton
-                  tripId={t.id}
-                  tenantName={tenantNames.get(t.tenant_id) ?? t.tenant_id}
-                  destination={t.destination}
-                  chargeAmount={t.charge_amount}
-                />
+        <ApproveCreditButton
+          tripId={t.id}
+          destination={t.destination}
+          chargeAmount={t.charge_amount}
+        />
               </li>
             ))}
           </ul>
