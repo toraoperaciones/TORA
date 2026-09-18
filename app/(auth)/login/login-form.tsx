@@ -74,15 +74,15 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="border-border-subtle bg-surface shadow-none">
+    <Card className="border-border-hairline bg-navy-lift shadow-none">
       <CardHeader className="items-center text-center">
         <div className="mb-2 flex justify-center">
           <Logo size="lg" />
         </div>
-        <CardTitle className="font-display text-h2 text-navy">
+        <CardTitle className="font-display text-h2 text-text-primary">
           Inicia sesión
         </CardTitle>
-        <CardDescription className="text-body-s text-graphite">
+        <CardDescription className="text-body-s text-text-tertiary">
           Accede a tu cuenta corporativa.
         </CardDescription>
       </CardHeader>
@@ -98,7 +98,7 @@ export function LoginForm() {
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.email.message}
               </p>
             )}
@@ -114,7 +114,7 @@ export function LoginForm() {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.password.message}
               </p>
             )}
@@ -123,7 +123,6 @@ export function LoginForm() {
           <Button
             type="submit"
             disabled={submitting}
-            className="font-display font-semibold"
           >
             {submitting ? "Ingresando…" : "Ingresar"}
           </Button>
@@ -134,17 +133,16 @@ export function LoginForm() {
             variant="outline"
             disabled
             title="Próximamente"
-            className="font-display font-semibold"
           >
             Continuar con Google
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-body-s text-graphite">
+        <p className="mt-6 text-center text-body-s text-text-tertiary">
           ¿No tienes cuenta?{" "}
           <Link
             href="/register"
-            className="font-semibold text-navy underline underline-offset-4 hover:text-navy-hover"
+            className="font-semibold text-text-primary underline underline-offset-4 hover:text-text-secondary"
           >
             Regístrate
           </Link>
