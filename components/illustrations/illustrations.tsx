@@ -92,13 +92,3 @@ export function EmptyError({ className }: IllustrationProps) {
     </Svg>
   );
 }
-
-/** Checkmark de confirmación (dinero liquidado). */
-export function SuccessCheck({ className }: IllustrationProps) {
-  return (
-    <Svg className={cn("text-forest", className)} label="Confirmado">
-      <circle cx="80" cy="80" r="44" opacity={0.4} />
-      <path d="M60 82l14 14 26-30" />
-    </Svg>
-  );
-}

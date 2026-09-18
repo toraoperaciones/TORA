@@ -105,13 +105,9 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
       return;
     }
 
-    toast.success(
-      <span className="flex items-center gap-2">
-        <AnimatedCheck />
-        Comprobante enviado. Se validará en menos de 1 hora hábil.
-      </span>,
-      { duration: 4000 }
-    );
+    toast.success("Comprobante enviado. Se validará en menos de 1 hora hábil.", {
+      duration: 4000,
+    });
     setSuccess(true); // persistente hasta navegación/refresh
     setSubmitting(false);
     setFile(null);

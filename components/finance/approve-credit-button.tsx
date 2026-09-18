@@ -63,13 +63,7 @@ export function ApproveCreditButton({
       return;
     }
 
-    toast.success(
-      <span className="flex items-center gap-2">
-        <AnimatedCheck />
-        Crédito aprobado. Reserva confirmada.
-      </span>,
-      { duration: 4000 }
-    );
+    toast.success("Crédito aprobado. Reserva confirmada.", { duration: 4000 });
     setApproved(true);
     // El dialog queda abierto con el check visible; el usuario lo cierra.
     router.refresh();

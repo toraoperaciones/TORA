@@ -8,6 +8,7 @@ import { AnimatedCheck } from "@/components/ui/animated-check";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatMXN } from "@/lib/utils";
 
 export interface TripOptionPublic {
   id: string;
@@ -66,13 +67,7 @@ export function OptionCard({
       }
 
       if (payload.status === "confirmed") {
-        toast.success(
-          <span className="flex items-center gap-2">
-            <AnimatedCheck />
-            Reserva confirmada.
-          </span>,
-          { duration: 4000 }
-        );
+        toast.success("Reserva confirmada.", { duration: 4000 });
         setJustConfirmed(true);
       } else {
         toast.success("Opción seleccionada.");
@@ -117,10 +112,7 @@ export function OptionCard({
 
         <div className="flex shrink-0 items-center gap-4">
           <span className="font-display text-h3 tabular-nums text-text-primary">
-            ${option.final_price.toLocaleString("es-MX", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {formatMXN(option.final_price)}
           </span>
           {canSelect && !option.is_selected && (
             <Button

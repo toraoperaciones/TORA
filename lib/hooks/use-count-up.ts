@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
  * rAF + ease-out-expo, 600ms. Respeta prefers-reduced-motion
  * (salta directo al valor final). Sin dependencias externas.
  */
-export function useCountUp(target: number, durationMs = 600): number {
+export function useCountUp(target: number): number {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number | null>(null);
 
@@ -25,7 +25,7 @@ export function useCountUp(target: number, durationMs = 600): number {
 
     const tick = (now: number) => {
       const elapsed = now - start;
-      const t = Math.min(elapsed / durationMs, 1);
+      const t = Math.min(elapsed / 600, 1);
       // ease-out-expo
       const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
       setValue(target * eased);
@@ -38,7 +38,7 @@ export function useCountUp(target: number, durationMs = 600): number {
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [target, durationMs]);
+  }, [target]);
 
   return value;
 }

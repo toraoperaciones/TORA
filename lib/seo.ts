@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 
-/**
- * Title por página (A9): "«Página» · TORA". Root layout define el template.
- */
+/** Title por página: «Página · TORA» (template definido en el root layout). */
 export function pageMetadata(title: string): Metadata {
   return { title };
 }
