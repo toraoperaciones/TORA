@@ -13,6 +13,8 @@ import {
 import { getClientContext } from "@/lib/auth/tenant";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatDate, formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const TX_TYPE_LABEL: Record<string, string> = {
   deposit: "Depósito",
@@ -33,6 +35,8 @@ const PAGE_SIZE = 20;
 interface SearchParams {
   page?: string;
 }
+
+export const metadata: Metadata = pageMetadata("Billetera");
 
 export default async function WalletPage({
   searchParams,

@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { getClientContext } from "@/lib/auth/tenant";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const INVOICE_STATUS_CLASS: Record<string, string> = {
   draft: "border-border-default bg-transparent text-text-tertiary",
@@ -24,6 +26,8 @@ const STATUS_LABEL: Record<string, string> = {
   paid: "Pagada",
   cancelled: "Cancelada",
 };
+
+export const metadata: Metadata = pageMetadata("Facturas");
 
 export default async function InvoicesPage() {
   const ctx = await getClientContext();

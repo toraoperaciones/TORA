@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { PipelineBoard, type BoardLead } from "@/components/admin/pipeline-board";
 import type { LeadStage } from "@/app/(admin)/admin/pipeline/actions";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata("Pipeline");
 
 export default async function PipelinePage() {
   const supabase = await createClient();

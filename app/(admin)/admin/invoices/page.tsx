@@ -11,7 +11,11 @@ import {
 import { InvoiceUploadDialog } from "@/components/admin/invoice-upload-dialog";
 import { InvoiceStatusSelect } from "@/components/admin/invoice-status-select";
 import { formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
+
+export const metadata: Metadata = pageMetadata("Facturas");
 
 export default async function AdminInvoicesPage({
   searchParams,

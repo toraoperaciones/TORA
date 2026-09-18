@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const INCIDENT_TYPE_LABEL: Record<string, string> = {
   flight_delay: "Retraso de vuelo",
@@ -62,6 +64,8 @@ interface IncidentRow {
     tenants: { name: string } | null;
   } | null;
 }
+
+export const metadata: Metadata = pageMetadata("Incidentes");
 
 export default async function IncidentsPage({
   searchParams,

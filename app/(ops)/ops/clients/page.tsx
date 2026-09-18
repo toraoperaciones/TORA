@@ -11,6 +11,8 @@ import {
 import { getBalance } from "@/lib/business/wallet";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 interface TenantRow {
   id: string;
@@ -40,6 +42,8 @@ const TX_TYPE_LABEL: Record<string, string> = {
   refund: "Reembolso",
   credit_payment: "Pago de crédito",
 };
+
+export const metadata: Metadata = pageMetadata("Clientes");
 
 export default async function OpsClientsPage() {
   const supabase = await createClient();

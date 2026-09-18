@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/table";
 import { getClientContext } from "@/lib/auth/tenant";
 import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const SERVICE_LABEL: Record<string, string> = {
   flight: "Vuelo",
@@ -26,6 +28,8 @@ const PAGE_SIZE = 20;
 interface SearchParams {
   page?: string;
 }
+
+export const metadata: Metadata = pageMetadata("Mis viajes");
 
 export default async function TripsPage({
   searchParams,

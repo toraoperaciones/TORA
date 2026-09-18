@@ -11,6 +11,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ServiceType } from "@/lib/business/markup";
 import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const QUOTABLE_STATUSES = ["pending_quote", "options_sent", "awaiting_selection"];
 
@@ -21,6 +23,8 @@ const SERVICE_LABEL: Record<string, string> = {
   stand: "Stand",
   mixed: "Mixto",
 };
+
+export const metadata: Metadata = pageMetadata("Cotizar");
 
 export default async function QuotePage({
   params,

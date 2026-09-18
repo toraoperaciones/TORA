@@ -3,6 +3,10 @@ import type { TenantRow } from "@/components/admin/tenant-card";
 import { EmptySearch } from "@/components/illustrations/illustrations";
 import { TenantFormDialog } from "@/components/admin/tenant-form-dialog";
 import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata("Tenants");
 
 export default async function TenantsPage() {
   const supabase = await createClient();

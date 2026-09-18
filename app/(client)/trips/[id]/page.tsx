@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientContext } from "@/lib/auth/tenant";
 import { createClient } from "@/lib/supabase/server";
 import { statusLabel } from "@/lib/business/trip-machine";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const SERVICE_LABEL: Record<string, string> = {
   flight: "Vuelo",
@@ -16,6 +18,8 @@ const SERVICE_LABEL: Record<string, string> = {
 };
 
 const SELECTABLE_STATUSES = ["options_sent", "awaiting_selection"];
+
+export const metadata: Metadata = pageMetadata("Viaje");
 
 export default async function TripDetailPage({
   params,

@@ -89,7 +89,7 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
         {unread > 0 && (
           <span
             aria-hidden
-            className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-forest"
+            className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-offwhite"
           />
         )}
       </button>
@@ -125,7 +125,7 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
                         aria-hidden
                         className={cn(
                           "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
-                          n.read_at ? "bg-text-muted" : "bg-forest"
+                          n.read_at ? "bg-text-muted" : "bg-offwhite"
                         )}
                       />
                       <div className="min-w-0 flex-1">

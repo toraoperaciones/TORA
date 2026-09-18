@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const ACTIVE_STATUSES = [
   "awaiting_selection",
@@ -51,6 +53,8 @@ interface OpsTrip {
   tenants: { id: string; name: string } | null;
   requester: { full_name: string | null } | null;
 }
+
+export const metadata: Metadata = pageMetadata("Viajes");
 
 export default async function OpsTripsPage({
   searchParams,

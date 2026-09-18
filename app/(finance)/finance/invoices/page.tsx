@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const STATUS_CLASS: Record<string, string> = {
   draft: "border-border-default bg-transparent text-text-secondary",
@@ -52,6 +54,8 @@ interface InvoiceRow {
   tenant_id: string;
   tenants: { name: string; rfc: string | null } | null;
 }
+
+export const metadata: Metadata = pageMetadata("Facturas");
 
 export default async function FinanceInvoicesPage({
   searchParams,

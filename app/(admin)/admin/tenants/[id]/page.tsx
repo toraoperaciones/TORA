@@ -11,6 +11,10 @@ import { InviteUserDialog } from "@/components/admin/invite-user-dialog";
 import { statusLabel } from "@/lib/business/trip-machine";
 import { StatusBadge } from "@/components/trips/status-badge";
 import { formatDate, formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = pageMetadata("Tenant");
 
 export default async function TenantDetailPage({
   params,

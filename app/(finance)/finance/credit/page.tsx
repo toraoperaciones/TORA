@@ -18,6 +18,8 @@ import {
 } from "@/lib/business/credit";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 interface TenantRow {
   id: string;
@@ -49,6 +51,8 @@ interface AwaitingTripRow {
   charge_amount: number;
   selected_option_id: string | null;
 }
+
+export const metadata: Metadata = pageMetadata("Crédito");
 
 export default async function FinanceCreditPage() {
   const supabase = await createClient();

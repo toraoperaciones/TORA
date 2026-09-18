@@ -18,6 +18,8 @@ import {
 import { getBalance } from "@/lib/business/wallet";
 import { createClient } from "@/lib/supabase/server";
 import { formatMXN } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const sum = (rows: Array<{ amount: string | number } | null> | null | undefined) =>
   (rows ?? []).reduce((acc, row) => acc + Number(row?.amount ?? 0), 0);
@@ -41,6 +43,8 @@ interface CreditLineRow {
   used_amount: string | number;
   status: string;
 }
+
+export const metadata: Metadata = pageMetadata("Dashboard");
 
 export default async function FinanceDashboardPage() {
   const supabase = await createClient();

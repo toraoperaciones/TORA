@@ -17,8 +17,12 @@ import { UserActivationDialog } from "@/components/admin/user-activation-dialog"
 import { UserEditDialog } from "@/components/admin/user-edit-dialog";
 import { UserStatusButtons } from "@/components/admin/user-status-buttons";
 import { formatDate } from "@/lib/utils";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
 const ROLES = ["CLIENT_ADMIN", "CLIENT_FINANCE", "TORA_OPS", "TORA_FINANCE", "TORA_ADMIN"] as const;
+
+export const metadata: Metadata = pageMetadata("Usuarios");
 
 export default async function UsersPage({
   searchParams,
@@ -166,7 +170,7 @@ export default async function UsersPage({
                     </TableCell>
                     <TableCell>
                       {user.status === "active" ? (
-                        <Badge className="border-transparent bg-forest/10 text-forest">Activo</Badge>
+                        <Badge variant="muted">Activo</Badge>
                       ) : isPending ? (
                         <Badge variant="secondary" className="text-text-secondary">Pendiente</Badge>
                       ) : (
