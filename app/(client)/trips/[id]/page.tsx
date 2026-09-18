@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 
 import { OptionCard, type TripOptionPublic } from "@/components/trips/option-card";
 import { StatusBadge } from "@/components/trips/status-badge";
+import { TripRail } from "@/components/trips/trip-rail";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientContext } from "@/lib/auth/tenant";
 import { createClient } from "@/lib/supabase/server";
-import { statusLabel } from "@/lib/business/trip-machine";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
@@ -100,34 +100,14 @@ export default async function TripDetailPage({
         <Card className="border-border-subtle bg-navy-lift shadow-none">
           <CardHeader>
             <CardTitle className="font-display text-h4 text-text-primary">
-              Estado del flujo
+              Estado del viaje
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2 text-body-s text-text-secondary">
-            <p>
-              Estado actual:{" "}
-              <span className="font-semibold text-text-primary">
-                {statusLabel(trip.status)}
-              </span>
-            </p>
-            {trip.status === "pending_quote" && (
-              <p>Operaciones está cotizando tu viaje. Te avisaremos cuando haya opciones.</p>
-            )}
-            {trip.status === "options_sent" && (
-              <p>Recibiste opciones. Selecciona la que prefieras para continuar.</p>
-            )}
-            {trip.status === "awaiting_selection" && (
-              <p>Selecciona una opción. El cargo se aplicará a tu billetera.</p>
-            )}
-            {trip.status === "awaiting_payment" && (
-              <p>
-                Opción reservada en espera de fondos. Fondea tu billetera o espera
-                la aprobación de crédito.
-              </p>
-            )}
-            {trip.status === "confirmed" && (
-              <p>Viaje confirmado. Recibirás los vouchers por correo.</p>
-            )}
+          <CardContent>
+            <TripRail
+              status={trip.status}
+              departureDate={trip.departure_date}
+            />
           </CardContent>
         </Card>
       </div>

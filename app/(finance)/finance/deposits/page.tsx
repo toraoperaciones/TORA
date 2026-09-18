@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
+import { cdmxDayStartIso } from "@/lib/dates";
 import { pageMetadata } from "@/lib/seo";
 import { formatMXN } from "@/lib/utils";
 
@@ -19,9 +20,7 @@ export const metadata: Metadata = pageMetadata("Depósitos");
 export default async function FinanceDepositsPage() {
   const supabase = await createClient();
 
-  const today = new Date().toLocaleDateString("en-CA", {
-    timeZone: "America/Mexico_City",
-  });
+  const today = cdmxDayStartIso();
 
   const [pending, validatedToday] = await Promise.all([
     supabase

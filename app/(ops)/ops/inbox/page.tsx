@@ -6,6 +6,7 @@ import { EmptyInvoices } from "@/components/illustrations/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { cdmxDayStartIso } from "@/lib/dates";
 import { pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -47,12 +48,21 @@ interface InboxTrip {
 }
 
 /** Card de solicitud — reutilizada por el hero y por la lista. */
-function TripCard({ trip, hero }: { trip: InboxTrip; hero?: boolean }) {
+function TripCard({
+  trip,
+  hero,
+  urgent,
+}: {
+  trip: InboxTrip;
+  hero?: boolean;
+  urgent?: boolean;
+}) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-lg border border-border-subtle bg-navy-lift transition-colors duration-150 hover:border-border-default sm:flex-row sm:items-center",
-        hero ? "p-6" : "p-5"
+        "flex flex-col gap-4 rounded-lg border bg-navy-lift transition-colors duration-150 hover:border-border-default sm:flex-row sm:items-center",
+        hero ? "p-6" : "p-5",
+        urgent ? "border-forest/40" : "border-border-subtle"
       )}
     >
       <div className="min-w-0 flex-1">
@@ -112,19 +122,32 @@ export default async function OpsInboxPage({
 }) {
   const { filter = "all" } = await searchParams;
   const supabase = await createClient();
+  const dayStart = cdmxDayStartIso();
 
-  const { data } = await supabase
-    .from("trips")
-    .select(
-      `id, origin, destination, departure_date, passengers, service_type,
-       urgency, created_at,
-       tenants:tenant_id (name),
-       requester:requester_id (full_name, email)`
-    )
-    .eq("status", "pending_quote")
-    .order("created_at", { ascending: true });
+  const [queue, quotedToday, confirmedToday] = await Promise.all([
+    supabase
+      .from("trips")
+      .select(
+        `id, origin, destination, departure_date, passengers, service_type,
+         urgency, created_at,
+         tenants:tenant_id (name),
+         requester:requester_id (full_name, email)`
+      )
+      .eq("status", "pending_quote")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("trips")
+      .select("id", { count: "exact", head: true })
+      .in("status", ["options_sent", "awaiting_selection"])
+      .gte("created_at", dayStart),
+    supabase
+      .from("trips")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "confirmed")
+      .gte("created_at", dayStart),
+  ]);
 
-  let trips = (data ?? []) as unknown as InboxTrip[];
+  let trips = (queue.data ?? []) as unknown as InboxTrip[];
 
   if (filter === "urgent" || filter === "normal") {
     trips = trips.filter((t) => t.urgency === filter);
@@ -138,6 +161,11 @@ export default async function OpsInboxPage({
 
   const [hero, ...rest] = trips;
   const urgentCount = trips.filter((t) => t.urgency === "urgent").length;
+  const metrics = [
+    { label: "Pendientes", value: trips.length },
+    { label: "Cotizados hoy", value: quotedToday.count ?? 0 },
+    { label: "Confirmados hoy", value: confirmedToday.count ?? 0 },
+  ];
 
   const tabs = [
     { value: "all", label: "Todas" },
@@ -158,6 +186,24 @@ export default async function OpsInboxPage({
             ? ` · ${urgentCount} urgente${urgentCount === 1 ? "" : "s"}`
             : ""}
         </p>
+      </div>
+
+      {/* Métricas del día (spec A4): los tres números que definen el turno. */}
+      <div className="grid grid-cols-3 gap-3">
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            data-metric
+            className="rounded-lg border border-border-subtle bg-navy-lift px-4 py-3"
+          >
+            <p className="text-caption uppercase tracking-wider text-text-tertiary">
+              {m.label}
+            </p>
+            <p className="mt-1 font-display text-h2 tabular-nums text-text-primary">
+              {m.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="flex flex-wrap items-center gap-1 rounded-lg border border-border-subtle bg-layer-1 p-1 sm:w-fit">
@@ -188,7 +234,7 @@ export default async function OpsInboxPage({
       ) : (
         <div className="flex flex-col gap-3">
           {/* Nivel 1 — la solicitud más antigua (o urgente) domina la pantalla. */}
-          <TripCard trip={hero} hero />
+          <TripCard trip={hero} hero urgent={hero.urgency === "urgent"} />
           {/* Niveles 2-3 — el resto en cards compactas. */}
           {rest.map((trip) => (
             <TripCard key={trip.id} trip={trip} />
