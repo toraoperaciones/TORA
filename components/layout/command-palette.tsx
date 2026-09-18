@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Plane, Search, Users } from "lucide-react";
+import { Clock, FileText, Plane, Search, Users } from "lucide-react";
 import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,9 +17,34 @@ import { createClient } from "@/lib/supabase/client";
 /**
  * Command Palette TORA (⌘K / Ctrl+K).
  * Navegación del rol + acciones + búsqueda de entidades vía Supabase
- * (las queries respetan RLS: cada usuario solo ve lo suyo).
+ * (las queries respetan RLS: cada usuario solo ve lo suyo) + Recientes
+ * (últimos 5 destinos, persistidos en localStorage por rol).
  * Abre también vía evento "tora:open-palette" (trigger del sidebar).
  */
+
+const RECENTS_KEY = "tora-palette-recents";
+const RECENTS_MAX = 5;
+
+function readRecents(): string[] {
+  try {
+    const raw = localStorage.getItem(RECENTS_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((x) => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function pushRecent(href: string) {
+  // Solo destinos internos de navegación (no resultados de búsqueda volátiles).
+  if (!href.startsWith("/") || href.includes("?")) return;
+  try {
+    const next = [href, ...readRecents().filter((h) => h !== href)].slice(0, RECENTS_MAX);
+    localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
+  } catch {
+    /* storage lleno o bloqueado: los recientes son best-effort */
+  }
+}
 
 interface EntityHit {
   kind: "trip" | "invoice" | "user";
@@ -190,14 +215,35 @@ export function CommandPalette({ role }: { role: Role }) {
 
   const go = useCallback(
     (href: string) => {
+      pushRecent(href);
       setOpen(false);
       router.push(href);
     },
     [router]
   );
 
+  // Recientes: se leen al abrir (localStorage no existe en SSR).
+  const [recents, setRecents] = useState<string[]>([]);
+  useEffect(() => {
+    if (open) setRecents(readRecents());
+  }, [open]);
+
   const hasEntities = hits.length > 0;
-  const isEmpty = !hasEntities && navMatches.length === 0 && actionMatches.length === 0;
+  const recentItems = useMemo(
+    () =>
+      recents
+        .map((href) => {
+          for (const section of navSections) {
+            const item = section.items.find((i) => i.href === href);
+            if (item) return { href, label: item.label, icon: item.icon, hint: section.overline };
+          }
+          return null;
+        })
+        .filter((x): x is { href: string; label: string; icon: (typeof navSections)[number]["items"][number]["icon"]; hint: string } => x !== null),
+    [recents, navSections]
+  );
+  const isEmpty =
+    !hasEntities && navMatches.length === 0 && actionMatches.length === 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -221,6 +267,21 @@ export function CommandPalette({ role }: { role: Role }) {
           </div>
 
           <Command.List className="max-h-[360px] overflow-y-auto p-2">
+            {!query.trim() && recentItems.length > 0 && (
+              <Command.Group
+                heading="Recientes"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
+              >
+                {recentItems.map((r) => (
+                  <Item key={`recent-${r.href}`} onSelect={() => go(r.href)}>
+                    <Clock className="h-4 w-4 text-text-muted" aria-hidden />
+                    <span className="flex-1">{r.label}</span>
+                    <span className="text-caption text-text-muted">{r.hint}</span>
+                  </Item>
+                ))}
+              </Command.Group>
+            )}
+
             <Command.Empty className="px-3 py-6 text-center text-body-s text-text-tertiary">
               {isEmpty
                 ? query.trim().length >= 2
