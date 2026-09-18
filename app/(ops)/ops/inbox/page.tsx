@@ -1,15 +1,9 @@
+import { ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
 
+import { EmptyInvoices } from "@/components/illustrations/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -24,8 +18,7 @@ function timeAgo(dateIso: string): string {
   if (minutes < 60) return `hace ${Math.max(1, minutes)}m`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `hace ${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `hace ${days}d`;
+  return `hace ${Math.floor(hours / 24)}d`;
 }
 
 const SERVICE_LABEL: Record<string, string> = {
@@ -87,109 +80,85 @@ export default async function OpsInboxPage({
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <div>
-        <h1>Bandeja de cotización</h1>
-        <p className="mt-1 text-body-s text-graphite">
+        <h1 className="font-display text-h2 text-text-primary">
+          Bandeja de cotización
+        </h1>
+        <p className="mt-1 text-body-s text-text-tertiary">
           {trips.length} solicitud{trips.length === 1 ? "" : "es"} pendiente
           {trips.length === 1 ? "" : "s"}
         </p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-1 rounded-lg border border-border-subtle bg-layer-1 p-1 sm:w-fit">
         {tabs.map((tab) => (
-          <Button
+          <Link
             key={tab.value}
-            asChild
-            variant={filter === tab.value ? "default" : "outline"}
-            size="sm"
-            className="font-display font-semibold"
+            href={`/ops/inbox?filter=${tab.value}`}
+            aria-current={filter === tab.value ? "page" : undefined}
+            className={cn(
+              "flex h-8 items-center rounded-md px-3 text-body-s transition-colors",
+              filter === tab.value
+                ? "bg-layer-4 font-semibold text-text-primary"
+                : "text-text-tertiary hover:text-text-primary"
+            )}
           >
-            <Link href={`/ops/inbox?filter=${tab.value}`}>{tab.label}</Link>
-          </Button>
+            {tab.label}
+          </Link>
         ))}
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-surface p-6">
-        {trips.length === 0 ? (
-          <p className="text-body-s text-graphite">
+      {trips.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border-subtle bg-navy-lift py-14 text-center">
+          <EmptyInvoices className="h-28 w-28" />
+          <p className="text-body-s text-text-tertiary">
             No hay solicitudes pendientes. Buen trabajo.
           </p>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Cliente
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Solicitante
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Ruta
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Salida
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Servicio
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Urgencia
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  En bandeja
-                </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
-                  Acción
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {trips.map((trip) => (
-                <TableRow key={trip.id} className="border-border-subtle">
-                  <TableCell className="text-body-s font-semibold text-navy">
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {trips.map((trip) => (
+            <div
+              key={trip.id}
+              className="flex flex-col gap-4 rounded-lg border border-border-subtle bg-navy-lift p-5 transition-colors duration-150 hover:border-border-default sm:flex-row sm:items-center"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-display text-body-m font-semibold text-text-primary">
                     {trip.tenants?.name ?? "—"}
-                  </TableCell>
-                  <TableCell className="text-body-s text-navy">
-                    {trip.requester?.full_name ?? trip.requester?.email ?? "—"}
-                  </TableCell>
-                  <TableCell className="text-body-s text-navy">
-                    {trip.origin} → {trip.destination}
-                  </TableCell>
-                  <TableCell className="text-body-s tabular-nums text-navy">
-                    {trip.departure_date}
-                  </TableCell>
-                  <TableCell className="text-body-s text-navy">
+                  </span>
+                  {trip.urgency === "urgent" ? (
+                    <Badge variant="warning">Urgente</Badge>
+                  ) : (
+                    <Badge variant="muted">Normal</Badge>
+                  )}
+                  <Badge variant="muted">
                     {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "whitespace-nowrap font-medium",
-                        trip.urgency === "urgent"
-                          ? "border-transparent bg-[rgba(46,125,91,0.1)] text-forest"
-                          : "border-border-default bg-transparent text-navy"
-                      )}
-                    >
-                      {trip.urgency === "urgent" ? "Urgente" : "Normal"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-caption text-graphite">
-                    {timeAgo(trip.created_at)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild size="sm" className="font-display font-semibold">
-                      <Link href={`/ops/trips/${trip.id}/quote`}>Cotizar</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+                  </Badge>
+                </div>
+                <p className="mt-1.5 flex items-center gap-1.5 text-body-s text-text-secondary">
+                  {trip.origin}
+                  <ArrowRight className="h-3.5 w-3.5 text-text-muted" aria-hidden />
+                  {trip.destination}
+                  <span className="text-text-muted">
+                    · {trip.passengers} pax
+                  </span>
+                </p>
+                <p className="mt-1 flex items-center gap-1.5 text-caption text-text-tertiary">
+                  <Clock className="h-3 w-3" aria-hidden />
+                  {timeAgo(trip.created_at)} · sale{" "}
+                  <span className="font-mono">{trip.departure_date}</span> ·{" "}
+                  {trip.requester?.full_name ?? trip.requester?.email ?? "—"}
+                </p>
+              </div>
+              <Button asChild size="sm" className="sm:ml-auto">
+                <Link href={`/ops/trips/${trip.id}/quote`}>Cotizar</Link>
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

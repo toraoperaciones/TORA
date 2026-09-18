@@ -81,29 +81,24 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
   return (
     <>
       <tr className="border-border-subtle">
-        <td className="px-4 py-3 text-body-s font-semibold text-navy">
+        <td className="px-4 py-3 text-body-s font-semibold text-text-primary">
           {deposit.tenants?.name ?? "—"}
         </td>
-        <td className="px-4 py-3 text-body-s text-navy">
+        <td className="px-4 py-3 text-body-s text-text-secondary">
           {deposit.creator?.full_name ?? deposit.creator?.email ?? "—"}
         </td>
-        <td className="px-4 py-3 text-body-s tabular-nums text-graphite">
+        <td className="px-4 py-3 font-mono text-caption tabular-nums text-text-tertiary">
           {deposit.reference ?? "—"}
         </td>
-        <td className="px-4 py-3 text-right text-body-s font-semibold tabular-nums text-navy">
+        <td className="px-4 py-3 text-right font-mono text-body-s font-semibold tabular-nums text-text-primary">
           {formatMXN(Number(deposit.amount))}
         </td>
-        <td className="px-4 py-3 text-caption text-graphite">
+        <td className="px-4 py-3 text-caption text-text-tertiary">
           {timeAgo(deposit.created_at)}
         </td>
         <td className="px-4 py-3 text-right">
           {deposit.receipt_url && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="font-display font-semibold"
-              onClick={() => setViewerOpen(true)}
-            >
+            <Button variant="ghost" size="sm" onClick={() => setViewerOpen(true)}>
               Ver
             </Button>
           )}
@@ -111,10 +106,10 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
         <td className="px-4 py-3 text-right">
           <div className="flex justify-end gap-2">
             <Button
+              variant="success"
               size="sm"
               disabled={busy !== null}
               onClick={handleApprove}
-              className="border-transparent bg-forest font-display font-semibold text-offwhite hover:bg-forest-hover"
             >
               {busy === "approve" ? "Aprobando…" : "Aprobar"}
             </Button>
@@ -123,7 +118,6 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
               size="sm"
               disabled={busy !== null}
               onClick={() => setRejectOpen(true)}
-              className="font-display font-semibold"
             >
               Rechazar
             </Button>
@@ -140,10 +134,10 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
       <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-navy">
+            <DialogTitle className="font-display text-h4 text-text-primary">
               Rechazar depósito
             </DialogTitle>
-            <DialogDescription className="text-body-s text-graphite">
+            <DialogDescription className="text-body-s text-text-tertiary">
               El cliente verá el depósito como rechazado. Explica el motivo.
             </DialogDescription>
           </DialogHeader>
@@ -158,18 +152,13 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
             />
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setRejectOpen(false)}
-              className="font-display font-semibold"
-            >
+            <Button variant="outline" onClick={() => setRejectOpen(false)}>
               Cancelar
             </Button>
             <Button
-              variant="outline"
+              variant="danger"
               disabled={busy !== null || reason.trim().length < 5}
               onClick={handleReject}
-              className="font-display font-semibold"
             >
               {busy === "reject" ? "Rechazando…" : "Confirmar rechazo"}
             </Button>

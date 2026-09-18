@@ -1,6 +1,5 @@
-import { format } from "date-fns";
-
 import { TenantsGrid } from "@/components/admin/tenants-grid";
+import type { TenantRow } from "@/components/admin/tenant-card";
 import { EmptySearch } from "@/components/illustrations/illustrations";
 import { TenantFormDialog } from "@/components/admin/tenant-form-dialog";
 import { createClient } from "@/lib/supabase/server";
@@ -17,9 +16,7 @@ export default async function TenantsPage() {
     )
     .order("created_at", { ascending: false });
 
-  const rows = (tenants ?? []) as NonNullable<
-    Awaited<ReturnType<typeof loadTenants>>
-  >;
+  const rows = (tenants ?? []) as TenantRow[];
 
   const activeCount = rows.filter((t) => t.status === "active").length;
 
@@ -47,19 +44,4 @@ export default async function TenantsPage() {
       )}
     </div>
   );
-}
-
-/** Tipado del select (solo para inferir la fila; la query real está arriba). */
-async function loadTenants() {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("tenants")
-    .select(
-      `id, name, rfc, razon_social, credit_limit, credit_days,
-       markup_flights, markup_hotels, markup_cars, markup_stands,
-       status, notes, created_at,
-       credit_lines (approved_limit, used_amount, status)`
-    )
-    .order("created_at", { ascending: false });
-  return data ?? [];
 }

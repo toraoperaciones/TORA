@@ -1,6 +1,14 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Info } from "lucide-react";
+
 import { DepositRow, type DepositRowData } from "@/components/finance/deposit-row";
+import { EmptyWallet } from "@/components/illustrations/illustrations";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function FinanceDepositsPage() {
@@ -20,46 +28,37 @@ export default async function FinanceDepositsPage() {
   const deposits = (data ?? []) as unknown as DepositRowData[];
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1>Validar depósitos SPEI</h1>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="font-display text-h2 text-text-primary">
+          Validar depósitos SPEI
+        </h1>
+        <p className="mt-1 flex items-center gap-1.5 text-body-s text-text-tertiary">
+          <Info className="h-3.5 w-3.5" aria-hidden />
+          Al aprobar un depósito, los viajes pendientes de pago del cliente se
+          re-evalúan automáticamente.
+        </p>
+      </div>
 
-      <Alert>
-        <AlertDescription>
-          Los depósitos se validan manualmente. Al aprobar uno, se re-evalúan
-          automáticamente los viajes pendientes de pago del cliente.
-        </AlertDescription>
-      </Alert>
-
-      <div className="rounded-lg border border-border-subtle bg-surface p-6">
+      <div className="rounded-lg border border-border-subtle bg-navy-lift">
         {deposits.length === 0 ? (
-          <p className="text-body-s text-graphite">
-            No hay depósitos pendientes de validación. Buen trabajo.
-          </p>
+          <div className="flex flex-col items-center gap-3 py-14 text-center">
+            <EmptyWallet className="h-28 w-28" />
+            <p className="text-body-s text-text-tertiary">
+              No hay depósitos pendientes de validación. Buen trabajo.
+            </p>
+          </div>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Cliente
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Subió
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Referencia
-                </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
-                  Monto
-                </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
-                  Antigüedad
-                </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
-                  Comprobante
-                </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
-                  Acciones
-                </TableHead>
+              <TableRow className="hover:bg-transparent">
+                <TableHead>Cliente</TableHead>
+                <TableHead>Subió</TableHead>
+                <TableHead>Referencia</TableHead>
+                <TableHead className="text-right">Monto</TableHead>
+                <TableHead>Antigüedad</TableHead>
+                <TableHead className="text-right">Comprobante</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
