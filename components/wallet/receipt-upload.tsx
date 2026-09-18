@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AnimatedCheck } from "@/components/ui/animated-check";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,7 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const {
     register,
@@ -103,7 +105,15 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
       return;
     }
 
-    toast.success("Comprobante enviado. Se validará en menos de 1 hora hábil.");
+    toast.success(
+      <span className="flex items-center gap-2">
+        <AnimatedCheck />
+        Comprobante enviado. Se validará en menos de 1 hora hábil.
+      </span>,
+      { duration: 4000 }
+    );
+    setSuccess(true);
+    setTimeout(() => setSuccess(false), 4000);
     setFile(null);
     reset();
     router.refresh();
@@ -168,9 +178,10 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
           <Button
             type="submit"
             disabled={submitting}
+            variant={success ? "success" : "default"}
             className="font-display font-semibold"
           >
-            {submitting ? "Enviando…" : "Enviar comprobante"}
+            {submitting ? "Enviando…" : success ? "Enviado" : "Enviar comprobante"}
           </Button>
         </form>
       </CardContent>

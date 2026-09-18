@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { ArrowRight } from "lucide-react";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 
@@ -22,6 +23,7 @@ import {
   getSpendSeries,
 } from "@/lib/business/wallet";
 import { createClient } from "@/lib/supabase/server";
+import { pageMetadata } from "@/lib/seo";
 import { formatMXN } from "@/lib/utils";
 
 const TX_TYPE_LABEL: Record<string, string> = {
@@ -49,6 +51,8 @@ function greeting(): string {
 function firstName(fullName: string): string {
   return fullName.trim().split(/\s+/)[0] || "";
 }
+
+export const metadata = pageMetadata("Inicio");
 
 export default async function DashboardPage() {
   const ctx = await getClientContext();
@@ -120,10 +124,15 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* KPIs */}
-      <Stagger className="grid gap-4 sm:grid-cols-3">
-        <StaggerItem>
-          <BalanceCard balance={balance} sparkline={seriesPoints} />
+      {/* Nivel 1 — HERO: el saldo domina la pantalla. */}
+      <Stagger className="grid gap-4 lg:grid-cols-3">
+        <StaggerItem className="lg:col-span-2">
+          <BalanceCard
+            balance={balance}
+            sparkline={seriesPoints}
+            hero
+            className="h-full"
+          />
         </StaggerItem>
         <StaggerItem>
           <KpiCard
@@ -131,10 +140,43 @@ export default async function DashboardPage() {
             value={monthlySpend}
             isMoney
             sparkline={seriesPoints}
+            className="h-full"
           />
         </StaggerItem>
         <StaggerItem>
-          <KpiCard label="Próximos viajes" value={upcomingTrips.length} />
+          <KpiCard label="Próximos viajes" value={upcomingTrips.length} className="h-full" />
+        </StaggerItem>
+        <StaggerItem className="lg:col-span-2">
+          {upcomingTrips.length > 0 ? (
+            <div
+              data-metric
+              className="flex h-full flex-col justify-between gap-4 rounded-lg border border-border-subtle bg-navy-lift p-6 sm:flex-row sm:items-center"
+            >
+              <div>
+                <p className="text-caption uppercase tracking-wider text-text-tertiary">
+                  Tu próximo viaje
+                </p>
+                <p className="mt-2 font-display text-h3 font-semibold text-text-primary">
+                  {upcomingTrips[0].destination} ·{" "}
+                  <span className="font-mono text-body-l text-text-secondary">
+                    {upcomingTrips[0].departure_date}
+                  </span>
+                </p>
+              </div>
+              <Button asChild variant="secondary">
+                <Link href={`/trips/${upcomingTrips[0].id}`}>
+                  Ver detalles
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <KpiCard
+              label="Próximo viaje"
+              value={0}
+              className="h-full"
+            />
+          )}
         </StaggerItem>
       </Stagger>
 
@@ -203,6 +245,17 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* CTA flotante — un solo botón primario siempre visible. */}
+      {ctx.role === "CLIENT_ADMIN" && (
+        <Button
+          asChild
+          size="lg"
+          className="fixed bottom-6 right-6 z-40 shadow-modal sm:hidden"
+        >
+          <Link href="/trips/new">Solicitar viaje</Link>
+        </Button>
+      )}
 
       {/* Actividad reciente */}
       <Card>

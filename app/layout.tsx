@@ -28,7 +28,10 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TORA — Infraestructura de viajes corporativos",
+  title: {
+    default: "TORA — Infraestructura de viajes corporativos",
+    template: "%s · TORA",
+  },
   description:
     "Plataforma B2B multi-tenant para gestionar vuelos, hoteles, autos y stands de ferias con billetera pre-fondeada y CFDI consolidado.",
   icons: {

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { AnimatedCheck } from "@/components/ui/animated-check";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -63,7 +64,13 @@ export function OptionCard({
       }
 
       if (payload.status === "confirmed") {
-        toast.success("Reserva confirmada.");
+        toast.success(
+          <span className="flex items-center gap-2">
+            <AnimatedCheck />
+            Reserva confirmada.
+          </span>,
+          { duration: 4000 }
+        );
       } else {
         toast.success("Opción seleccionada.");
       }

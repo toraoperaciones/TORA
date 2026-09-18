@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { approveCreditForTripAction } from "@/app/(finance)/finance/actions";
+import { AnimatedCheck } from "@/components/ui/animated-check";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -60,7 +61,13 @@ export function ApproveCreditButton({
       return;
     }
 
-    toast.success("Crédito aprobado. Reserva confirmada.");
+    toast.success(
+      <span className="flex items-center gap-2">
+        <AnimatedCheck />
+        Crédito aprobado. Reserva confirmada.
+      </span>,
+      { duration: 4000 }
+    );
     setOpen(false);
     router.refresh();
   }

@@ -1,20 +1,35 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
+
+import { EASE_TORA } from "@/lib/motion";
+
 /**
- * Sparkline TORA — SVG inline 60×24, stroke 1.5. Sin ejes, sin grid.
+ * Sparkline TORA — SVG inline, stroke 1.5. Sin ejes, sin grid.
  * `tone="money"` usa forest (solo métricas de dinero); el resto navy.
+ * Se dibuja de izquierda a derecha (300ms) — propósito: orientar la mirada
+ * sobre la tendencia. Solo anima el primer render (no re-dibuja en updates).
  */
 
 interface SparklineProps {
   points: number[];
   tone?: "navy" | "money";
   className?: string;
+  width?: number;
+  height?: number;
 }
 
-export function Sparkline({ points, tone = "navy", className }: SparklineProps) {
-  const W = 60;
-  const H = 24;
+export function Sparkline({
+  points,
+  tone = "navy",
+  className,
+  width = 60,
+  height = 24,
+}: SparklineProps) {
+  const W = width;
+  const H = height;
   const PAD = 2;
+  const reduced = useReducedMotion();
 
   if (points.length < 2) {
     return (
@@ -60,7 +75,7 @@ export function Sparkline({ points, tone = "navy", className }: SparklineProps) 
       className={className}
       aria-hidden
     >
-      <polyline
+      <motion.polyline
         points={coords.join(" ")}
         fill="none"
         stroke={stroke}
@@ -68,6 +83,9 @@ export function Sparkline({ points, tone = "navy", className }: SparklineProps) 
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"
+        initial={reduced ? false : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.3, ease: EASE_TORA }}
       />
     </svg>
   );

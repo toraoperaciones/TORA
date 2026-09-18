@@ -1,11 +1,15 @@
 import { ArrowRight, Clock } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { EmptyInvoices } from "@/components/illustrations/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
+
+export const metadata: Metadata = pageMetadata("Bandeja");
 
 interface SearchParams {
   filter?: string;
@@ -42,6 +46,65 @@ interface InboxTrip {
   requester: { full_name: string | null; email: string } | null;
 }
 
+/** Card de solicitud — reutilizada por el hero y por la lista. */
+function TripCard({ trip, hero }: { trip: InboxTrip; hero?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-4 rounded-lg border border-border-subtle bg-navy-lift transition-colors duration-150 hover:border-border-default sm:flex-row sm:items-center",
+        hero ? "p-6" : "p-5"
+      )}
+    >
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={cn(
+              "font-display font-semibold text-text-primary",
+              hero ? "text-h3" : "text-body-m"
+            )}
+          >
+            {trip.tenants?.name ?? "—"}
+          </span>
+          {trip.urgency === "urgent" ? (
+            <Badge variant="warning">Urgente</Badge>
+          ) : (
+            <Badge variant="muted">Normal</Badge>
+          )}
+          <Badge variant="muted">
+            {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
+          </Badge>
+        </div>
+        <p
+          className={cn(
+            "mt-1.5 flex items-center gap-1.5 text-text-secondary",
+            hero ? "text-body-m" : "text-body-s"
+          )}
+        >
+          {trip.origin}
+          <ArrowRight className="h-3.5 w-3.5 text-text-muted" aria-hidden />
+          {trip.destination}
+          <span className="text-text-muted">
+            · {trip.passengers} pax
+          </span>
+        </p>
+        <p className="mt-1 flex items-center gap-1.5 text-caption text-text-tertiary">
+          <Clock className="h-3 w-3" aria-hidden />
+          {timeAgo(trip.created_at)} · sale{" "}
+          <span className="font-mono">{trip.departure_date}</span> ·{" "}
+          {trip.requester?.full_name ?? trip.requester?.email ?? "—"}
+        </p>
+      </div>
+      <Button
+        asChild
+        size={hero ? "default" : "sm"}
+        className={hero ? "sm:ml-auto" : undefined}
+      >
+        <Link href={`/ops/trips/${trip.id}/quote`}>Cotizar</Link>
+      </Button>
+    </div>
+  );
+}
+
 export default async function OpsInboxPage({
   searchParams,
 }: {
@@ -73,9 +136,12 @@ export default async function OpsInboxPage({
     return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
   });
 
+  const [hero, ...rest] = trips;
+  const urgentCount = trips.filter((t) => t.urgency === "urgent").length;
+
   const tabs = [
     { value: "all", label: "Todas" },
-    { value: "urgent", label: "Urgentes" },
+    { value: "urgent", label: `Urgentes${urgentCount > 0 ? ` (${urgentCount})` : ""}` },
     { value: "normal", label: "Normales" },
   ];
 
@@ -88,6 +154,9 @@ export default async function OpsInboxPage({
         <p className="mt-1 text-body-s text-text-tertiary">
           {trips.length} solicitud{trips.length === 1 ? "" : "es"} pendiente
           {trips.length === 1 ? "" : "s"}
+          {urgentCount > 0
+            ? ` · ${urgentCount} urgente${urgentCount === 1 ? "" : "s"}`
+            : ""}
         </p>
       </div>
 
@@ -118,44 +187,11 @@ export default async function OpsInboxPage({
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {trips.map((trip) => (
-            <div
-              key={trip.id}
-              className="flex flex-col gap-4 rounded-lg border border-border-subtle bg-navy-lift p-5 transition-colors duration-150 hover:border-border-default sm:flex-row sm:items-center"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-display text-body-m font-semibold text-text-primary">
-                    {trip.tenants?.name ?? "—"}
-                  </span>
-                  {trip.urgency === "urgent" ? (
-                    <Badge variant="warning">Urgente</Badge>
-                  ) : (
-                    <Badge variant="muted">Normal</Badge>
-                  )}
-                  <Badge variant="muted">
-                    {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
-                  </Badge>
-                </div>
-                <p className="mt-1.5 flex items-center gap-1.5 text-body-s text-text-secondary">
-                  {trip.origin}
-                  <ArrowRight className="h-3.5 w-3.5 text-text-muted" aria-hidden />
-                  {trip.destination}
-                  <span className="text-text-muted">
-                    · {trip.passengers} pax
-                  </span>
-                </p>
-                <p className="mt-1 flex items-center gap-1.5 text-caption text-text-tertiary">
-                  <Clock className="h-3 w-3" aria-hidden />
-                  {timeAgo(trip.created_at)} · sale{" "}
-                  <span className="font-mono">{trip.departure_date}</span> ·{" "}
-                  {trip.requester?.full_name ?? trip.requester?.email ?? "—"}
-                </p>
-              </div>
-              <Button asChild size="sm" className="sm:ml-auto">
-                <Link href={`/ops/trips/${trip.id}/quote`}>Cotizar</Link>
-              </Button>
-            </div>
+          {/* Nivel 1 — la solicitud más antigua (o urgente) domina la pantalla. */}
+          <TripCard trip={hero} hero />
+          {/* Niveles 2-3 — el resto en cards compactas. */}
+          {rest.map((trip) => (
+            <TripCard key={trip.id} trip={trip} />
           ))}
         </div>
       )}

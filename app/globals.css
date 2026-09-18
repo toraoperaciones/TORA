@@ -55,8 +55,8 @@
     monospace;
 
   /* Escala tipográfica — base 16px */
-  --text-display-xl: 4.5rem;
-  --text-display-xl--line-height: 1.1;
+  --text-display-xl: 6rem;
+  --text-display-xl--line-height: 1.05;
   --text-display-xl--letter-spacing: -0.02em;
   --text-display-xl--font-weight: 700;
 
@@ -321,6 +321,14 @@
   /* Longitud de línea máxima para texto corrido */
   .prose-tora {
     max-width: 75ch;
+  }
+
+  /* Impresión: nunca cortar una fila de tabla entre páginas */
+  @media print {
+    tr,
+    td {
+      break-inside: avoid;
+    }
   }
 
   /* Reduced motion: sin transiciones decorativas */
