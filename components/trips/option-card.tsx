@@ -81,14 +81,14 @@ export function OptionCard({
     <Card
       className={
         option.is_selected
-          ? "border-2 border-forest bg-surface shadow-none"
-          : "border-border-subtle bg-surface shadow-none"
+          ? "border-2 border-forest bg-navy-lift shadow-none"
+          : "border-border-subtle bg-navy-lift shadow-none"
       }
     >
       <CardContent className="flex items-center justify-between gap-4 pt-6">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-h4 text-navy">{option.provider}</h3>
+            <h3 className="font-display text-h4 text-text-primary">{option.provider}</h3>
             {option.is_selected && (
               <Badge className="border-transparent bg-forest text-offwhite">
                 Seleccionada
@@ -96,17 +96,17 @@ export function OptionCard({
             )}
           </div>
           {details && (
-            <p className="mt-1 truncate text-body-s text-graphite">{details}</p>
+            <p className="mt-1 truncate text-body-s text-text-secondary">{details}</p>
           )}
           {option.expires_at && (
-            <p className="mt-1 text-caption text-graphite">
+            <p className="mt-1 text-caption text-text-secondary">
               Vigencia: {new Date(option.expires_at).toLocaleDateString("es-MX")}
             </p>
           )}
         </div>
 
         <div className="flex shrink-0 items-center gap-4">
-          <span className="font-display text-h3 tabular-nums text-navy">
+          <span className="font-display text-h3 tabular-nums text-text-primary">
             ${option.final_price.toLocaleString("es-MX", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,

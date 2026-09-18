@@ -144,8 +144,8 @@ export function InvoiceUploadDialog({
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">Subir factura</DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogTitle className="font-display text-h4 text-text-primary">Subir factura</DialogTitle>
+          <DialogDescription className="text-body-s text-text-secondary">
             PDF + XML al bucket privado `invoices`. El cliente solo puede leerlos.
           </DialogDescription>
         </DialogHeader>
@@ -166,7 +166,7 @@ export function InvoiceUploadDialog({
               </SelectContent>
             </Select>
             {errors.tenantId && (
-              <p className="text-caption font-semibold text-navy">{errors.tenantId.message}</p>
+              <p className="text-caption font-semibold text-text-primary">{errors.tenantId.message}</p>
             )}
           </div>
 
@@ -175,7 +175,7 @@ export function InvoiceUploadDialog({
               <Label htmlFor="inv-period">Período (YYYY-MM)</Label>
               <Input id="inv-period" placeholder="2025-03" {...register("period")} />
               {errors.period && (
-                <p className="text-caption font-semibold text-navy">{errors.period.message}</p>
+                <p className="text-caption font-semibold text-text-primary">{errors.period.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-2">
@@ -193,7 +193,7 @@ export function InvoiceUploadDialog({
                 {...register("subtotal")}
               />
               {errors.subtotal && (
-                <p className="text-caption font-semibold text-navy">{errors.subtotal.message}</p>
+                <p className="text-caption font-semibold text-text-primary">{errors.subtotal.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-2">
@@ -209,8 +209,8 @@ export function InvoiceUploadDialog({
             </div>
           </div>
 
-          <div className="text-caption text-graphite">
-            Total calculado: <span className="tabular-nums font-semibold text-navy">${total.toFixed(2)} MXN</span>
+          <div className="text-caption text-text-secondary">
+            Total calculado: <span className="tabular-nums font-semibold text-text-primary">${total.toFixed(2)} MXN</span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

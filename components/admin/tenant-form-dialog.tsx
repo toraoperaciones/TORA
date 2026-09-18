@@ -114,10 +114,10 @@ export function TenantFormDialog() {
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">
+          <DialogTitle className="font-display text-h4 text-text-primary">
             Nuevo tenant
           </DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogDescription className="text-body-s text-text-secondary">
             Alta de cliente corporativo. Los markups definen el margen embebido.
           </DialogDescription>
         </DialogHeader>
@@ -127,7 +127,7 @@ export function TenantFormDialog() {
             <Label htmlFor="tenant-name">Nombre</Label>
             <Input id="tenant-name" placeholder="Grupo Salinas SA de CV" {...register("name")} />
             {errors.name && (
-              <p className="text-caption font-semibold text-navy">{errors.name.message}</p>
+              <p className="text-caption font-semibold text-text-primary">{errors.name.message}</p>
             )}
           </div>
 
@@ -135,7 +135,7 @@ export function TenantFormDialog() {
             <Label htmlFor="tenant-rfc">RFC (opcional)</Label>
             <Input id="tenant-rfc" placeholder="GSA240101XYZ" {...register("rfc")} />
             {errors.rfc && (
-              <p className="text-caption font-semibold text-navy">{errors.rfc.message}</p>
+              <p className="text-caption font-semibold text-text-primary">{errors.rfc.message}</p>
             )}
           </div>
 
@@ -188,7 +188,7 @@ export function TenantFormDialog() {
                 })}
               />
               {errors[field.name] && (
-                <p className="text-caption font-semibold text-navy">
+                <p className="text-caption font-semibold text-text-primary">
                   {errors[field.name]?.message}
                 </p>
               )}

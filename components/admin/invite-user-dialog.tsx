@@ -83,10 +83,10 @@ export function InviteUserDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">
+          <DialogTitle className="font-display text-h4 text-text-primary">
             Invitar usuario · {tenant.name}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogDescription className="text-body-s text-text-secondary">
             Crea el usuario con acceso inmediato. Comparte la contraseña temporal por un
             canal seguro.
           </DialogDescription>

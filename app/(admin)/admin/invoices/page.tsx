@@ -48,7 +48,7 @@ export default async function AdminInvoicesPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-h2 text-navy">Facturas</h1>
+        <h1 className="font-display text-h2 text-text-primary">Facturas</h1>
         <InvoiceUploadDialog tenants={tenants} />
       </div>
 
@@ -61,14 +61,14 @@ export default async function AdminInvoicesPage({
               className={`rounded-md border px-3 py-1.5 text-caption font-display font-semibold ${
                 params.period === period
                   ? "border-transparent bg-navy text-offwhite"
-                  : "border-border-subtle bg-offwhite text-graphite hover:border-navy/30"
+                  : "border-border-subtle bg-navy-lift text-text-secondary hover:border-border-emphasis"
               }`}
             >
               {period}
             </a>
           ))}
           {params.period && (
-            <a href="/admin/invoices" className="text-caption text-graphite underline">
+            <a href="/admin/invoices" className="text-caption text-text-secondary underline">
               limpiar
             </a>
           )}
@@ -76,46 +76,46 @@ export default async function AdminInvoicesPage({
       )}
 
       {filtered.length === 0 ? (
-        <p className="text-body-s text-graphite">Aún no hay facturas emitidas.</p>
+        <p className="text-body-s text-text-secondary">Aún no hay facturas emitidas.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border-subtle bg-offwhite">
+        <div className="overflow-x-auto rounded-lg border border-border-subtle bg-navy-lift">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Periodo</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Cliente</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Subtotal</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">IVA</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Total</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">CFDI UUID</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Estado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Archivos</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Cambiar estado</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Periodo</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Cliente</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Subtotal</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">IVA</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Total</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">CFDI UUID</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Estado</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Archivos</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Cambiar estado</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((invoice) => (
                 <TableRow key={invoice.id}>
-                  <TableCell className="font-display text-body-s font-semibold text-navy">
+                  <TableCell className="font-display text-body-s font-semibold text-text-primary">
                     {invoice.period}
                   </TableCell>
-                  <TableCell className="text-body-s text-navy">{invoice.tenants?.[0]?.name ?? "—"}</TableCell>
-                  <TableCell className="tabular-nums text-body-s text-graphite">
+                  <TableCell className="text-body-s text-text-primary">{invoice.tenants?.[0]?.name ?? "—"}</TableCell>
+                  <TableCell className="tabular-nums text-body-s text-text-secondary">
                     {formatMXN(invoice.subtotal)}
                   </TableCell>
-                  <TableCell className="tabular-nums text-body-s text-graphite">
+                  <TableCell className="tabular-nums text-body-s text-text-secondary">
                     {formatMXN(invoice.iva)}
                   </TableCell>
-                  <TableCell className="tabular-nums text-body-s font-semibold text-navy">
+                  <TableCell className="tabular-nums text-body-s font-semibold text-text-primary">
                     {formatMXN(invoice.total)}
                   </TableCell>
-                  <TableCell className="max-w-40 truncate text-caption text-graphite">
+                  <TableCell className="max-w-40 truncate text-caption text-text-secondary">
                     {invoice.cfdi_uuid ?? "—"}
                   </TableCell>
                   <TableCell>                      <Badge
                         className={
                           invoice.status === "cancelled"
-                            ? "border-transparent bg-graphite/5 text-graphite/70"
+                            ? "border-transparent bg-layer-2 text-text-secondary"
                             : invoice.status === "paid"
                               ? "border-transparent bg-forest/10 text-forest"
                               : undefined
@@ -135,7 +135,7 @@ export default async function AdminInvoicesPage({
                       {invoice.pdf_url ? (
                         <a
                           href={`/api/receipts/signed-url?path=${encodeURIComponent(invoice.pdf_url)}&bucket=invoices`}
-                          className="text-navy underline"
+                          className="text-text-primary underline"
                         >
                           PDF
                         </a>
@@ -143,12 +143,12 @@ export default async function AdminInvoicesPage({
                       {invoice.xml_url ? (
                         <a
                           href={`/api/receipts/signed-url?path=${encodeURIComponent(invoice.xml_url)}&bucket=invoices`}
-                          className="text-navy underline"
+                          className="text-text-primary underline"
                         >
                           XML
                         </a>
                       ) : null}
-                      {!invoice.pdf_url && !invoice.xml_url && <span className="text-graphite">—</span>}
+                      {!invoice.pdf_url && !invoice.xml_url && <span className="text-text-secondary">—</span>}
                     </div>
                   </TableCell>
                   <TableCell>

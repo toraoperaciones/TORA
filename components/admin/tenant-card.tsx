@@ -74,7 +74,7 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
 
       <div className="mt-4 flex items-center justify-between border-t border-border-hairline pt-4">
         {tenant.status === "active" ? (
-          <Badge variant="success" dot>
+          <Badge variant="outline" dot>
             Activo
           </Badge>
         ) : tenant.status === "suspended" ? (

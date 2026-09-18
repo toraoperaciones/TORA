@@ -14,10 +14,10 @@ import { createClient } from "@/lib/supabase/server";
 import { cn, formatMXN } from "@/lib/utils";
 
 const STATUS_CLASS: Record<string, string> = {
-  draft: "border-border-default bg-transparent text-graphite",
-  issued: "border-border-default bg-transparent text-navy font-semibold",
+  draft: "border-border-default bg-transparent text-text-secondary",
+  issued: "border-border-default bg-transparent text-text-primary font-semibold",
   paid: "border-transparent bg-forest text-offwhite",
-  cancelled: "border-border-default bg-transparent text-graphite",
+  cancelled: "border-border-default bg-transparent text-text-secondary",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -132,32 +132,32 @@ export default async function FinanceInvoicesPage({
         ))}
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-surface p-6">
+      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
         {invoices.length === 0 ? (
-          <p className="text-body-s text-graphite">Aún no hay facturas emitidas.</p>
+          <p className="text-body-s text-text-secondary">Aún no hay facturas emitidas.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                   Periodo
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                   Cliente
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   Subtotal
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   IVA
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   Total
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                   Estado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   Descargas
                 </TableHead>
               </TableRow>
@@ -165,24 +165,24 @@ export default async function FinanceInvoicesPage({
             <TableBody>
               {invoices.map((invoice) => (
                 <TableRow key={invoice.id} className="border-border-subtle">
-                  <TableCell className="text-body-s font-semibold text-navy">
+                  <TableCell className="text-body-s font-semibold text-text-primary">
                     {invoice.period}
                     {invoice.cfdi_uuid && (
-                      <p className="text-caption font-normal text-graphite">
+                      <p className="text-caption font-normal text-text-secondary">
                         CFDI {invoice.cfdi_uuid.slice(0, 8)}…
                       </p>
                     )}
                   </TableCell>
-                  <TableCell className="text-body-s text-navy">
+                  <TableCell className="text-body-s text-text-primary">
                     {invoice.tenants?.name ?? "—"}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
                     {formatMXN(Number(invoice.subtotal))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
                     {formatMXN(Number(invoice.iva))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-text-primary">
                     {formatMXN(Number(invoice.total))}
                   </TableCell>
                   <TableCell>
@@ -203,24 +203,24 @@ export default async function FinanceInvoicesPage({
                           href={invoice.pdf_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-navy underline underline-offset-4"
+                          className="font-semibold text-text-primary underline underline-offset-4"
                         >
                           PDF
                         </a>
                       ) : (
-                        <span className="text-caption text-graphite">PDF —</span>
+                        <span className="text-caption text-text-secondary">PDF —</span>
                       )}
                       {invoice.xml_url ? (
                         <a
                           href={invoice.xml_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-navy underline underline-offset-4"
+                          className="font-semibold text-text-primary underline underline-offset-4"
                         >
                           XML
                         </a>
                       ) : (
-                        <span className="text-caption text-graphite">XML —</span>
+                        <span className="text-caption text-text-secondary">XML —</span>
                       )}
                     </div>
                   </TableCell>

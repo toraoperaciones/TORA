@@ -66,9 +66,9 @@ export default async function TripDetailPage({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-border-subtle bg-surface shadow-none">
+        <Card className="border-border-subtle bg-navy-lift shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-navy">
+            <CardTitle className="font-display text-h4 text-text-primary">
               Resumen
             </CardTitle>
           </CardHeader>
@@ -76,33 +76,33 @@ export default async function TripDetailPage({
             <dl className="grid grid-cols-2 gap-x-6 gap-y-3">
               {details.map(([label, value]) => (
                 <div key={label}>
-                  <dt className="text-caption uppercase tracking-wider text-graphite">
+                  <dt className="text-caption uppercase tracking-wider text-text-secondary">
                     {label}
                   </dt>
-                  <dd className="text-body-s font-medium tabular-nums text-navy">
+                  <dd className="text-body-s font-medium tabular-nums text-text-primary">
                     {value}
                   </dd>
                 </div>
               ))}
             </dl>
             {trip.reason && (
-              <p className="mt-4 border-t border-border-subtle pt-4 text-body-s text-graphite">
+              <p className="mt-4 border-t border-border-subtle pt-4 text-body-s text-text-secondary">
                 {trip.reason}
               </p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-border-subtle bg-surface shadow-none">
+        <Card className="border-border-subtle bg-navy-lift shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-navy">
+            <CardTitle className="font-display text-h4 text-text-primary">
               Estado del flujo
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2 text-body-s text-graphite">
+          <CardContent className="flex flex-col gap-2 text-body-s text-text-secondary">
             <p>
               Estado actual:{" "}
-              <span className="font-semibold text-navy">
+              <span className="font-semibold text-text-primary">
                 {statusLabel(trip.status)}
               </span>
             </p>
@@ -129,10 +129,10 @@ export default async function TripDetailPage({
       </div>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-display text-h3 text-navy">Opciones</h2>
+        <h2 className="font-display text-h3 text-text-primary">Opciones</h2>
 
         {tripOptions.length === 0 ? (
-          <p className="text-body-s text-graphite">
+          <p className="text-body-s text-text-secondary">
             Operaciones está cotizando tu viaje. Te avisaremos cuando haya opciones.
           </p>
         ) : (

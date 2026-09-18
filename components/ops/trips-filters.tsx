@@ -55,7 +55,7 @@ export function TripsFilters({ tenants }: { tenants: TenantOption[] }) {
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border-subtle bg-surface p-4">
+    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border-subtle bg-navy-lift p-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="filter-status">Estado</Label>
         <Select

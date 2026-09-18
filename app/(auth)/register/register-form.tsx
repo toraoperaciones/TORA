@@ -72,15 +72,15 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="border-border-subtle bg-surface shadow-none">
+    <Card className="border-border-subtle bg-navy-lift shadow-none">
       <CardHeader className="items-center text-center">
         <div className="mb-2 flex justify-center">
           <Logo size="lg" />
         </div>
-        <CardTitle className="font-display text-h2 text-navy">
+        <CardTitle className="font-display text-h2 text-text-primary">
           Crea tu cuenta
         </CardTitle>
-        <CardDescription className="text-body-s text-graphite">
+        <CardDescription className="text-body-s text-text-secondary">
           Registra tu empresa en TORA.
         </CardDescription>
       </CardHeader>
@@ -96,7 +96,7 @@ export function RegisterForm() {
               {...register("fullName")}
             />
             {errors.fullName && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.fullName.message}
               </p>
             )}
@@ -112,7 +112,7 @@ export function RegisterForm() {
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.email.message}
               </p>
             )}
@@ -128,13 +128,13 @@ export function RegisterForm() {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.password.message}
               </p>
             )}
           </div>
 
-          <p className="prose-tora text-caption text-graphite">
+          <p className="prose-tora text-caption text-text-secondary">
             Tu cuenta será revisada por el equipo de TORA antes de activarse.
           </p>
 
@@ -147,11 +147,11 @@ export function RegisterForm() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-body-s text-graphite">
+        <p className="mt-6 text-center text-body-s text-text-secondary">
           ¿Ya tienes cuenta?{" "}
           <Link
             href="/login"
-            className="font-semibold text-navy underline underline-offset-4 hover:text-navy-hover"
+            className="font-semibold text-text-primary underline underline-offset-4 hover:text-text-secondary"
           >
             Inicia sesión
           </Link>

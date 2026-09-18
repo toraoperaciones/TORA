@@ -24,7 +24,7 @@ export default async function PipelinePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-h2 text-navy">Pipeline comercial</h1>
+      <h1 className="font-display text-h2 text-text-primary">Pipeline comercial</h1>
       <PipelineBoard initialLeads={boardLeads} />
     </div>
   );

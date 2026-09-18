@@ -71,9 +71,9 @@ export default async function TripsPage({
         )}
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-surface p-6">
+      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
         {trips.length === 0 ? (
-          <p className="text-body-s text-graphite">
+          <p className="text-body-s text-text-secondary">
             Aún no tienes viajes. Solicita el primero en 3 clics.
           </p>
         ) : (
@@ -81,16 +81,16 @@ export default async function TripsPage({
             <Table>
               <TableHeader>
                 <TableRow className="border-border-subtle hover:bg-transparent">
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                     Destino
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                     Fechas
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                     Servicio
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                     Estado
                   </TableHead>
                 </TableRow>
@@ -101,17 +101,17 @@ export default async function TripsPage({
                     <TableCell>
                       <Link
                         href={`/trips/${trip.id}`}
-                        className="text-body-s font-semibold text-navy underline-offset-4 hover:underline"
+                        className="text-body-s font-semibold text-text-primary underline-offset-4 hover:underline"
                       >
                         {trip.destination}
                       </Link>
-                      <p className="text-caption text-graphite">Desde {trip.origin}</p>
+                      <p className="text-caption text-text-secondary">Desde {trip.origin}</p>
                     </TableCell>
-                    <TableCell className="text-body-s tabular-nums text-navy">
+                    <TableCell className="text-body-s tabular-nums text-text-primary">
                       {trip.departure_date}
                       {trip.return_date ? ` → ${trip.return_date}` : ""}
                     </TableCell>
-                    <TableCell className="text-body-s text-navy">
+                    <TableCell className="text-body-s text-text-primary">
                       {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
                     </TableCell>
                     <TableCell>
@@ -123,7 +123,7 @@ export default async function TripsPage({
             </Table>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-caption text-graphite">
+              <p className="text-caption text-text-secondary">
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">

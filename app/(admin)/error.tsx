@@ -12,9 +12,9 @@ export default function AdminError({
 }) {
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 text-center">
-      <AlertCircle className="h-8 w-8 text-navy" />
-      <h2 className="font-display text-h3 text-navy">Algo no salió bien.</h2>
-      <p className="text-body-s text-graphite">
+      <AlertCircle className="h-8 w-8 text-text-primary" />
+      <h2 className="font-display text-h3 text-text-primary">Algo no salió bien.</h2>
+      <p className="text-body-s text-text-secondary">
         Intenta de nuevo. Si el problema persiste, contacta a soporte.
       </p>
       <Button onClick={reset} className="font-display font-semibold">

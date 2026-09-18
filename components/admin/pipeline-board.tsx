@@ -61,14 +61,14 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="text-body-s text-graphite">
+        <p className="text-body-s text-text-secondary">
           {leads.length} leads · total estimado{" "}
-          <span className="tabular-nums font-semibold text-navy">
+          <span className="tabular-nums font-semibold text-text-primary">
             {formatMXN(leads.reduce((acc, l) => acc + (l.estimated_monthly_spend ?? 0), 0))}
           </span>{" "}
           /mes
         </p>
-        <Button className="border-transparent bg-forest font-display font-semibold text-offwhite hover:bg-forest-hover" onClick={() => setCreateOpen(true)}>
+        <Button onClick={() => setCreateOpen(true)}>
           <Plus className="mr-1 h-4 w-4" /> Nuevo lead
         </Button>
       </div>
@@ -79,18 +79,18 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
           return (
             <div
               key={col.key}
-              className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-offwhite/50 p-3"
+              className="flex flex-col gap-3 rounded-lg border border-border-subtle bg-layer-3 p-3"
             >
               <div className="flex items-baseline justify-between">
-                <h2 className="font-display text-h5 text-navy">{col.label}</h2>
-                <span className="text-caption text-graphite">
+                <h2 className="font-display text-h5 text-text-primary">{col.label}</h2>
+                <span className="text-caption text-text-secondary">
                   {columnLeads.length} ·{" "}
                   <span className="tabular-nums">{formatMXN(columnTotal(col.key))}</span>
                 </span>
               </div>
 
               {columnLeads.length === 0 ? (
-                <p className="text-caption text-graphite">Sin leads</p>
+                <p className="text-caption text-text-secondary">Sin leads</p>
               ) : (
                 columnLeads.map((lead) => (
                   <LeadDetailDialog
@@ -100,17 +100,17 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
                       <button
                         type="button"
                         disabled={moving === lead.id}
-                        className="w-full rounded-lg border border-border-subtle bg-offwhite p-4 text-left transition-colors hover:border-navy/30"
+                        className="w-full rounded-lg border border-border-subtle bg-navy-lift p-4 text-left transition-colors hover:border-border-emphasis"
                       >
-                        <p className="font-display text-h4 text-navy">{lead.company_name}</p>
+                        <p className="font-display text-h4 text-text-primary">{lead.company_name}</p>
                         {lead.contact_name && (
-                          <p className="text-body-s text-graphite">{lead.contact_name}</p>
+                          <p className="text-body-s text-text-secondary">{lead.contact_name}</p>
                         )}
-                        <p className="text-caption text-graphite">{lead.contact_email ?? "—"}</p>
-                        <p className="mt-2 tabular-nums text-body-s font-semibold text-navy">
+                        <p className="text-caption text-text-secondary">{lead.contact_email ?? "—"}</p>
+                        <p className="mt-2 tabular-nums text-body-s font-semibold text-text-primary">
                           {formatMXN(lead.estimated_monthly_spend ?? 0)}
                         </p>
-                        <p className="text-caption text-graphite">
+                        <p className="text-caption text-text-secondary">
                           {lead.last_contact_at ? timeAgoEs(lead.last_contact_at) : "Sin contacto"}
                         </p>
                         <div className="mt-3 flex gap-2">

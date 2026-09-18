@@ -23,6 +23,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Logo } from "@/components/brand/logo";
+import { NotificationBell } from "@/components/layout/notification-bell";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import type { Role } from "@/lib/auth/roles";
 import { cn } from "@/lib/utils";
@@ -337,6 +338,9 @@ export function Sidebar({ role, fullName, email, className }: SidebarProps) {
         </button>
 
         <div className={cn("flex items-center gap-1", collapsed && "flex-col")}>
+          <NotificationBell
+            canLinkTrips={role === "CLIENT_ADMIN" || role === "CLIENT_FINANCE"}
+          />
           <ThemeToggle />
           <button
             type="button"

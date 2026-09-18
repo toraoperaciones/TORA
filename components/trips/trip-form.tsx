@@ -112,14 +112,14 @@ export function TripForm({
   }
 
   return (
-    <Card className="border-border-subtle bg-surface shadow-none">
+    <Card className="border-border-subtle bg-navy-lift shadow-none">
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <Label htmlFor="origin">Origen</Label>
             <Input id="origin" placeholder="Monterrey" {...register("origin")} />
             {errors.origin && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.origin.message}
               </p>
             )}
@@ -133,7 +133,7 @@ export function TripForm({
               {...register("destination")}
             />
             {errors.destination && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.destination.message}
               </p>
             )}
@@ -143,7 +143,7 @@ export function TripForm({
             <Label htmlFor="departure_date">Fecha de salida</Label>
             <Input id="departure_date" type="date" {...register("departure_date")} />
             {errors.departure_date && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.departure_date.message}
               </p>
             )}
@@ -153,7 +153,7 @@ export function TripForm({
             <Label htmlFor="return_date">Fecha de regreso (opcional)</Label>
             <Input id="return_date" type="date" {...register("return_date")} />
             {errors.return_date && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.return_date.message}
               </p>
             )}
@@ -168,7 +168,7 @@ export function TripForm({
               {...register("passengers")}
             />
             {errors.passengers && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.passengers.message}
               </p>
             )}
@@ -224,7 +224,7 @@ export function TripForm({
               {...register("reason")}
             />
             {errors.reason && (
-              <p className="text-caption font-semibold text-navy">
+              <p className="text-caption font-semibold text-text-primary">
                 {errors.reason.message}
               </p>
             )}

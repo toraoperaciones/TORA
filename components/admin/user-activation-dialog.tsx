@@ -91,10 +91,10 @@ export function UserActivationDialog({
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">
+          <DialogTitle className="font-display text-h4 text-text-primary">
             Activar usuario
           </DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogDescription className="text-body-s text-text-secondary">
             {user.full_name ?? "—"} · {user.email}
           </DialogDescription>
         </DialogHeader>
@@ -147,7 +147,7 @@ export function UserActivationDialog({
           >
             Cancelar
           </Button>
-          <Button onClick={handleActivate} disabled={saving} className="border-transparent bg-forest font-display font-semibold text-offwhite hover:bg-forest-hover">
+          <Button onClick={handleActivate} disabled={saving}>
             {saving ? "Activando…" : "Activar"}
           </Button>
         </DialogFooter>

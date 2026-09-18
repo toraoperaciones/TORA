@@ -100,8 +100,8 @@ export function UserEditDialog({ user, tenants, trigger }: UserEditDialogProps) 
       <DialogTrigger asChild>{trigger ?? <Button variant="outline" size="sm" className="font-display font-semibold">Editar</Button>}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">Editar usuario</DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogTitle className="font-display text-h4 text-text-primary">Editar usuario</DialogTitle>
+          <DialogDescription className="text-body-s text-text-secondary">
             {user.full_name ?? "—"} · {user.email}
           </DialogDescription>
         </DialogHeader>

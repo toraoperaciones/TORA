@@ -91,10 +91,10 @@ export function NewIncidentDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">
+          <DialogTitle className="font-display text-h4 text-text-primary">
             Nuevo incidente
           </DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogDescription className="text-body-s text-text-secondary">
             Registra el problema para dar seguimiento.
           </DialogDescription>
         </DialogHeader>
@@ -217,10 +217,10 @@ export function ResolveIncidentDialog({ incidentId }: { incidentId: string }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-navy">
+          <DialogTitle className="font-display text-h4 text-text-primary">
             Resolver incidente
           </DialogTitle>
-          <DialogDescription className="text-body-s text-graphite">
+          <DialogDescription className="text-body-s text-text-secondary">
             Describe cómo se resolvió. Quedará registrado con tu usuario y fecha.
           </DialogDescription>
         </DialogHeader>

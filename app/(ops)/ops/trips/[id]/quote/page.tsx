@@ -81,7 +81,7 @@ export default async function QuotePage({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <p className="text-caption uppercase tracking-wider text-graphite">
+        <p className="text-caption uppercase tracking-wider text-text-secondary">
           <Link href="/ops/inbox" className="hover:underline">
             Bandeja
           </Link>{" "}
@@ -93,9 +93,9 @@ export default async function QuotePage({
         </div>
       </div>
 
-      <Card className="border-border-subtle bg-surface shadow-none">
+      <Card className="border-border-subtle bg-navy-lift shadow-none">
         <CardHeader>
-          <CardTitle className="font-display text-h4 text-navy">
+          <CardTitle className="font-display text-h4 text-text-primary">
             Resumen del viaje
           </CardTitle>
         </CardHeader>
@@ -103,17 +103,17 @@ export default async function QuotePage({
           <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
             {details.map(([label, value]) => (
               <div key={label}>
-                <dt className="text-caption uppercase tracking-wider text-graphite">
+                <dt className="text-caption uppercase tracking-wider text-text-secondary">
                   {label}
                 </dt>
-                <dd className="text-body-s font-medium tabular-nums text-navy">
+                <dd className="text-body-s font-medium tabular-nums text-text-primary">
                   {value}
                 </dd>
               </div>
             ))}
           </dl>
           {trip.reason && (
-            <p className="mt-4 border-t border-border-subtle pt-4 text-body-s text-graphite">
+            <p className="mt-4 border-t border-border-subtle pt-4 text-body-s text-text-secondary">
               {trip.reason}
             </p>
           )}
@@ -137,14 +137,14 @@ export default async function QuotePage({
       />
 
       {trip.status === "awaiting_payment" && (
-        <Card className="border-border-subtle bg-surface shadow-none">
+        <Card className="border-border-subtle bg-navy-lift shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-navy">
+            <CardTitle className="font-display text-h4 text-text-primary">
               Pago pendiente
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <p className="text-body-s text-graphite">
+            <p className="text-body-s text-text-secondary">
               El cliente ya seleccionó una opción. Esperando confirmación de pago
               (automática si el saldo alcanza, o cuando Finanzas apruebe el
               depósito).
@@ -157,22 +157,22 @@ export default async function QuotePage({
       )}
 
       {trip.status === "confirmed" && (
-        <Card className="border-border-subtle bg-surface shadow-none">
+        <Card className="border-border-subtle bg-navy-lift shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-navy">
+            <CardTitle className="font-display text-h4 text-text-primary">
               Booking
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <span className="text-caption uppercase tracking-wider text-graphite">
+              <span className="text-caption uppercase tracking-wider text-text-secondary">
                 Confirmación
               </span>
-              <span className="text-body-s font-semibold tabular-nums text-navy">
+              <span className="text-body-s font-semibold tabular-nums text-text-primary">
                 {booking?.confirmation_number ?? "—"}
               </span>
               {booking?.supplier_reference && (
-                <span className="text-caption text-graphite">
+                <span className="text-caption text-text-secondary">
                   Ref. proveedor: {booking.supplier_reference}
                 </span>
               )}
@@ -183,8 +183,8 @@ export default async function QuotePage({
       )}
 
       {trip.status === "awaiting_selection" && (
-        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-surface p-6">
-          <p className="text-body-s text-graphite">
+        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-navy-lift p-6">
+          <p className="text-body-s text-text-secondary">
             El cliente está viendo estas opciones. Puedes reabrir la cotización
             para editarlas.
           </p>

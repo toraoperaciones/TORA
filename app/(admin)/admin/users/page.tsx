@@ -73,7 +73,7 @@ export default async function UsersPage({
       className={`rounded-md border px-3 py-1.5 text-caption font-display font-semibold transition-colors ${
         active
           ? "border-transparent bg-navy text-offwhite"
-          : "border-border-subtle bg-offwhite text-graphite hover:border-navy/30"
+          : "border-border-subtle bg-navy-lift text-text-secondary hover:border-border-emphasis"
       }`}
     >
       {label}
@@ -91,11 +91,11 @@ export default async function UsersPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-h2 text-navy">Usuarios</h1>
+      <h1 className="font-display text-h2 text-text-primary">Usuarios</h1>
 
       {pendingCount > 0 && status !== "pending_approval" && (
-        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-offwhite p-4">
-          <p className="text-body-s font-semibold text-navy">
+        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-navy-lift p-4">
+          <p className="text-body-s font-semibold text-text-primary">
             {pendingCount} {pendingCount === 1 ? "usuario pendiente" : "usuarios pendientes"} de
             activación.
           </p>
@@ -135,19 +135,19 @@ export default async function UsersPage({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-body-s text-graphite">No hay usuarios que coincidan con los filtros.</p>
+        <p className="text-body-s text-text-secondary">No hay usuarios que coincidan con los filtros.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border-subtle bg-offwhite">
+        <div className="overflow-x-auto rounded-lg border border-border-subtle bg-navy-lift">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Nombre</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Email</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Rol</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Tenant</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Estado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Creado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">Acciones</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Nombre</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Email</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Rol</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Tenant</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Estado</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Creado</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,24 +158,24 @@ export default async function UsersPage({
                     key={user.id}
                     className={isPending ? "border-l-2 border-l-navy" : undefined}
                   >
-                    <TableCell className="text-body-s text-navy">{user.full_name ?? "—"}</TableCell>
-                    <TableCell className="text-body-s text-graphite">{user.email}</TableCell>
-                    <TableCell className="text-body-s text-navy">{user.role}</TableCell>
-                    <TableCell className="text-body-s text-graphite">
+                    <TableCell className="text-body-s text-text-primary">{user.full_name ?? "—"}</TableCell>
+                    <TableCell className="text-body-s text-text-secondary">{user.email}</TableCell>
+                    <TableCell className="text-body-s text-text-primary">{user.role}</TableCell>
+                    <TableCell className="text-body-s text-text-secondary">
                       {user.tenants?.[0]?.name ?? "TORA interno"}
                     </TableCell>
                     <TableCell>
                       {user.status === "active" ? (
                         <Badge className="border-transparent bg-forest/10 text-forest">Activo</Badge>
                       ) : isPending ? (
-                        <Badge variant="secondary" className="text-graphite">Pendiente</Badge>
+                        <Badge variant="secondary" className="text-text-secondary">Pendiente</Badge>
                       ) : (
-                        <Badge className="border-transparent bg-graphite/10 text-graphite">
+                        <Badge className="border-transparent bg-layer-3 text-text-secondary">
                           <AlertCircle className="mr-1 h-3 w-3" /> Suspendido
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell className="text-body-s text-graphite">
+                    <TableCell className="text-body-s text-text-secondary">
                       {formatDate(user.created_at)}
                     </TableCell>
                     <TableCell>
@@ -185,12 +185,7 @@ export default async function UsersPage({
                             user={{ id: user.id, email: user.email, full_name: user.full_name }}
                             tenants={tenants}
                             trigger={
-                              <Button
-                                size="sm"
-                                className="border-transparent bg-forest font-display font-semibold text-offwhite hover:bg-forest-hover"
-                              >
-                                Activar
-                              </Button>
+                              <Button size="sm">Activar</Button>
                             }
                           />
                         ) : (

@@ -144,27 +144,27 @@ export default async function FinanceDashboardPage() {
         />
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-surface p-6">
-        <h2 className="mb-4 font-display text-h4 text-navy">Saldos por cliente</h2>
+      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+        <h2 className="mb-4 font-display text-h4 text-text-primary">Saldos por cliente</h2>
         <Table>
           <TableHeader>
             <TableRow className="border-border-subtle hover:bg-transparent">
-              <TableHead className="text-caption uppercase tracking-wider text-graphite">
+              <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                 Cliente
               </TableHead>
-              <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+              <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                 Saldo
               </TableHead>
-              <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+              <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                 Línea de crédito
               </TableHead>
-              <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+              <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                 Crédito usado
               </TableHead>
-              <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+              <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                 Disponible
               </TableHead>
-              <TableHead className="text-caption uppercase tracking-wider text-graphite">
+              <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                 Mora
               </TableHead>
             </TableRow>
@@ -186,13 +186,13 @@ export default async function FinanceDashboardPage() {
 
               return (
                 <TableRow key={tenant.id} className="border-border-subtle">
-                  <TableCell className="text-body-s font-semibold text-navy">
+                  <TableCell className="text-body-s font-semibold text-text-primary">
                     {tenant.name}
                   </TableCell>
                   <TableCell className="text-right">
                     <span
                       className={`inline-flex items-center gap-1.5 text-body-s tabular-nums ${
-                        balance < 0 ? "font-semibold text-navy" : "text-navy"
+                        balance < 0 ? "font-semibold text-text-primary" : "text-text-primary"
                       }`}
                     >
                       {balance < 0 && (
@@ -202,13 +202,13 @@ export default async function FinanceDashboardPage() {
                       {formatMXN(Math.abs(balance))}
                     </span>
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
                     {line ? formatMXN(Number(line.approved_limit)) : "—"}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
                     {line || usedByCharges > 0 ? formatMXN(usedByCharges) : "—"}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
                     {line
                       ? formatMXN(Number(line.approved_limit) - usedByCharges)
                       : "—"}
@@ -220,12 +220,12 @@ export default async function FinanceDashboardPage() {
                         Suspender · {oldestDays}d
                       </Badge>
                     ) : oldestDays > 30 ? (
-                      <span className="inline-flex items-center gap-1 text-caption font-semibold text-navy">
+                      <span className="inline-flex items-center gap-1 text-caption font-semibold text-text-primary">
                         <AlertCircle className="h-3 w-3" aria-hidden />
                         {oldestDays}d
                       </span>
                     ) : (
-                      <span className="text-caption text-graphite">
+                      <span className="text-caption text-text-secondary">
                         {oldestDays > 0 ? `${oldestDays}d` : "—"}
                       </span>
                     )}
@@ -237,27 +237,27 @@ export default async function FinanceDashboardPage() {
         </Table>
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-surface p-6">
-        <h2 className="mb-4 font-display text-h4 text-navy">Cartera vencida</h2>
+      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+        <h2 className="mb-4 font-display text-h4 text-text-primary">Cartera vencida</h2>
         {overdueCharges.length === 0 ? (
-          <p className="text-body-s text-graphite">Sin cartera vencida.</p>
+          <p className="text-body-s text-text-secondary">Sin cartera vencida.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                   Cliente
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
                   Cargo
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   Monto
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   Días
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-graphite">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
                   Interés acumulado
                 </TableHead>
               </TableRow>
@@ -265,19 +265,19 @@ export default async function FinanceDashboardPage() {
             <TableBody>
               {overdueCharges.map(({ charge, days }) => (
                 <TableRow key={charge.id} className="border-border-subtle">
-                  <TableCell className="text-body-s font-semibold text-navy">
+                  <TableCell className="text-body-s font-semibold text-text-primary">
                     {tenantName.get(charge.tenant_id) ?? "—"}
                   </TableCell>
-                  <TableCell className="text-caption tabular-nums text-graphite">
+                  <TableCell className="text-caption tabular-nums text-text-secondary">
                     {charge.reference ?? charge.id.slice(0, 8)}
                   </TableCell>
-                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-text-primary">
                     {formatMXN(Number(charge.amount))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-text-primary">
                     {days}d
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-navy">
+                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
                     {formatMXN(calculateInterest(charge))}
                   </TableCell>
                 </TableRow>

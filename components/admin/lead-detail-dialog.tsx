@@ -50,15 +50,15 @@ export function LeadDetailDialog({ lead, trigger, onDeleted }: LeadDetailDialogP
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-navy">
+            <DialogTitle className="font-display text-h4 text-text-primary">
               {lead.company_name}
             </DialogTitle>
-            <DialogDescription className="text-body-s text-graphite">
+            <DialogDescription className="text-body-s text-text-secondary">
               Etapa: {lead.stage}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-2 text-body-s text-navy">
+          <div className="flex flex-col gap-2 text-body-s text-text-primary">
             <p>Contacto: {lead.contact_name ?? "—"}</p>
             <p>Email: {lead.contact_email ?? "—"}</p>
             <p>Teléfono: {lead.contact_phone ?? "—"}</p>
@@ -68,10 +68,10 @@ export function LeadDetailDialog({ lead, trigger, onDeleted }: LeadDetailDialogP
                 {formatMXN(lead.estimated_monthly_spend ?? 0)}
               </span>
             </p>
-            <p className="text-caption text-graphite">
+            <p className="text-caption text-text-secondary">
               Último contacto: {lead.last_contact_at ? timeAgo(lead.last_contact_at) : "—"}
             </p>
-            {lead.notes && <p className="text-graphite">{lead.notes}</p>}
+            {lead.notes && <p className="text-text-secondary">{lead.notes}</p>}
           </div>
 
           <DialogFooter className="flex-row flex-wrap gap-2 sm:justify-between">
@@ -95,7 +95,7 @@ export function LeadDetailDialog({ lead, trigger, onDeleted }: LeadDetailDialogP
                 variant="outline"
                 onClick={() => void handleDelete()}
                 disabled={deleting}
-                className="font-display font-semibold text-navy"
+                className="font-display font-semibold text-text-primary"
               >
                 {deleting ? "Eliminando…" : "Eliminar"}
               </Button>

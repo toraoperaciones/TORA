@@ -112,10 +112,38 @@ export function CommandPalette({ role }: { role: Role }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<EntityHit[]>([]);
-  const [searching, setSearching] = useState(false);
 
   const navSections = useMemo(() => NAV_BY_ROLE[role], [role]);
-  const actions = ACTIONS_BY_ROLE[role] ?? [];
+  const actions = useMemo(() => ACTIONS_BY_ROLE[role] ?? [], [role]);
+
+  // Filtrado propio (shouldFilter=false en <Command>): cmdk no re-evalúa
+  // items que se montan tarde (hits asíncronos) y los dejaba ocultos.
+  const q = query.trim().toLowerCase();
+  const navMatches = useMemo(
+    () =>
+      navSections
+        .map((s) => ({
+          ...s,
+          items: s.items.filter(
+            (i) =>
+              !q ||
+              i.label.toLowerCase().includes(q) ||
+              s.overline.toLowerCase().includes(q)
+          ),
+        }))
+        .filter((s) => s.items.length > 0),
+    [navSections, q]
+  );
+  const actionMatches = useMemo(
+    () =>
+      actions.filter(
+        (a) =>
+          !q ||
+          a.label.toLowerCase().includes(q) ||
+          a.keywords.toLowerCase().includes(q)
+      ),
+    [actions, q]
+  );
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -147,18 +175,14 @@ export function CommandPalette({ role }: { role: Role }) {
     const q = query.trim();
     if (q.length < 2) {
       setHits([]);
-      setSearching(false);
       return;
     }
-    setSearching(true);
     const timer = setTimeout(async () => {
       try {
         const found = await searchEntities(q, role);
         setHits(found);
       } catch {
         setHits([]);
-      } finally {
-        setSearching(false);
       }
     }, 180);
     return () => clearTimeout(timer);
@@ -173,6 +197,7 @@ export function CommandPalette({ role }: { role: Role }) {
   );
 
   const hasEntities = hits.length > 0;
+  const isEmpty = !hasEntities && navMatches.length === 0 && actionMatches.length === 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -181,7 +206,7 @@ export function CommandPalette({ role }: { role: Role }) {
         className="top-[18%] max-w-xl translate-y-0 gap-0 overflow-hidden rounded-xl border-border-default bg-popover p-0 shadow-modal"
       >
         <DialogTitle className="sr-only">Buscar</DialogTitle>
-        <Command loop>
+        <Command shouldFilter={false} loop>
           <div className="flex items-center gap-3 border-b border-border-subtle px-4">
             <Search className="h-4 w-4 shrink-0 text-text-muted" aria-hidden />
             <Command.Input
@@ -197,11 +222,11 @@ export function CommandPalette({ role }: { role: Role }) {
 
           <Command.List className="max-h-[360px] overflow-y-auto p-2">
             <Command.Empty className="px-3 py-6 text-center text-body-s text-text-tertiary">
-              {searching
-                ? "Buscando…"
-                : query.trim().length >= 2
+              {isEmpty
+                ? query.trim().length >= 2
                   ? "Sin resultados."
-                  : "Escribe para buscar o elige un destino."}
+                  : "Escribe para buscar o elige un destino."
+                : ""}
             </Command.Empty>
 
             {hasEntities && (
@@ -229,7 +254,7 @@ export function CommandPalette({ role }: { role: Role }) {
               heading="Navegación"
               className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
             >
-              {navSections.flatMap((section) =>
+              {navMatches.flatMap((section) =>
                 section.items.map((item) => (
                   <Item
                     key={`nav-${item.href}`}
@@ -246,12 +271,12 @@ export function CommandPalette({ role }: { role: Role }) {
               )}
             </Command.Group>
 
-            {actions.length > 0 && (
+            {actionMatches.length > 0 && (
               <Command.Group
                 heading="Acciones"
                 className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
               >
-                {actions.map((action) => (
+                {actionMatches.map((action) => (
                   <Item
                     key={action.href}
                     onSelect={() => go(action.href)}

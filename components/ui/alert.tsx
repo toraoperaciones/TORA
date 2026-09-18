@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
  * Solo variante default — los errores usan toast + peso tipográfico.
  */
 const alertVariants = cva(
-  "relative w-full rounded-lg border px-4 py-3 text-body-s [&>svg~*]:pl-7 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:size-4 [&>svg]:text-navy",
+  "relative w-full rounded-lg border px-4 py-3 text-body-s [&>svg~*]:pl-7 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:size-4 [&>svg]:text-text-primary",
   {
     variants: {
       variant: {
-        default: "border-border-subtle bg-surface text-navy",
+        default: "border-border-subtle bg-navy-lift text-text-primary",
       },
     },
     defaultVariants: {
@@ -45,7 +45,7 @@ function AlertDescription({
   className,
   ...props
 }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <div className={cn("text-graphite", className)} {...props} />;
+  return <div className={cn("text-text-secondary", className)} {...props} />;
 }
 
 export { Alert, AlertTitle, AlertDescription };

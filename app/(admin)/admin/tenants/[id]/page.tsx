@@ -53,38 +53,38 @@ export default async function TenantDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-caption text-graphite">
+      <div className="text-caption text-text-secondary">
         <Link href="/admin/tenants" className="hover:underline">
           Tenants
         </Link>{" "}
-        → <span className="text-navy">{tenant.name}</span>
+        → <span className="text-text-primary">{tenant.name}</span>
       </div>
 
-      <h1 className="font-display text-h2 text-navy">{tenant.name}</h1>
+      <h1 className="font-display text-h2 text-text-primary">{tenant.name}</h1>
 
       <Card>
         <CardContent className="grid gap-4 p-6 sm:grid-cols-2">
-          <p className="text-body-s text-graphite">
-            RFC: <span className="text-navy">{tenant.rfc ?? "—"}</span>
+          <p className="text-body-s text-text-secondary">
+            RFC: <span className="text-text-primary">{tenant.rfc ?? "—"}</span>
           </p>
-          <p className="text-body-s text-graphite">
-            Razón social: <span className="text-navy">{tenant.razon_social ?? "—"}</span>
+          <p className="text-body-s text-text-secondary">
+            Razón social: <span className="text-text-primary">{tenant.razon_social ?? "—"}</span>
           </p>
-          <p className="text-body-s text-graphite">
-            Régimen fiscal: <span className="text-navy">{tenant.regimen_fiscal ?? "—"}</span>
+          <p className="text-body-s text-text-secondary">
+            Régimen fiscal: <span className="text-text-primary">{tenant.regimen_fiscal ?? "—"}</span>
           </p>
-          <p className="text-body-s text-graphite">
+          <p className="text-body-s text-text-secondary">
             Estado:{" "}
             {tenant.status === "active" ? (
-              <Badge className="border-transparent bg-forest/10 text-forest">Activo</Badge>
+              <Badge className="border-border-default bg-layer-2 text-text-primary">Activo</Badge>
             ) : (
-              <Badge className="border-transparent bg-graphite/10 text-graphite">
+              <Badge className="border-transparent bg-layer-3 text-text-secondary">
                 <AlertCircle className="mr-1 h-3 w-3" /> {tenant.status}
               </Badge>
             )}
           </p>
           {tenant.notes && (
-            <p className="text-body-s text-graphite sm:col-span-2">Notas: {tenant.notes}</p>
+            <p className="text-body-s text-text-secondary sm:col-span-2">Notas: {tenant.notes}</p>
           )}
         </CardContent>
       </Card>
@@ -92,26 +92,26 @@ export default async function TenantDetailPage({
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-graphite">Saldo</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-navy">{formatMXN(balance)}</p>
+            <p className="text-caption uppercase tracking-wider text-text-secondary">Saldo</p>
+            <p className="mt-2 font-display text-h3 tabular-nums text-text-primary">{formatMXN(balance)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-graphite">Viajes totales</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-navy">{tripsCount ?? 0}</p>
+            <p className="text-caption uppercase tracking-wider text-text-secondary">Viajes totales</p>
+            <p className="mt-2 font-display text-h3 tabular-nums text-text-primary">{tripsCount ?? 0}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-graphite">Usuarios activos</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-navy">{activeUsers}</p>
+            <p className="text-caption uppercase tracking-wider text-text-secondary">Usuarios activos</p>
+            <p className="mt-2 font-display text-h3 tabular-nums text-text-primary">{activeUsers}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-graphite">Crédito disponible</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-navy">
+            <p className="text-caption uppercase tracking-wider text-text-secondary">Crédito disponible</p>
+            <p className="mt-2 font-display text-h3 tabular-nums text-text-primary">
               {formatMXN(creditAvailable)}
             </p>
           </CardContent>
@@ -120,7 +120,7 @@ export default async function TenantDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-display text-h4 text-navy">Configuración de markups</CardTitle>
+          <CardTitle className="font-display text-h4 text-text-primary">Configuración de markups</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-4">
           {[
@@ -129,9 +129,9 @@ export default async function TenantDetailPage({
             { label: "Autos", value: tenant.markup_cars },
             { label: "Stands", value: tenant.markup_stands },
           ].map((markup) => (
-            <p key={markup.label} className="text-body-s text-graphite">
+            <p key={markup.label} className="text-body-s text-text-secondary">
               {markup.label}:{" "}
-              <span className="tabular-nums font-semibold text-navy">
+              <span className="tabular-nums font-semibold text-text-primary">
                 {(markup.value * 100).toFixed(1)}%
               </span>
             </p>
@@ -141,35 +141,35 @@ export default async function TenantDetailPage({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="font-display text-h4 text-navy">Usuarios</CardTitle>
+          <CardTitle className="font-display text-h4 text-text-primary">Usuarios</CardTitle>
           <InviteUserDialog tenant={{ id: tenant.id, name: tenant.name }} />
         </CardHeader>
         <CardContent>
           {(users ?? []).length === 0 ? (
-            <p className="text-body-s text-graphite">Sin usuarios.</p>
+            <p className="text-body-s text-text-secondary">Sin usuarios.</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Nombre</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Email</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Rol</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Estado</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Nombre</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Email</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Rol</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {(users ?? []).map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="text-body-s text-navy">{user.full_name ?? "—"}</TableCell>
-                    <TableCell className="text-body-s text-graphite">{user.email}</TableCell>
-                    <TableCell className="text-body-s text-navy">{user.role}</TableCell>
+                    <TableCell className="text-body-s text-text-primary">{user.full_name ?? "—"}</TableCell>
+                    <TableCell className="text-body-s text-text-secondary">{user.email}</TableCell>
+                    <TableCell className="text-body-s text-text-primary">{user.role}</TableCell>
                     <TableCell>
                       {user.status === "active" ? (
-                        <Badge className="border-transparent bg-forest/10 text-forest">Activo</Badge>
+                        <Badge className="border-border-default bg-layer-2 text-text-primary">Activo</Badge>
                       ) : user.status === "pending_approval" ? (
-                        <Badge variant="secondary" className="text-graphite">Pendiente</Badge>
+                        <Badge variant="secondary" className="text-text-secondary">Pendiente</Badge>
                       ) : (
-                        <Badge className="border-transparent bg-graphite/10 text-graphite">
+                        <Badge className="border-transparent bg-layer-3 text-text-secondary">
                           <AlertCircle className="mr-1 h-3 w-3" /> Suspendido
                         </Badge>
                       )}
@@ -184,25 +184,25 @@ export default async function TenantDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-display text-h4 text-navy">Últimos viajes</CardTitle>
+          <CardTitle className="font-display text-h4 text-text-primary">Últimos viajes</CardTitle>
         </CardHeader>
         <CardContent>
           {(recentTrips ?? []).length === 0 ? (
-            <p className="text-body-s text-graphite">Aún no hay viajes.</p>
+            <p className="text-body-s text-text-secondary">Aún no hay viajes.</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Destino</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Salida</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-graphite">Estado</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Destino</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Salida</TableHead>
+                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {(recentTrips ?? []).map((trip) => (
                   <TableRow key={trip.id}>
-                    <TableCell className="text-body-s text-navy">{trip.destination}</TableCell>
-                    <TableCell className="text-body-s text-graphite">
+                    <TableCell className="text-body-s text-text-primary">{trip.destination}</TableCell>
+                    <TableCell className="text-body-s text-text-secondary">
                       {formatDate(trip.departure_date)}
                     </TableCell>
                     <TableCell>
