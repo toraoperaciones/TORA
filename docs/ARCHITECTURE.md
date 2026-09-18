@@ -125,3 +125,12 @@ Verificación de cada flujo: `docs/ACCEPTANCE.md`.
 - **¿Por qué RPCs en lugar de TS?** Las mutaciones de dinero (`select_trip_option`, `approve_deposit`, `approve_credit_for_trip`) exigen atomicidad y aislamiento ante carreras (dos aprobaciones concurrentes, doble selección). En Postgres, la transacción es el límite correcto; en TS habría que orquestar locks manuales y seguiríamos expuestos a TOCTOU. Además, `security definer` permite validar rol/tenant dentro del propio motor, sin confiar en el cliente.
 - **¿Por qué `credit_lines` separada de `tenants`?** Un tenant puede tener historial de líneas (una cerrada, otra activa), cada línea audita `approved_by`/`approved_at`, y el unique parcial `WHERE status='active'` garantiza una sola línea activa por tenant.
 - **¿Por qué `pipeline_leads` separada?** Los leads son datos de CRM pre-conversión: no cumplen las invariantes de `tenants` (RFC, markups, usuarios) y su ciclo de vida es distinto. `converted_tenant_id` deja trazable la conversión sin mezclar modelos.
+
+## Fase 2 — Reestructura a monorepo (propuesta)
+
+Cuando el equipo crezca, migrar a la arquitectura next-forge: `apps/app`
+(portales), `packages/ui` (design system compartido), `packages/database`,
+`packages/auth` y `packages/business` (lógica actual de `lib/`). El design
+system ya está aislado (`components/ui` + tokens en `globals.css` + `lib/motion`),
+así que el movimiento es principalmente de carpetas y `tsconfig paths` —
+sin cambios de lógica. Fuera de alcance del MVP actual.
