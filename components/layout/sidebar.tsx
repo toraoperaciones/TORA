@@ -34,6 +34,8 @@ interface SidebarProps {
   fullName: string;
   email: string;
   className?: string;
+  /** Colapso forzado (rail de iconos en tablet 640–1024). */
+  forcedCollapsed?: boolean;
 }
 
 interface NavItemDef {
@@ -48,8 +50,9 @@ interface NavSectionDef {
 }
 
 /**
- * Navegación agrupada por sección. Los labels NUNCA se truncan:
- * el sidebar colapsado muestra solo iconos con tooltip.
+ * Navegación agrupada por sección (spec A2). Los labels NUNCA se truncan:
+ * el sidebar colapsado muestra solo iconos. Orden dentro de cada sección:
+ * frecuencia de uso, lo más usado arriba.
  */
 export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
   CLIENT_ADMIN: [
@@ -59,13 +62,16 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
         { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
         { href: "/trips", label: "Viajes", icon: Plane },
         { href: "/wallet", label: "Billetera", icon: Wallet },
-        { href: "/invoices", label: "Facturas", icon: FileText },
       ],
+    },
+    {
+      overline: "Gestión",
+      items: [{ href: "/invoices", label: "Facturas", icon: FileText }],
     },
   ],
   CLIENT_FINANCE: [
     {
-      overline: "Operación",
+      overline: "Finanzas",
       items: [
         { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
         { href: "/invoices", label: "Facturas", icon: FileText },
@@ -86,6 +92,15 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
   ],
   TORA_ADMIN: [
     {
+      overline: "Administración",
+      items: [
+        { href: "/admin/tenants", label: "Tenants", icon: Building2 },
+        { href: "/admin/users", label: "Usuarios", icon: Users },
+        { href: "/admin/pipeline", label: "Pipeline", icon: Target },
+        { href: "/admin/invoices", label: "Facturas", icon: FileText },
+      ],
+    },
+    {
       overline: "Operación",
       items: [
         { href: "/ops/inbox", label: "Bandeja Ops", icon: Inbox },
@@ -96,17 +111,8 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
       overline: "Finanzas",
       items: [
         { href: "/finance/deposits", label: "Depósitos", icon: Receipt },
-        { href: "/finance/credit", label: "Crédito", icon: CreditCard },
         { href: "/finance/dashboard", label: "Dashboard Fin.", icon: LayoutDashboard },
-      ],
-    },
-    {
-      overline: "Administración",
-      items: [
-        { href: "/admin/tenants", label: "Tenants", icon: Building2 },
-        { href: "/admin/users", label: "Usuarios", icon: Users },
-        { href: "/admin/pipeline", label: "Pipeline", icon: Target },
-        { href: "/admin/invoices", label: "Facturas", icon: FileText },
+        { href: "/finance/credit", label: "Crédito", icon: CreditCard },
       ],
     },
   ],
@@ -146,7 +152,7 @@ function NavItem({
       aria-current={active ? "page" : undefined}
       title={collapsed ? item.label : undefined}
       className={cn(
-        "relative flex h-10 items-center gap-3 rounded-md px-3 text-body-s font-medium whitespace-nowrap transition-colors duration-150",
+        "relative flex h-11 items-center gap-3 rounded-md px-3 text-body-s font-medium whitespace-nowrap transition-colors duration-150 md:h-10",
         collapsed && "justify-center px-0",
         active
           ? "bg-layer-3 text-text-primary"
@@ -178,7 +184,10 @@ function NavSections({
 }) {
   const sections = NAV_BY_ROLE[role];
   return (
-    <nav className="flex flex-col gap-1" aria-label={`Navegación ${role}`}>
+    <nav
+      className="flex flex-col gap-1"
+      aria-label="Navegación principal"
+    >
       {sections.map((section, si) => (
         <div key={section.overline} className={cn(si > 0 && "mt-5")}>
           {!collapsed && (
@@ -222,21 +231,29 @@ function openPalette() {
 }
 
 /** Sidebar de escritorio: 280px expandido, 72px colapsado (persistido). */
-export function Sidebar({ role, fullName, email, className }: SidebarProps) {
+export function Sidebar({
+  role,
+  fullName,
+  email,
+  className,
+  forcedCollapsed = false,
+}: SidebarProps) {
   const pathname = usePathname();
   const { logout, loggingOut } = useLogout();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsedState, setCollapsedState] = useState(false);
+  const collapsed = forcedCollapsed || collapsedState;
 
   useEffect(() => {
+    if (forcedCollapsed) return;
     try {
-      setCollapsed(localStorage.getItem("tora-sidebar") === "collapsed");
+      setCollapsedState(localStorage.getItem("tora-sidebar") === "collapsed");
     } catch {
       // sin localStorage: expandido
     }
-  }, []);
+  }, [forcedCollapsed]);
 
   function toggleCollapse() {
-    setCollapsed((prev) => {
+    setCollapsedState((prev) => {
       const next = !prev;
       try {
         localStorage.setItem("tora-sidebar", next ? "collapsed" : "expanded");
@@ -268,7 +285,7 @@ export function Sidebar({ role, fullName, email, className }: SidebarProps) {
             <Logo variant="lockup" theme="light" size="md" />
           )}
         </Link>
-        {!collapsed && (
+        {!collapsed && !forcedCollapsed && (
           <button
             type="button"
             onClick={toggleCollapse}
@@ -360,7 +377,7 @@ export function Sidebar({ role, fullName, email, className }: SidebarProps) {
             <LogOut className="h-4 w-4 shrink-0" aria-hidden />
             {!collapsed && (loggingOut ? "Cerrando sesión…" : "Cerrar sesión")}
           </button>
-          {collapsed ? (
+          {collapsed && !forcedCollapsed ? (
             <button
               type="button"
               onClick={toggleCollapse}

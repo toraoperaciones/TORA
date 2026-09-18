@@ -34,15 +34,24 @@ export function PortalShell({
 
   return (
     <div className="flex min-h-screen bg-navy-deep">
+      {/* Desktop expandido */}
       <Sidebar
         role={role}
         fullName={fullName}
         email={email}
         className="hidden lg:flex"
       />
+      {/* Tablet 640–1024: rail de iconos (spec A5) */}
+      <Sidebar
+        role={role}
+        fullName={fullName}
+        email={email}
+        forcedCollapsed
+        className="hidden sm:flex lg:hidden"
+      />
 
       {/* Topbar móvil */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-border-hairline bg-navy-deep px-4 lg:hidden">
+      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-border-hairline bg-navy-deep px-4 sm:hidden">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
@@ -72,14 +81,14 @@ export function PortalShell({
 
       <CommandPalette role={role} />
 
-      <main className="min-w-0 flex-1 pt-14 lg:pt-0">
+      <main className="min-w-0 flex-1 pt-14 sm:pt-0">
         <motion.div
           key={pathname}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: EASE_TORA }}
         >
-          <div className="mx-auto max-w-[1280px] px-5 py-8 sm:px-6 lg:px-16">
+          <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-6 lg:px-16 2xl:px-24">
             {children}
           </div>
         </motion.div>
