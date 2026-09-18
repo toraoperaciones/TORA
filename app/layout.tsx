@@ -53,7 +53,7 @@ export const metadata: Metadata = {
  * Anti-flash: aplica el tema persistido ANTES de que React hidrate.
  * Dark es el default; si localStorage dice light, se aplica aquí mismo.
  */
-const themeInit = `try{var t=localStorage.getItem("tora-theme");if(t==="light"){document.documentElement.dataset.theme="light"}}catch(e){}`;
+const themeInit = `try{var t=localStorage.getItem("tora-theme");if(t==="light"){document.documentElement.classList.remove("dark")}}catch(e){}`;
 
 export default function RootLayout({
   children,
@@ -61,12 +61,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es-MX" data-theme="dark" suppressHydrationWarning>
+    <html lang="es-MX" className="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body
-        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable} bg-navy-deep font-body text-text-primary antialiased`}
+        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable} bg-background font-body text-foreground antialiased`}
       >
         <QueryProvider>{children}</QueryProvider>
         <Toaster position="top-right" />

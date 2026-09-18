@@ -27,10 +27,10 @@ const INCIDENT_TYPE_LABEL: Record<string, string> = {
 };
 
 const SEVERITY_CLASS: Record<string, string> = {
-  critical: "border-transparent bg-navy text-offwhite",
-  high: "border-transparent bg-layer-4 text-text-primary",
-  medium: "border-transparent bg-[rgba(74,74,74,0.1)] text-text-secondary",
-  low: "border-transparent bg-[rgba(74,74,74,0.05)] text-text-secondary",
+  critical: "border-transparent bg-card text-foreground",
+  high: "border-transparent bg-accent text-foreground",
+  medium: "border-transparent bg-[rgba(74,74,74,0.1)] text-foreground/75",
+  low: "border-transparent bg-[rgba(74,74,74,0.05)] text-foreground/75",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -111,7 +111,7 @@ export default async function IncidentsPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1>Incidentes</h1>
-          <p className="mt-1 text-body-s text-text-secondary">
+          <p className="mt-1 text-body-s text-foreground/75">
             {openCount} abiert{openCount === 1 ? "o" : "os"}
           </p>
         </div>
@@ -137,42 +137,42 @@ export default async function IncidentsPage({
         ))}
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         {incidents.length === 0 ? (
-          <p className="text-body-s text-text-secondary">No hay incidentes abiertos.</p>
+          <p className="text-body-s text-foreground/75">No hay incidentes abiertos.</p>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Severidad
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Tipo
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Trip
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Descripción
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Estado
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Creado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Acción
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {incidents.map((incident) => (
-                <TableRow key={incident.id} className="border-border-subtle">
+                <TableRow key={incident.id} className="border-border">
                   <TableCell>
                     <Badge
                       className={cn(
@@ -183,29 +183,29 @@ export default async function IncidentsPage({
                       {incident.severity}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-body-s text-text-primary">
+                  <TableCell className="text-body-s text-foreground">
                     {INCIDENT_TYPE_LABEL[incident.type] ?? incident.type}
                   </TableCell>
-                  <TableCell className="text-body-s text-text-primary">
+                  <TableCell className="text-body-s text-foreground">
                     {incident.trips?.destination ?? "—"}
                   </TableCell>
-                  <TableCell className="text-body-s text-text-primary">
+                  <TableCell className="text-body-s text-foreground">
                     {incident.trips?.tenants?.name ?? "—"}
                   </TableCell>
-                  <TableCell className="max-w-[240px] truncate text-body-s text-text-secondary">
+                  <TableCell className="max-w-[240px] truncate text-body-s text-foreground/75">
                     {incident.description}
                   </TableCell>
-                  <TableCell className="text-body-s text-text-primary">
+                  <TableCell className="text-body-s text-foreground">
                     {STATUS_LABEL[incident.status] ?? incident.status}
                   </TableCell>
-                  <TableCell className="text-caption text-text-secondary">
+                  <TableCell className="text-caption text-foreground/75">
                     {new Date(incident.created_at).toLocaleDateString("es-MX")}
                   </TableCell>
                   <TableCell className="text-right">
                     {incident.status === "open" || incident.status === "in_progress" ? (
                       <ResolveIncidentDialog incidentId={incident.id} />
                     ) : (
-                      <span className="text-caption text-text-secondary">—</span>
+                      <span className="text-caption text-foreground/75">—</span>
                     )}
                   </TableCell>
                 </TableRow>

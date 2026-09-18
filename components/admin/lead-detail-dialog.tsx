@@ -50,15 +50,15 @@ export function LeadDetailDialog({ lead, trigger, onDeleted }: LeadDetailDialogP
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-text-primary">
+            <DialogTitle className="font-display text-h4 text-foreground">
               {lead.company_name}
             </DialogTitle>
-            <DialogDescription className="text-body-s text-text-secondary">
+            <DialogDescription className="text-body-s text-foreground/75">
               Etapa: {lead.stage}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-2 text-body-s text-text-primary">
+          <div className="flex flex-col gap-2 text-body-s text-foreground">
             <p>Contacto: {lead.contact_name ?? "—"}</p>
             <p>Email: {lead.contact_email ?? "—"}</p>
             <p>Teléfono: {lead.contact_phone ?? "—"}</p>
@@ -68,10 +68,10 @@ export function LeadDetailDialog({ lead, trigger, onDeleted }: LeadDetailDialogP
                 {formatMXN(lead.estimated_monthly_spend ?? 0)}
               </span>
             </p>
-            <p className="text-caption text-text-secondary">
+            <p className="text-caption text-foreground/75">
               Último contacto: {lead.last_contact_at ? timeAgo(lead.last_contact_at) : "—"}
             </p>
-            {lead.notes && <p className="text-text-secondary">{lead.notes}</p>}
+            {lead.notes && <p className="text-foreground/75">{lead.notes}</p>}
           </div>
 
           <DialogFooter className="flex-row flex-wrap gap-2 sm:justify-between">
@@ -95,7 +95,7 @@ export function LeadDetailDialog({ lead, trigger, onDeleted }: LeadDetailDialogP
                 variant="outline"
                 onClick={() => void handleDelete()}
                 disabled={deleting}
-                className="font-display font-semibold text-text-primary"
+                className="font-display font-semibold text-foreground"
               >
                 {deleting ? "Eliminando…" : "Eliminar"}
               </Button>

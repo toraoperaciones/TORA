@@ -1,42 +1,37 @@
 import { Badge } from "@/components/ui/badge";
-import type { BadgeTone } from "@/components/ui/badge";
 import { statusLabel } from "@/lib/business/trip-machine";
 import { cn } from "@/lib/utils";
 
 /**
- * Badge de estado de trip — tokens del sistema, sin colores hardcodeados.
- * success (forest) exclusivo para confirmed: estado con dinero liquidado.
- * Nunca rojo para cancelado.
+ * Badge de estado de trip — lenguaje monocromático del preset:
+ * `default` (sólido) exclusivo para confirmed: estado con dinero liquidado.
+ * Nunca rojo para cancelado; destructive es solo para errores críticos.
  */
-const STATUS_VARIANT: Record<string, { tone: BadgeTone; className?: string }> = {
-  pending_quote: { tone: "outline" },
-  options_sent: { tone: "outline" },
-  awaiting_selection: {
-    tone: "warning",
-    className: "bg-layer-3",
-  },
-  awaiting_payment: { tone: "muted" },
-  confirmed: {
-    tone: "success",
-    className: "border-transparent bg-forest text-offwhite",
-  },
-  completed: { tone: "muted" },
+type BadgeVariant = React.ComponentProps<typeof Badge>["variant"];
+
+const STATUS_VARIANT: Record<string, { variant: BadgeVariant; className?: string }> = {
+  pending_quote: { variant: "outline" },
+  options_sent: { variant: "outline" },
+  awaiting_selection: { variant: "muted" },
+  awaiting_payment: { variant: "secondary" },
+  confirmed: { variant: "default" },
+  completed: { variant: "muted" },
   cancelled: {
-    tone: "outline",
-    className: "text-text-tertiary",
+    variant: "outline",
+    className: "text-muted-foreground",
   },
   refunded: {
-    tone: "outline",
-    className: "text-text-tertiary",
+    variant: "outline",
+    className: "text-muted-foreground",
   },
 };
 
 export function StatusBadge({ status }: { status: string }) {
-  const variant = STATUS_VARIANT[status] ?? { tone: "outline" as BadgeTone };
+  const match = STATUS_VARIANT[status] ?? { variant: "outline" as BadgeVariant };
   return (
     <Badge
-      variant={variant.tone}
-      className={cn("whitespace-nowrap font-medium", variant.className)}
+      variant={match.variant}
+      className={cn("whitespace-nowrap font-medium", match.className)}
     >
       {statusLabel(status)}
     </Badge>

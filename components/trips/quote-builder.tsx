@@ -214,12 +214,12 @@ export function QuoteBuilder({
   }
 
   return (
-    <Card className="border-border-subtle bg-navy-lift shadow-none">
+    <Card className="border-border bg-card shadow-none">
       <CardHeader>
-        <CardTitle className="font-display text-h4 text-text-primary">
+        <CardTitle className="font-display text-h4 text-foreground">
           Opciones de cotización
         </CardTitle>
-        <CardDescription className="text-body-s text-text-secondary">
+        <CardDescription className="text-body-s text-foreground/75">
           Markup aplicado: {(markup * 100).toFixed(0)}% ({serviceType}). El precio
           final se calcula automáticamente, pero puedes ajustarlo por opción.
         </CardDescription>
@@ -234,10 +234,10 @@ export function QuoteBuilder({
           return (
             <div
               key={opt.key}
-              className="rounded-lg border border-border-subtle p-4"
+              className="rounded-lg border border-border p-4"
             >
               <div className="mb-3 flex items-center justify-between">
-                <p className="text-caption font-semibold uppercase tracking-wider text-text-secondary">
+                <p className="text-caption font-semibold uppercase tracking-wider text-foreground/75">
                   Opción {index + 1}
                 </p>
                 <Button
@@ -286,7 +286,7 @@ export function QuoteBuilder({
                   <Label htmlFor={`final-${opt.key}`}>
                     Precio final (MXN)
                     {opt.touched && (
-                      <span className="ml-2 font-normal normal-case text-text-secondary">
+                      <span className="ml-2 font-normal normal-case text-foreground/75">
                         editado
                       </span>
                     )}
@@ -338,7 +338,7 @@ export function QuoteBuilder({
                     <p
                       className={cn(
                         "flex items-center gap-1.5 text-caption font-semibold",
-                        isMarginHealthy(net, final) ? "text-text-secondary" : "text-text-primary"
+                        isMarginHealthy(net, final) ? "text-foreground/75" : "text-foreground"
                       )}
                     >
                       {!isMarginHealthy(net, final) && (
@@ -365,13 +365,13 @@ export function QuoteBuilder({
             <Plus className="h-4 w-4" />
             Agregar opción
           </Button>
-          <p className="text-caption text-text-secondary">
+          <p className="text-caption text-foreground/75">
             {options.length} de {MAX_OPTIONS} opciones usadas
           </p>
         </div>
 
         {editable ? (
-          <div className="flex flex-wrap gap-3 border-t border-border-subtle pt-4">
+          <div className="flex flex-wrap gap-3 border-t border-border pt-4">
             <Button
               type="button"
               variant="outline"
@@ -391,7 +391,7 @@ export function QuoteBuilder({
             </Button>
           </div>
         ) : (
-          <p className="border-t border-border-subtle pt-4 text-body-s text-text-secondary">
+          <p className="border-t border-border pt-4 text-body-s text-foreground/75">
             Este trip ya no admite edición de opciones desde su estado actual.
           </p>
         )}
@@ -400,10 +400,10 @@ export function QuoteBuilder({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-text-primary">
+            <DialogTitle className="font-display text-h4 text-foreground">
               Enviar al cliente
             </DialogTitle>
-            <DialogDescription className="text-body-s text-text-secondary">
+            <DialogDescription className="text-body-s text-foreground/75">
               ¿Enviar estas {options.length} opciones al cliente? No podrás
               modificarlas sin antes reabrirlas.
             </DialogDescription>

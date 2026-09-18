@@ -147,10 +147,10 @@ export function LeadFormDialog({
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">
+          <DialogTitle className="font-display text-h4 text-foreground">
             {isEdit ? "Editar lead" : "Nuevo lead"}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogDescription className="text-body-s text-foreground/75">
             CRM básico de prospectos antes de convertirse en tenant.
           </DialogDescription>
         </DialogHeader>
@@ -160,7 +160,7 @@ export function LeadFormDialog({
             <Label htmlFor="lead-company">Empresa</Label>
             <Input id="lead-company" placeholder="Grupo Industrial Saltillo" {...register("companyName")} />
             {errors.companyName && (
-              <p className="text-caption font-semibold text-text-primary">{errors.companyName.message}</p>
+              <p className="text-caption font-semibold text-foreground">{errors.companyName.message}</p>
             )}
           </div>
 
@@ -179,7 +179,7 @@ export function LeadFormDialog({
             <Label htmlFor="lead-email">Email</Label>
             <Input id="lead-email" type="email" {...register("contactEmail")} />
             {errors.contactEmail && (
-              <p className="text-caption font-semibold text-text-primary">{errors.contactEmail.message}</p>
+              <p className="text-caption font-semibold text-foreground">{errors.contactEmail.message}</p>
             )}
           </div>
 

@@ -76,8 +76,8 @@ export default async function UsersPage({
       href={href}
       className={`rounded-md border px-3 py-1.5 text-caption font-display font-semibold transition-colors ${
         active
-          ? "border-transparent bg-navy text-offwhite"
-          : "border-border-subtle bg-navy-lift text-text-secondary hover:border-border-emphasis"
+          ? "border-transparent bg-card text-foreground"
+          : "border-border bg-card text-foreground/75 hover:border-foreground/30"
       }`}
     >
       {label}
@@ -95,11 +95,11 @@ export default async function UsersPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-h2 text-text-primary">Usuarios</h1>
+      <h1 className="font-display text-h2 text-foreground">Usuarios</h1>
 
       {pendingCount > 0 && status !== "pending_approval" && (
-        <div className="flex items-center justify-between rounded-lg border border-border-subtle bg-navy-lift p-4">
-          <p className="text-body-s font-semibold text-text-primary">
+        <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
+          <p className="text-body-s font-semibold text-foreground">
             {pendingCount} {pendingCount === 1 ? "usuario pendiente" : "usuarios pendientes"} de
             activación.
           </p>
@@ -139,19 +139,19 @@ export default async function UsersPage({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-body-s text-text-secondary">No hay usuarios que coincidan con los filtros.</p>
+        <p className="text-body-s text-foreground/75">No hay usuarios que coincidan con los filtros.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border-subtle bg-navy-lift">
+        <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Nombre</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Email</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Rol</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Tenant</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Estado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Creado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">Acciones</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Nombre</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Email</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Rol</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Tenant</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Estado</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Creado</TableHead>
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -160,26 +160,26 @@ export default async function UsersPage({
                 return (
                   <TableRow
                     key={user.id}
-                    className={isPending ? "border-l-2 border-l-navy" : undefined}
+                    className={isPending ? "border-l-2 border-l-foreground/30" : undefined}
                   >
-                    <TableCell className="text-body-s text-text-primary">{user.full_name ?? "—"}</TableCell>
-                    <TableCell className="text-body-s text-text-secondary">{user.email}</TableCell>
-                    <TableCell className="text-body-s text-text-primary">{user.role}</TableCell>
-                    <TableCell className="text-body-s text-text-secondary">
+                    <TableCell className="text-body-s text-foreground">{user.full_name ?? "—"}</TableCell>
+                    <TableCell className="text-body-s text-foreground/75">{user.email}</TableCell>
+                    <TableCell className="text-body-s text-foreground">{user.role}</TableCell>
+                    <TableCell className="text-body-s text-foreground/75">
                       {user.tenants?.[0]?.name ?? "TORA interno"}
                     </TableCell>
                     <TableCell>
                       {user.status === "active" ? (
                         <Badge variant="muted">Activo</Badge>
                       ) : isPending ? (
-                        <Badge variant="secondary" className="text-text-secondary">Pendiente</Badge>
+                        <Badge variant="secondary" className="text-foreground/75">Pendiente</Badge>
                       ) : (
-                        <Badge className="border-transparent bg-layer-3 text-text-secondary">
+                        <Badge className="border-transparent bg-muted text-foreground/75">
                           <AlertCircle className="mr-1 h-3 w-3" /> Suspendido
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell className="text-body-s text-text-secondary">
+                    <TableCell className="text-body-s text-foreground/75">
                       {formatDate(user.created_at)}
                     </TableCell>
                     <TableCell>

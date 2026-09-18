@@ -46,8 +46,8 @@ function ConfirmDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">{title}</DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogTitle className="font-display text-h4 text-foreground">{title}</DialogTitle>
+          <DialogDescription className="text-body-s text-foreground/75">
             {description}
           </DialogDescription>
         </DialogHeader>

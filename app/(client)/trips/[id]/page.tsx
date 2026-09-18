@@ -70,9 +70,9 @@ export default async function TripDetailPage({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-border-subtle bg-navy-lift shadow-none">
+        <Card className="border-border bg-card shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-text-primary">
+            <CardTitle className="font-display text-h4 text-foreground">
               Resumen
             </CardTitle>
           </CardHeader>
@@ -80,26 +80,26 @@ export default async function TripDetailPage({
             <dl className="grid grid-cols-2 gap-x-6 gap-y-3">
               {details.map(([label, value]) => (
                 <div key={label}>
-                  <dt className="text-caption uppercase tracking-wider text-text-secondary">
+                  <dt className="text-caption uppercase tracking-wider text-foreground/75">
                     {label}
                   </dt>
-                  <dd className="text-body-s font-medium tabular-nums text-text-primary">
+                  <dd className="text-body-s font-medium tabular-nums text-foreground">
                     {value}
                   </dd>
                 </div>
               ))}
             </dl>
             {trip.reason && (
-              <p className="mt-4 border-t border-border-subtle pt-4 text-body-s text-text-secondary">
+              <p className="mt-4 border-t border-border pt-4 text-body-s text-foreground/75">
                 {trip.reason}
               </p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-border-subtle bg-navy-lift shadow-none">
+        <Card className="border-border bg-card shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-text-primary">
+            <CardTitle className="font-display text-h4 text-foreground">
               Estado del viaje
             </CardTitle>
           </CardHeader>
@@ -113,10 +113,10 @@ export default async function TripDetailPage({
       </div>
 
       <section className="flex flex-col gap-4">
-        <h2 className="font-display text-h3 text-text-primary">Opciones</h2>
+        <h2 className="font-display text-h3 text-foreground">Opciones</h2>
 
         {tripOptions.length === 0 ? (
-          <p className="text-body-s text-text-secondary">
+          <p className="text-body-s text-foreground/75">
             Operaciones está cotizando tu viaje. Te avisaremos cuando haya opciones.
           </p>
         ) : (

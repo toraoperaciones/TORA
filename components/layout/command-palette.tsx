@@ -2,10 +2,11 @@
 
 import { Clock, FileText, Plane, Search, Users } from "lucide-react";
 import { Command } from "cmdk";
+import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { NAV_BY_ROLE } from "@/lib/navigation";
+import { NAV_BY_ROLE, type NavItemDef } from "@/lib/navigation";
 import {
   Dialog,
   DialogContent,
@@ -139,36 +140,44 @@ export function CommandPalette({ role }: { role: Role }) {
   const [hits, setHits] = useState<EntityHit[]>([]);
 
   const navSections = useMemo(() => NAV_BY_ROLE[role], [role]);
+
+  /** Aplana flat|grouped a lista de items con su grupo como hint. */
+  const flatNav = useMemo(
+    () =>
+      navSections.flatMap((section) =>
+        section.type === "flat"
+          ? section.items.map((item) => ({ item, hint: "Navegación" }))
+          : section.groups.flatMap((group) =>
+              group.items.map((item) => ({ item, hint: group.label }))
+            )
+      ),
+    [navSections]
+  );
   const actions = useMemo(() => ACTIONS_BY_ROLE[role] ?? [], [role]);
 
   // Filtrado propio (shouldFilter=false en <Command>): cmdk no re-evalúa
   // items que se montan tarde (hits asíncronos) y los dejaba ocultos.
   const q = query.trim().toLowerCase();
-  const navMatches = useMemo(
-    () =>
-      navSections
-        .map((s) => ({
-          ...s,
-          items: s.items.filter(
-            (i) =>
-              !q ||
-              i.label.toLowerCase().includes(q) ||
-              s.overline.toLowerCase().includes(q)
-          ),
-        }))
-        .filter((s) => s.items.length > 0),
-    [navSections, q]
-  );
-  const actionMatches = useMemo(
-    () =>
-      actions.filter(
-        (a) =>
-          !q ||
-          a.label.toLowerCase().includes(q) ||
-          a.keywords.toLowerCase().includes(q)
-      ),
-    [actions, q]
-  );
+  const navMatches = useMemo(() => {
+    if (!q) return flatNav;
+    return new Fuse(flatNav, {
+      keys: ["item.label", "hint"],
+      threshold: 0.35,
+      ignoreLocation: true,
+    })
+      .search(q)
+      .map((r) => r.item);
+  }, [flatNav, q]);
+  const actionMatches = useMemo(() => {
+    if (!q) return actions;
+    return new Fuse(actions, {
+      keys: ["label", "keywords"],
+      threshold: 0.35,
+      ignoreLocation: true,
+    })
+      .search(q)
+      .map((r) => r.item);
+  }, [actions, q]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -233,14 +242,13 @@ export function CommandPalette({ role }: { role: Role }) {
     () =>
       recents
         .map((href) => {
-          for (const section of navSections) {
-            const item = section.items.find((i) => i.href === href);
-            if (item) return { href, label: item.label, icon: item.icon, hint: section.overline };
-          }
-          return null;
+          const match = flatNav.find(({ item }) => item.href === href);
+          return match
+            ? { href, label: match.item.label, icon: match.item.icon, hint: match.hint }
+            : null;
         })
-        .filter((x): x is { href: string; label: string; icon: (typeof navSections)[number]["items"][number]["icon"]; hint: string } => x !== null),
-    [recents, navSections]
+        .filter((x): x is { href: string; label: string; icon: NavItemDef["icon"]; hint: string } => x !== null),
+    [recents, flatNav]
   );
   const isEmpty =
     !hasEntities && navMatches.length === 0 && actionMatches.length === 0;
@@ -249,19 +257,19 @@ export function CommandPalette({ role }: { role: Role }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         showCloseButton={false}
-        className="top-[18%] max-w-xl translate-y-0 gap-0 overflow-hidden rounded-xl border-border-default bg-popover p-0 shadow-modal"
+        className="top-[18%] max-w-xl translate-y-0 gap-0 overflow-hidden rounded-xl border-border bg-popover p-0 shadow-2xl"
       >
         <DialogTitle className="sr-only">Buscar</DialogTitle>
         <Command shouldFilter={false} loop>
-          <div className="flex items-center gap-3 border-b border-border-subtle px-4">
-            <Search className="h-4 w-4 shrink-0 text-text-muted" aria-hidden />
+          <div className="flex items-center gap-3 border-b border-border px-4">
+            <Search className="h-4 w-4 shrink-0 text-muted-foreground/70" aria-hidden />
             <Command.Input
               value={query}
               onValueChange={setQuery}
               placeholder="Buscar viajes, facturas, personas o acciones…"
-              className="h-13 w-full bg-transparent py-4 text-body-m text-text-primary outline-none placeholder:text-text-muted"
+              className="h-13 w-full bg-transparent py-4 text-body-m text-foreground outline-none placeholder:text-muted-foreground/70"
             />
-            <kbd className="rounded border border-border-subtle bg-layer-1 px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
+            <kbd className="rounded border border-border bg-muted/50 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/70">
               esc
             </kbd>
           </div>
@@ -270,19 +278,19 @@ export function CommandPalette({ role }: { role: Role }) {
             {!query.trim() && recentItems.length > 0 && (
               <Command.Group
                 heading="Recientes"
-                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
               >
                 {recentItems.map((r) => (
                   <Item key={`recent-${r.href}`} onSelect={() => go(r.href)}>
-                    <Clock className="h-4 w-4 text-text-muted" aria-hidden />
+                    <Clock className="h-4 w-4 text-muted-foreground/70" aria-hidden />
                     <span className="flex-1">{r.label}</span>
-                    <span className="text-caption text-text-muted">{r.hint}</span>
+                    <span className="text-caption text-muted-foreground/70">{r.hint}</span>
                   </Item>
                 ))}
               </Command.Group>
             )}
 
-            <Command.Empty className="px-3 py-6 text-center text-body-s text-text-tertiary">
+            <Command.Empty className="px-3 py-6 text-center text-body-s text-muted-foreground">
               {isEmpty
                 ? query.trim().length >= 2
                   ? "Sin resultados."
@@ -293,7 +301,7 @@ export function CommandPalette({ role }: { role: Role }) {
             {hasEntities && (
               <Command.Group
                 heading="Resultados"
-                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
               >
                 {hits.map((hit) => (
                   <Item key={hit.id} onSelect={() => go(hit.href)}>
@@ -305,7 +313,7 @@ export function CommandPalette({ role }: { role: Role }) {
                       <Users className="h-4 w-4" aria-hidden />
                     )}
                     <span className="flex-1 truncate">{hit.label}</span>
-                    <span className="text-caption text-text-muted">{hit.hint}</span>
+                    <span className="text-caption text-muted-foreground/70">{hit.hint}</span>
                   </Item>
                 ))}
               </Command.Group>
@@ -313,29 +321,25 @@ export function CommandPalette({ role }: { role: Role }) {
 
             <Command.Group
               heading="Navegación"
-              className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
+              className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
             >
-              {navMatches.flatMap((section) =>
-                section.items.map((item) => (
-                  <Item
-                    key={`nav-${item.href}`}
-                    onSelect={() => go(item.href)}
-                    keywords={section.overline}
-                  >
-                    <item.icon className="h-4 w-4" aria-hidden />
-                    <span className="flex-1">{item.label}</span>
-                    <span className="text-caption text-text-muted">
-                      {section.overline}
-                    </span>
-                  </Item>
-                ))
-              )}
+              {navMatches.map(({ item, hint }) => (
+                <Item
+                  key={`nav-${item.href}`}
+                  onSelect={() => go(item.href)}
+                  keywords={hint}
+                >
+                  <item.icon className="h-4 w-4" aria-hidden />
+                  <span className="flex-1">{item.label}</span>
+                  <span className="text-caption text-muted-foreground/70">{hint}</span>
+                </Item>
+              ))}
             </Command.Group>
 
             {actionMatches.length > 0 && (
               <Command.Group
                 heading="Acciones"
-                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-muted"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
               >
                 {actionMatches.map((action) => (
                   <Item
@@ -350,7 +354,7 @@ export function CommandPalette({ role }: { role: Role }) {
             )}
           </Command.List>
 
-          <div className="flex items-center gap-4 border-t border-border-subtle px-4 py-2.5 text-caption text-text-muted">
+          <div className="flex items-center gap-4 border-t border-border px-4 py-2.5 text-caption text-muted-foreground/70">
             <span>↑↓ navegar</span>
             <span>↵ seleccionar</span>
             <span>esc cerrar</span>
@@ -374,7 +378,7 @@ function Item({
     <Command.Item
       onSelect={onSelect}
       keywords={keywords ? [keywords] : undefined}
-      className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 text-body-s text-text-secondary transition-colors data-[selected=true]:bg-layer-3 data-[selected=true]:text-text-primary"
+      className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 text-body-s text-foreground/75 transition-colors data-[selected=true]:bg-muted data-[selected=true]:text-foreground"
     >
       {children}
     </Command.Item>

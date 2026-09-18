@@ -11,7 +11,7 @@ import { EASE_TORA } from "@/lib/motion";
  */
 export function AnimatedCheck({ className }: { className?: string }) {
   return (
-    <span className="relative flex h-5 w-5 shrink-0 items-center justify-center text-forest">
+    <span className="relative flex h-5 w-5 shrink-0 items-center justify-center text-primary">
       <svg
         viewBox="0 0 20 20"
         className={className}

@@ -27,10 +27,10 @@ export function CreditApprovalBanner() {
   return (
     <div
       data-credit-approved
-      className="flex items-center gap-3 rounded-lg border border-forest/20 bg-navy-lift p-4"
+      className="flex items-center gap-3 rounded-lg border border-primary/20 bg-card p-4"
     >
       <AnimatedCheck />
-      <p className="text-body-s font-semibold text-text-primary">
+      <p className="text-body-s font-semibold text-foreground">
         Crédito aprobado{approved ? ` — ${approved}` : ""}. Reserva confirmada.
       </p>
     </div>

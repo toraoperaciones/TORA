@@ -76,10 +76,10 @@ export function ApproveCreditButton({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">
+          <DialogTitle className="font-display text-h4 text-foreground">
             Aprobar crédito — {destination}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogDescription className="text-body-s text-foreground/75">
             Cubre el cargo de {formatMXN(chargeAmount)} del trip a {destination} y
             confirma la reserva. El cargo queda pendiente de pago a 30 días.
           </DialogDescription>
@@ -100,7 +100,7 @@ export function ApproveCreditButton({
               value={limit}
               onChange={(e) => setLimit(e.target.value)}
             />
-            <p className="text-caption text-text-secondary">
+            <p className="text-caption text-foreground/75">
               Mínimo requerido: {formatMXN(chargeAmount)}
             </p>
           </div>

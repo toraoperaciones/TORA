@@ -49,7 +49,7 @@ export function TenantStatusMenu({
         type="button"
         onClick={() => setConfirm(currentStatus === "suspended" ? "active" : "suspended")}
         aria-label={currentStatus === "suspended" ? "Activar tenant" : "Suspender tenant"}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-navy/5"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-foreground/75 transition-colors hover:bg-card/5"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -70,10 +70,10 @@ export function TenantStatusMenu({
       <Dialog open={confirm !== null} onOpenChange={(open) => !open && setConfirm(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-text-primary">
+            <DialogTitle className="font-display text-h4 text-foreground">
               {confirm ? LABELS[confirm] : ""} tenant
             </DialogTitle>
-            <DialogDescription className="text-body-s text-text-secondary">
+            <DialogDescription className="text-body-s text-foreground/75">
               Esta acción cambia el estado del tenant. Los usuarios del tenant seguirán
               pudiendo iniciar sesión; el bloqueo por suspensión se aplica en el portal.
             </DialogDescription>

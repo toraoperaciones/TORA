@@ -16,10 +16,10 @@ import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
 const STATUS_CLASS: Record<string, string> = {
-  draft: "border-border-default bg-transparent text-text-secondary",
-  issued: "border-border-default bg-transparent text-text-primary font-semibold",
-  paid: "border-transparent bg-forest text-offwhite",
-  cancelled: "border-border-default bg-transparent text-text-secondary",
+  draft: "border-border bg-transparent text-foreground/75",
+  issued: "border-border bg-transparent text-foreground font-semibold",
+  paid: "border-transparent bg-primary text-foreground",
+  cancelled: "border-border bg-transparent text-foreground/75",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -106,7 +106,7 @@ export default async function FinanceInvoicesPage({
             </Link>
           </Button>
         ))}
-        <span className="mx-2 h-5 w-px bg-border-subtle" aria-hidden />
+        <span className="mx-2 h-5 w-px bg-border" aria-hidden />
         <Button
           asChild
           variant={!params.tenant ? "default" : "outline"}
@@ -136,57 +136,57 @@ export default async function FinanceInvoicesPage({
         ))}
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         {invoices.length === 0 ? (
-          <p className="text-body-s text-text-secondary">Aún no hay facturas emitidas.</p>
+          <p className="text-body-s text-foreground/75">Aún no hay facturas emitidas.</p>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Periodo
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Subtotal
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   IVA
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Total
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Estado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Descargas
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {invoices.map((invoice) => (
-                <TableRow key={invoice.id} className="border-border-subtle">
-                  <TableCell className="text-body-s font-semibold text-text-primary">
+                <TableRow key={invoice.id} className="border-border">
+                  <TableCell className="text-body-s font-semibold text-foreground">
                     {invoice.period}
                     {invoice.cfdi_uuid && (
-                      <p className="text-caption font-normal text-text-secondary">
+                      <p className="text-caption font-normal text-foreground/75">
                         CFDI {invoice.cfdi_uuid.slice(0, 8)}…
                       </p>
                     )}
                   </TableCell>
-                  <TableCell className="text-body-s text-text-primary">
+                  <TableCell className="text-body-s text-foreground">
                     {invoice.tenants?.name ?? "—"}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
+                  <TableCell className="text-right text-body-s tabular-nums text-foreground">
                     {formatMXN(Number(invoice.subtotal))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-text-primary">
+                  <TableCell className="text-right text-body-s tabular-nums text-foreground">
                     {formatMXN(Number(invoice.iva))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-text-primary">
+                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-foreground">
                     {formatMXN(Number(invoice.total))}
                   </TableCell>
                   <TableCell>
@@ -207,24 +207,24 @@ export default async function FinanceInvoicesPage({
                           href={invoice.pdf_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-text-primary underline underline-offset-4"
+                          className="font-semibold text-foreground underline underline-offset-4"
                         >
                           PDF
                         </a>
                       ) : (
-                        <span className="text-caption text-text-secondary">PDF —</span>
+                        <span className="text-caption text-foreground/75">PDF —</span>
                       )}
                       {invoice.xml_url ? (
                         <a
                           href={invoice.xml_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-text-primary underline underline-offset-4"
+                          className="font-semibold text-foreground underline underline-offset-4"
                         >
                           XML
                         </a>
                       ) : (
-                        <span className="text-caption text-text-secondary">XML —</span>
+                        <span className="text-caption text-foreground/75">XML —</span>
                       )}
                     </div>
                   </TableCell>

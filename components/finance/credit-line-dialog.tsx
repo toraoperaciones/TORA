@@ -64,10 +64,10 @@ export function CreditLineDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">
+          <DialogTitle className="font-display text-h4 text-foreground">
             Línea de crédito — {tenant.name}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogDescription className="text-body-s text-foreground/75">
             El crédito es a 30 días sin interés. Después aplica la tasa mensual.
           </DialogDescription>
         </DialogHeader>

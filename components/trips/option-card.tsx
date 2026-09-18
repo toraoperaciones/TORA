@@ -86,32 +86,32 @@ export function OptionCard({
     <Card
       className={
         option.is_selected
-          ? "border-2 border-forest bg-navy-lift shadow-none"
-          : "border-border-subtle bg-navy-lift shadow-none"
+          ? "border-2 border-primary bg-card shadow-none"
+          : "border-border bg-card shadow-none"
       }
     >
       <CardContent className="flex items-center justify-between gap-4 pt-6">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-h4 text-text-primary">{option.provider}</h3>
+            <h3 className="font-display text-h4 text-foreground">{option.provider}</h3>
             {option.is_selected && (
-              <Badge className="border-transparent bg-forest text-offwhite">
+              <Badge className="border-transparent bg-primary text-foreground">
                 Seleccionada
               </Badge>
             )}
           </div>
           {details && (
-            <p className="mt-1 truncate text-body-s text-text-secondary">{details}</p>
+            <p className="mt-1 truncate text-body-s text-foreground/75">{details}</p>
           )}
           {option.expires_at && (
-            <p className="mt-1 text-caption text-text-secondary">
+            <p className="mt-1 text-caption text-foreground/75">
               Vigencia: {new Date(option.expires_at).toLocaleDateString("es-MX")}
             </p>
           )}
         </div>
 
         <div className="flex shrink-0 items-center gap-4">
-          <span className="font-display text-h3 tabular-nums text-text-primary">
+          <span className="font-display text-h3 tabular-nums text-foreground">
             {formatMXN(option.final_price)}
           </span>
           {canSelect && !option.is_selected && (

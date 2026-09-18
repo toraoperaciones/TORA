@@ -26,7 +26,7 @@ export function TripRail({
   // Estados terminales fuera del flujo: el riel no aplica; mensaje directo.
   if (current === -1) {
     return (
-      <p className="text-body-s text-text-secondary">
+      <p className="text-body-s text-foreground/75">
         {status === "cancelled"
           ? "Este viaje se canceló. Si necesitas algo similar, solicita uno nuevo."
           : "El cargo de este viaje fue reembolsado a tu billetera."}
@@ -54,7 +54,7 @@ export function TripRail({
                 aria-hidden
                 className={cn(
                   "absolute left-[5px] top-4 h-full w-px",
-                  done || active ? "bg-layer-5" : "bg-border-subtle"
+                  done || active ? "bg-accent" : "bg-border"
                 )}
               />
             )}
@@ -62,30 +62,30 @@ export function TripRail({
               aria-current={active ? "step" : undefined}
               className={cn(
                 "relative mt-1 h-[11px] w-[11px] shrink-0 rounded-full border",
-                done && "border-offwhite bg-offwhite",
-                active && "border-offwhite ring-2 ring-offwhite/30",
+                done && "border-border bg-muted",
+                active && "border-border ring-2 ring-ring/30",
                 !done && !active && "border-border-strong bg-transparent",
-                money && "border-forest bg-forest ring-2 ring-forest/25"
+                money && "border-primary bg-primary ring-2 ring-ring/25"
               )}
             />
             <div className="min-w-0">
               <p
                 className={cn(
                   "text-body-s font-medium",
-                  (done || active) && "text-text-primary",
-                  !done && !active && "text-text-tertiary",
-                  money && "text-forest"
+                  (done || active) && "text-foreground",
+                  !done && !active && "text-muted-foreground",
+                  money && "text-primary"
                 )}
               >
                 {milestone.label}
                 {active && (
-                  <span className="ml-2 font-mono text-caption text-text-tertiary">
+                  <span className="ml-2 font-mono text-caption text-muted-foreground">
                     {isViaje ? departureDate : "en curso"}
                   </span>
                 )}
               </p>
               {active && (
-                <p className="mt-0.5 text-caption text-text-secondary">{milestone.hint}</p>
+                <p className="mt-0.5 text-caption text-foreground/75">{milestone.hint}</p>
               )}
             </div>
           </li>

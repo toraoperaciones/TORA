@@ -1,14 +1,13 @@
-import { cn } from "@/lib/utils";
+import { cn } from "cn"
 
-/** Skeleton TORA — shimmer sobre capas de opacidad, sin gradientes de color. */
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="skeleton"
-      className={cn("animate-shimmer rounded-md", className)}
+      className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
-  );
+  )
 }
 
-export { Skeleton };
+export { Skeleton }

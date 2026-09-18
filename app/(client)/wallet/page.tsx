@@ -24,10 +24,10 @@ const TX_TYPE_LABEL: Record<string, string> = {
 };
 
 const TX_STATUS_CLASS: Record<string, string> = {
-  pending: "border-border-default bg-transparent text-text-primary",
-  completed: "border-transparent bg-forest text-offwhite",
-  rejected: "border-border-default bg-transparent text-text-secondary",
-  pending_payment: "border-transparent bg-layer-3 text-text-primary",
+  pending: "border-border bg-transparent text-foreground",
+  completed: "border-transparent bg-primary text-foreground",
+  rejected: "border-border bg-transparent text-foreground/75",
+  pending_payment: "border-transparent bg-muted text-foreground",
 };
 
 const PAGE_SIZE = 20;
@@ -54,7 +54,7 @@ export default async function WalletPage({
     return (
       <div className="flex flex-col gap-8">
         <h1>Billetera</h1>
-        <p className="text-body-s text-text-secondary">
+        <p className="text-body-s text-foreground/75">
           Tu usuario no tiene tenant asignado.
         </p>
       </div>
@@ -93,46 +93,46 @@ export default async function WalletPage({
 
       {ctx.role === "CLIENT_ADMIN" && <ReceiptUpload tenantId={tenantId} />}
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         {transactions.length === 0 ? (
-          <p className="text-body-s text-text-secondary">
+          <p className="text-body-s text-foreground/75">
             Aún no hay transacciones registradas.
           </p>
         ) : (
           <>
             <Table>
               <TableHeader>
-                <TableRow className="border-border-subtle hover:bg-transparent">
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Fecha
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Tipo
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Referencia
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Estado
                   </TableHead>
-                  <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                     Monto
                   </TableHead>
-                  <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                     Comprobante
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {transactions.map((tx) => (
-                  <TableRow key={tx.id} className="border-border-subtle">
-                    <TableCell className="text-body-s text-text-primary">
+                  <TableRow key={tx.id} className="border-border">
+                    <TableCell className="text-body-s text-foreground">
                       {formatDate(tx.created_at)}
                     </TableCell>
-                    <TableCell className="text-body-s text-text-primary">
+                    <TableCell className="text-body-s text-foreground">
                       {TX_TYPE_LABEL[tx.type] ?? tx.type}
                     </TableCell>
-                    <TableCell className="max-w-[220px] truncate text-body-s text-text-secondary">
+                    <TableCell className="max-w-[220px] truncate text-body-s text-foreground/75">
                       {tx.reference ?? "—"}
                     </TableCell>
                     <TableCell>
@@ -149,14 +149,14 @@ export default async function WalletPage({
                               : "Por pagar"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right text-body-s font-semibold tabular-nums text-text-primary">
+                    <TableCell className="text-right text-body-s font-semibold tabular-nums text-foreground">
                       {formatMXN(Number(tx.amount))}
                     </TableCell>
                     <TableCell className="text-right">
                       {tx.receipt_url ? (
                         <ViewReceiptButton path={tx.receipt_url} />
                       ) : (
-                        <span className="text-caption text-text-secondary">—</span>
+                        <span className="text-caption text-foreground/75">—</span>
                       )}
                     </TableCell>
                   </TableRow>
@@ -165,7 +165,7 @@ export default async function WalletPage({
             </Table>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-caption text-text-secondary">
+              <p className="text-caption text-foreground/75">
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">

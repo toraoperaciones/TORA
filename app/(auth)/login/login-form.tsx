@@ -74,15 +74,15 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="border-border-hairline bg-navy-lift shadow-none">
+    <Card className="border-border bg-card shadow-none">
       <CardHeader className="items-center text-center">
         <div className="mb-2 flex justify-center">
           <Logo variant="lockup" theme="light" size="lg" />
         </div>
-        <CardTitle className="font-display text-h2 text-text-primary">
+        <CardTitle className="font-display text-h2 text-foreground">
           Inicia sesión
         </CardTitle>
-        <CardDescription className="text-body-s text-text-tertiary">
+        <CardDescription className="text-body-s text-muted-foreground">
           Accede a tu cuenta corporativa.
         </CardDescription>
       </CardHeader>
@@ -98,7 +98,7 @@ export function LoginForm() {
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-caption font-semibold text-text-primary">
+              <p className="text-caption font-semibold text-foreground">
                 {errors.email.message}
               </p>
             )}
@@ -114,7 +114,7 @@ export function LoginForm() {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-caption font-semibold text-text-primary">
+              <p className="text-caption font-semibold text-foreground">
                 {errors.password.message}
               </p>
             )}
@@ -138,11 +138,11 @@ export function LoginForm() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-body-s text-text-tertiary">
+        <p className="mt-6 text-center text-body-s text-muted-foreground">
           ¿No tienes cuenta?{" "}
           <Link
             href="/register"
-            className="font-semibold text-text-primary underline underline-offset-4 hover:text-text-secondary"
+            className="font-semibold text-foreground underline underline-offset-4 hover:text-foreground/75"
           >
             Regístrate
           </Link>

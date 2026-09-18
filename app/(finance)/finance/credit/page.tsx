@@ -138,11 +138,11 @@ export default async function FinanceCreditPage() {
       <CreditApprovalBanner />
 
       {awaitingTrips.length > 0 && (
-        <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
-          <h2 className="font-display text-h4 text-text-primary">
+        <div className="rounded-lg border border-border bg-card p-6">
+          <h2 className="font-display text-h4 text-foreground">
             Solicitudes de crédito pendientes
           </h2>
-          <p className="mt-1 text-body-s text-text-secondary">
+          <p className="mt-1 text-body-s text-foreground/75">
             Trips con opción seleccionada cuyo saldo no cubre. Aprobar crédito
             confirma la reserva y deja el cargo a 30 días.
           </p>
@@ -150,13 +150,13 @@ export default async function FinanceCreditPage() {
             {awaitingTrips.map((t) => (
               <li
                 key={t.id}
-                className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle bg-layer-3 px-4 py-3"
+                className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted px-4 py-3"
               >
                 <div>
-                  <p className="text-body-s font-semibold text-text-primary">
+                  <p className="text-body-s font-semibold text-foreground">
                     {tenantNames.get(t.tenant_id) ?? t.tenant_id} → {t.destination}
                   </p>
-                  <p className="text-caption text-text-secondary tabular-nums">
+                  <p className="text-caption text-foreground/75 tabular-nums">
                     Cargo pendiente: {formatMXN(t.charge_amount)}
                   </p>
                 </div>
@@ -178,32 +178,32 @@ export default async function FinanceCreditPage() {
         </AlertDescription>
       </Alert>
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         {tenants.length === 0 ? (
-          <p className="text-body-s text-text-secondary">Sin clientes registrados.</p>
+          <p className="text-body-s text-foreground/75">Sin clientes registrados.</p>
         ) : (
           <Table>
             <TableHeader>
-              <TableRow className="border-border-subtle hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Límite aprobado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Utilizado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Disponible
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Interés acumulado
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                   Estado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                   Acciones
                 </TableHead>
               </TableRow>
@@ -228,23 +228,23 @@ export default async function FinanceCreditPage() {
                 );
 
                 return (
-                  <TableRow key={tenant.id} className="border-border-subtle align-top">
-                    <TableCell className="text-body-s font-semibold text-text-primary">
+                  <TableRow key={tenant.id} className="border-border align-top">
+                    <TableCell className="text-body-s font-semibold text-foreground">
                       {tenant.name}
-                      <p className="text-caption font-normal text-text-secondary">
+                      <p className="text-caption font-normal text-foreground/75">
                         RFC {tenant.rfc ?? "—"} · crédito {tenant.credit_days}d
                       </p>
                       {/* Movimientos expandibles: charges pending_payment */}
                       {tenantCharges.length > 0 && (
                         <details className="mt-2">
-                          <summary className="cursor-pointer text-caption font-normal text-text-secondary hover:underline">
+                          <summary className="cursor-pointer text-caption font-normal text-foreground/75 hover:underline">
                             Ver movimientos ({tenantCharges.length})
                           </summary>
-                          <ul className="mt-2 flex flex-col gap-1 border-l border-border-subtle pl-3">
+                          <ul className="mt-2 flex flex-col gap-1 border-l border-border pl-3">
                             {tenantCharges.map((charge) => (
                               <li
                                 key={charge.id}
-                                className="flex items-center justify-between gap-3 text-caption text-text-primary"
+                                className="flex items-center justify-between gap-3 text-caption text-foreground"
                               >
                                 <span>
                                   {charge.reference ?? charge.id.slice(0, 8)} ·{" "}
@@ -260,19 +260,19 @@ export default async function FinanceCreditPage() {
                         </details>
                       )}
                     </TableCell>
-                    <TableCell className="text-right text-body-s tabular-nums text-text-primary">
+                    <TableCell className="text-right text-body-s tabular-nums text-foreground">
                       {line ? formatMXN(limit) : "—"}
                     </TableCell>
-                    <TableCell className="text-right text-body-s tabular-nums text-text-primary">
+                    <TableCell className="text-right text-body-s tabular-nums text-foreground">
                       {used > 0 ? formatMXN(used) : "—"}
                     </TableCell>
-                    <TableCell className="text-right text-body-s tabular-nums text-text-primary">
+                    <TableCell className="text-right text-body-s tabular-nums text-foreground">
                       {line ? formatMXN(Math.max(0, limit - used)) : "—"}
                     </TableCell>
                     <TableCell
                       className={cn(
                         "text-right text-body-s tabular-nums",
-                        interest > 0 ? "font-semibold text-text-primary" : "text-text-secondary"
+                        interest > 0 ? "font-semibold text-foreground" : "text-foreground/75"
                       )}
                     >
                       {formatMXN(interest)}
@@ -283,8 +283,8 @@ export default async function FinanceCreditPage() {
                         className={cn(
                           "whitespace-nowrap font-medium",
                           tenant.status === "active"
-                            ? "border-transparent bg-forest text-offwhite"
-                            : "border-border-default bg-transparent text-text-secondary"
+                            ? "border-transparent bg-primary text-foreground"
+                            : "border-border bg-transparent text-foreground/75"
                         )}
                       >
                         {tenant.status === "active" ? "Activo" : tenant.status}

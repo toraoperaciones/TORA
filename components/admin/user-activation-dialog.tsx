@@ -91,10 +91,10 @@ export function UserActivationDialog({
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">
+          <DialogTitle className="font-display text-h4 text-foreground">
             Activar usuario
           </DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogDescription className="text-body-s text-foreground/75">
             {user.full_name ?? "—"} · {user.email}
           </DialogDescription>
         </DialogHeader>

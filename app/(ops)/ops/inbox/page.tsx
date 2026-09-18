@@ -60,16 +60,16 @@ function TripCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-lg border bg-navy-lift transition-colors duration-150 hover:border-border-default sm:flex-row sm:items-center",
+        "flex flex-col gap-4 rounded-lg border bg-card transition-colors duration-150 hover:border-border sm:flex-row sm:items-center",
         hero ? "p-6" : "p-5",
-        urgent ? "border-forest/40" : "border-border-subtle"
+        urgent ? "border-primary/40" : "border-border"
       )}
     >
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span
             className={cn(
-              "font-display font-semibold text-text-primary",
+              "font-display font-semibold text-foreground",
               hero ? "text-h3" : "text-body-m"
             )}
           >
@@ -86,18 +86,18 @@ function TripCard({
         </div>
         <p
           className={cn(
-            "mt-1.5 flex items-center gap-1.5 text-text-secondary",
+            "mt-1.5 flex items-center gap-1.5 text-foreground/75",
             hero ? "text-body-m" : "text-body-s"
           )}
         >
           {trip.origin}
-          <ArrowRight className="h-3.5 w-3.5 text-text-muted" aria-hidden />
+          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/70" aria-hidden />
           {trip.destination}
-          <span className="text-text-muted">
+          <span className="text-muted-foreground/70">
             · {trip.passengers} pax
           </span>
         </p>
-        <p className="mt-1 flex items-center gap-1.5 text-caption text-text-tertiary">
+        <p className="mt-1 flex items-center gap-1.5 text-caption text-muted-foreground">
           <Clock className="h-3 w-3" aria-hidden />
           {timeAgo(trip.created_at)} · sale{" "}
           <span className="font-mono">{trip.departure_date}</span> ·{" "}
@@ -176,10 +176,10 @@ export default async function OpsInboxPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-h2 text-text-primary">
+        <h1 className="font-display text-h2 text-foreground">
           Bandeja de cotización
         </h1>
-        <p className="mt-1 text-body-s text-text-tertiary">
+        <p className="mt-1 text-body-s text-muted-foreground">
           {trips.length} solicitud{trips.length === 1 ? "" : "es"} pendiente
           {trips.length === 1 ? "" : "s"}
           {urgentCount > 0
@@ -194,19 +194,19 @@ export default async function OpsInboxPage({
           <div
             key={m.label}
             data-metric
-            className="rounded-lg border border-border-subtle bg-navy-lift px-4 py-3"
+            className="rounded-lg border border-border bg-card px-4 py-3"
           >
-            <p className="text-caption uppercase tracking-wider text-text-tertiary">
+            <p className="text-caption uppercase tracking-wider text-muted-foreground">
               {m.label}
             </p>
-            <p className="mt-1 font-display text-h2 tabular-nums text-text-primary">
+            <p className="mt-1 font-display text-h2 tabular-nums text-foreground">
               {m.value}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-1 rounded-lg border border-border-subtle bg-layer-1 p-1 sm:w-fit">
+      <div className="flex flex-wrap items-center gap-1 rounded-lg border border-border bg-muted/50 p-1 sm:w-fit">
         {tabs.map((tab) => (
           <Link
             key={tab.value}
@@ -215,8 +215,8 @@ export default async function OpsInboxPage({
             className={cn(
               "flex h-8 items-center rounded-md px-3 text-body-s transition-colors",
               filter === tab.value
-                ? "bg-layer-4 font-semibold text-text-primary"
-                : "text-text-tertiary hover:text-text-primary"
+                ? "bg-accent font-semibold text-foreground"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             {tab.label}
@@ -225,9 +225,9 @@ export default async function OpsInboxPage({
       </div>
 
       {trips.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-border-subtle bg-navy-lift py-14 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-14 text-center">
           <EmptyInvoices className="h-28 w-28" />
-          <p className="text-body-s text-text-tertiary">
+          <p className="text-body-s text-muted-foreground">
             No hay solicitudes pendientes. Buen trabajo.
           </p>
         </div>

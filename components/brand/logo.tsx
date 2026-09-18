@@ -73,7 +73,7 @@ export function Logo({
           className={cn(
             "font-display font-bold uppercase tracking-[0.14em] leading-none",
             WORDMARK_TEXT[size],
-            theme === "light" ? "text-offwhite" : "text-navy"
+            theme === "light" ? "text-foreground" : "text-foreground"
           )}
         >
           TORA

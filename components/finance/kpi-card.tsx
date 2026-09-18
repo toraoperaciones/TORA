@@ -16,12 +16,12 @@ interface KpiCardProps {
  */
 export function KpiCard({ label, value, hint, emphasis = "default" }: KpiCardProps) {
   return (
-    <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
-      <p className="text-caption uppercase tracking-wider text-text-secondary">{label}</p>
+    <div className="rounded-lg border border-border bg-card p-6">
+      <p className="text-caption uppercase tracking-wider text-foreground/75">{label}</p>
       <p
         className={cn(
           "mt-2 flex items-center gap-1.5 font-display text-h2 tabular-nums",
-          emphasis === "positive" ? "text-forest" : "text-text-primary",
+          emphasis === "positive" ? "text-primary" : "text-foreground",
           emphasis === "warning" && "font-semibold"
         )}
       >
@@ -30,7 +30,7 @@ export function KpiCard({ label, value, hint, emphasis = "default" }: KpiCardPro
         )}
         {value}
       </p>
-      {hint && <p className="mt-1 text-caption text-text-secondary">{hint}</p>}
+      {hint && <p className="mt-1 text-caption text-foreground/75">{hint}</p>}
     </div>
   );
 }

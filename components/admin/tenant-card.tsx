@@ -32,22 +32,22 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
   const used = Number(activeLine?.used_amount ?? 0);
 
   return (
-    <div className="flex flex-col rounded-lg border border-border-subtle bg-navy-lift p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border-default">
+    <div className="flex flex-col rounded-lg border border-border bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border">
       <div className="flex items-start gap-3">
         <span
           aria-hidden
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-layer-3 font-display text-body-s font-semibold text-text-secondary"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted font-display text-body-s font-semibold text-foreground/75"
         >
           {initials(tenant.name)}
         </span>
         <div className="min-w-0 flex-1">
           <Link
             href={`/admin/tenants/${tenant.id}`}
-            className="block truncate font-display text-body-m font-semibold text-text-primary hover:underline"
+            className="block truncate font-display text-body-m font-semibold text-foreground hover:underline"
           >
             {tenant.name}
           </Link>
-          <p className="truncate font-mono text-caption text-text-tertiary">
+          <p className="truncate font-mono text-caption text-muted-foreground">
             {tenant.rfc ?? "—"}
           </p>
         </div>
@@ -55,28 +55,26 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div>
-          <p className="text-overline uppercase tracking-wider text-text-muted">
+          <p className="text-overline uppercase tracking-wider text-muted-foreground/70">
             Línea
           </p>
-          <p className="mt-1 font-display text-body-m font-semibold tabular-nums text-text-primary">
+          <p className="mt-1 font-display text-body-m font-semibold tabular-nums text-foreground">
             {formatMXN(line)}
           </p>
         </div>
         <div>
-          <p className="text-overline uppercase tracking-wider text-text-muted">
+          <p className="text-overline uppercase tracking-wider text-muted-foreground/70">
             Crédito usado
           </p>
-          <p className="mt-1 font-display text-body-m font-semibold tabular-nums text-text-primary">
+          <p className="mt-1 font-display text-body-m font-semibold tabular-nums text-foreground">
             {formatMXN(used)}
           </p>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-border-hairline pt-4">
+      <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
         {tenant.status === "active" ? (
-          <Badge variant="outline" dot>
-            Activo
-          </Badge>
+          <Badge variant="outline">Activo</Badge>
         ) : tenant.status === "suspended" ? (
           <Badge variant="warning">
             <AlertCircle className="h-3 w-3" aria-hidden /> Suspendido

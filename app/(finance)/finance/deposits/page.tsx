@@ -60,10 +60,10 @@ export default async function FinanceDepositsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-h2 text-text-primary">
+        <h1 className="font-display text-h2 text-foreground">
           Validar depósitos SPEI
         </h1>
-        <p className="mt-1 flex items-center gap-1.5 text-body-s text-text-tertiary">
+        <p className="mt-1 flex items-center gap-1.5 text-body-s text-muted-foreground">
           <Info className="h-3.5 w-3.5" aria-hidden />
           Al aprobar un depósito, los viajes pendientes de pago del cliente se
           re-evalúan automáticamente.
@@ -77,18 +77,18 @@ export default async function FinanceDepositsPage() {
         scale="l"
         animated={false}
       >
-        <p className="mt-2 text-body-s text-text-secondary">
+        <p className="mt-2 text-body-s text-foreground/75">
           {deposits.length === 0
             ? "Nada en cola — todo validado."
             : `${deposits.length} depósito${deposits.length === 1 ? "" : "s"} en cola · FIFO`}
         </p>
       </MoneyHero>
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift">
+      <div className="rounded-lg border border-border bg-card">
         {deposits.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-14 text-center">
             <EmptyWallet className="h-28 w-28" />
-            <p className="text-body-s text-text-tertiary">
+            <p className="text-body-s text-muted-foreground">
               No hay depósitos pendientes de validación. Buen trabajo.
             </p>
           </div>
@@ -117,23 +117,23 @@ export default async function FinanceDepositsPage() {
       {/* Nivel 3 — contexto: validados hoy. */}
       {validated.length > 0 ? (
         <section aria-label="Validados hoy" className="flex flex-col gap-3">
-          <h2 className="text-caption uppercase tracking-wider text-text-tertiary">
+          <h2 className="text-caption uppercase tracking-wider text-muted-foreground">
             Validados hoy
           </h2>
-          <ul className="flex flex-col divide-y divide-border-subtle rounded-lg border border-border-subtle bg-navy-lift px-5">
+          <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-card px-5">
             {validated.map((v) => (
               <li key={v.id} className="flex items-center justify-between gap-3 py-3">
-                <span className="text-body-s text-text-primary">
+                <span className="text-body-s text-foreground">
                   {v.tenants?.name ?? "—"}
                 </span>
-                <span className="text-caption text-text-tertiary">
+                <span className="text-caption text-muted-foreground">
                   {new Date(v.validated_at).toLocaleTimeString("es-MX", {
                     hour: "2-digit",
                     minute: "2-digit",
                     timeZone: "America/Mexico_City",
                   })}
                 </span>
-                <span className="font-mono text-body-s font-semibold tabular-nums text-forest">
+                <span className="font-mono text-body-s font-semibold tabular-nums text-primary">
                   +{formatMXN(Number(v.amount))}
                 </span>
               </li>

@@ -1,5 +1,5 @@
 /**
- * Layout del grupo (auth): hero navy-deep con noise sutil y radial depth.
+ * Layout del grupo (auth): split con panel del preset (muted/accent) y radial depth.
  * Grupo de rutas — no afecta URLs (/login, /register, /pending).
  */
 export default function AuthLayout({
@@ -8,7 +8,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-navy-deep px-6 py-8">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 py-8">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-noise opacity-[0.03]"

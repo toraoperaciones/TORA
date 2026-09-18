@@ -40,7 +40,7 @@ export function TenantsGrid({ tenants }: { tenants: TenantRow[] }) {
         <div
           role="tablist"
           aria-label="Filtrar tenants"
-          className="flex flex-wrap items-center gap-1 rounded-lg border border-border-subtle bg-layer-1 p-1"
+          className="flex flex-wrap items-center gap-1 rounded-lg border border-border bg-muted/50 p-1"
         >
           {FILTERS.map((f) => (
             <button
@@ -52,8 +52,8 @@ export function TenantsGrid({ tenants }: { tenants: TenantRow[] }) {
               className={cn(
                 "h-8 rounded-md px-3 text-body-s transition-colors",
                 filter === f.key
-                  ? "bg-layer-4 font-semibold text-text-primary"
-                  : "text-text-tertiary hover:text-text-primary"
+                  ? "bg-accent font-semibold text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
               {f.label}
@@ -73,9 +73,9 @@ export function TenantsGrid({ tenants }: { tenants: TenantRow[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-border-subtle bg-navy-lift py-14 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-14 text-center">
           <EmptySearch className="h-28 w-28" />
-          <p className="text-body-s text-text-tertiary">
+          <p className="text-body-s text-muted-foreground">
             Ningún tenant coincide con el filtro actual.
           </p>
         </div>

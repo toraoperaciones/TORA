@@ -110,10 +110,10 @@ export default async function DashboardPage() {
       {/* Saludo */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-h1 text-text-primary">
+          <h1 className="font-display text-h1 text-foreground">
             {greeting()}{name ? `, ${name}` : ""}.
           </h1>
-          <p className="mt-1 text-body-s text-text-tertiary">
+          <p className="mt-1 text-body-s text-muted-foreground">
             Esto es lo que está pasando en TORA.
           </p>
         </div>
@@ -151,15 +151,15 @@ export default async function DashboardPage() {
           {upcomingTrips.length > 0 ? (
             <div
               data-metric
-              className="flex h-full flex-col justify-between gap-4 rounded-lg border border-border-subtle bg-navy-lift p-6 sm:flex-row sm:items-center"
+              className="flex h-full flex-col justify-between gap-4 rounded-lg border border-border bg-card p-6 sm:flex-row sm:items-center"
             >
               <div>
-                <p className="text-caption uppercase tracking-wider text-text-tertiary">
+                <p className="text-caption uppercase tracking-wider text-muted-foreground">
                   Tu próximo viaje
                 </p>
-                <p className="mt-2 font-display text-h3 font-semibold text-text-primary">
+                <p className="mt-2 font-display text-h3 font-semibold text-foreground">
                   {upcomingTrips[0].destination} ·{" "}
-                  <span className="font-mono text-body-l text-text-secondary">
+                  <span className="font-mono text-body-l text-foreground/75">
                     {upcomingTrips[0].departure_date}
                   </span>
                 </p>
@@ -191,7 +191,7 @@ export default async function DashboardPage() {
             {categories.length === 0 ? (
               <div className="flex flex-col items-center gap-3 py-6 text-center">
                 <EmptyWallet className="h-24 w-24" />
-                <p className="max-w-[38ch] text-body-s text-text-tertiary">
+                <p className="max-w-[38ch] text-body-s text-muted-foreground">
                   Sin actividad este mes. Los gastos aparecerán aquí cuando
                   confirmes tu primer viaje.
                 </p>
@@ -216,12 +216,12 @@ export default async function DashboardPage() {
             {upcomingTrips.length === 0 ? (
               <div className="flex flex-col items-center gap-3 py-6 text-center">
                 <EmptyTrips className="h-24 w-24" />
-                <p className="text-body-s text-text-tertiary">
+                <p className="text-body-s text-muted-foreground">
                   Aún no tienes viajes programados.
                 </p>
               </div>
             ) : (
-              <ul className="flex flex-col divide-y divide-border-subtle">
+              <ul className="flex flex-col divide-y divide-border">
                 {upcomingTrips.map((trip) => (
                   <li
                     key={trip.id}
@@ -230,11 +230,11 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                       <Link
                         href={`/trips/${trip.id}`}
-                        className="text-body-s font-semibold text-text-primary underline-offset-4 hover:underline"
+                        className="text-body-s font-semibold text-foreground underline-offset-4 hover:underline"
                       >
                         {trip.destination}
                       </Link>
-                      <p className="font-mono text-caption text-text-tertiary">
+                      <p className="font-mono text-caption text-muted-foreground">
                         Sale el {trip.departure_date}
                       </p>
                     </div>
@@ -252,7 +252,7 @@ export default async function DashboardPage() {
         <Button
           asChild
           size="lg"
-          className="fixed bottom-6 right-6 z-40 shadow-modal sm:hidden"
+          className="fixed bottom-6 right-6 z-40 shadow-2xl sm:hidden"
         >
           <Link href="/trips/new">Solicitar viaje</Link>
         </Button>
@@ -267,12 +267,12 @@ export default async function DashboardPage() {
           {transactions.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-6 text-center">
               <EmptyWallet className="h-24 w-24" />
-              <p className="text-body-s text-text-tertiary">
+              <p className="text-body-s text-muted-foreground">
                 Aún no hay actividad en tu billetera.
               </p>
             </div>
           ) : (
-            <ul className="flex flex-col divide-y divide-border-subtle">
+            <ul className="flex flex-col divide-y divide-border">
               {transactions.map((tx) => {
                 const isCredit = tx.type === "deposit" || tx.type === "refund";
                 return (
@@ -281,22 +281,22 @@ export default async function DashboardPage() {
                     className="flex items-center justify-between gap-3 py-3"
                   >
                     <div className="min-w-0">
-                      <p className="text-body-s text-text-primary">
+                      <p className="text-body-s text-foreground">
                         <span className="font-semibold">
                           {TX_TYPE_LABEL[tx.type] ?? tx.type}
                         </span>
-                        <span className="ml-2 text-text-tertiary">
+                        <span className="ml-2 text-muted-foreground">
                           {statusLabel(tx.status)}
                         </span>
                       </p>
-                      <p className="text-caption text-text-muted">
+                      <p className="text-caption text-muted-foreground/70">
                         {formatDistanceToNow(new Date(tx.created_at), {
                           addSuffix: true,
                           locale: es,
                         })}
                       </p>
                     </div>
-                    <span className="font-mono text-body-s font-semibold tabular-nums text-text-primary">
+                    <span className="font-mono text-body-s font-semibold tabular-nums text-foreground">
                       {isCredit ? "+" : "−"}
                       {formatMXN(Number(tx.amount))}
                     </span>

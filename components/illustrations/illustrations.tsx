@@ -21,7 +21,7 @@ function Svg({
       fill="none"
       role="img"
       aria-label={label}
-      className={cn("h-40 w-40 text-text-muted/70", className)}
+      className={cn("h-40 w-40 text-muted-foreground/70/70", className)}
       stroke="currentColor"
       strokeWidth={2}
       strokeLinecap="round"

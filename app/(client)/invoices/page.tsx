@@ -14,10 +14,10 @@ import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 
 const INVOICE_STATUS_CLASS: Record<string, string> = {
-  draft: "border-border-default bg-transparent text-text-tertiary",
-  issued: "border-border-default bg-transparent text-text-primary font-semibold",
-  paid: "border-transparent bg-forest text-offwhite",
-  cancelled: "border-border-default bg-transparent text-text-tertiary",
+  draft: "border-border bg-transparent text-muted-foreground",
+  issued: "border-border bg-transparent text-foreground font-semibold",
+  paid: "border-transparent bg-primary text-foreground",
+  cancelled: "border-border bg-transparent text-muted-foreground",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -54,15 +54,15 @@ export default async function InvoicesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-h2 text-text-primary">Facturas</h1>
-        <p className="mt-1 text-body-s text-text-tertiary">
+        <h1 className="font-display text-h2 text-foreground">Facturas</h1>
+        <p className="mt-1 text-body-s text-muted-foreground">
           CFDI mensual consolidado de tu empresa.
         </p>
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift">
+      <div className="rounded-lg border border-border bg-card">
         {invoices.length === 0 ? (
-          <p className="py-10 text-center text-body-s text-text-tertiary">
+          <p className="py-10 text-center text-body-s text-muted-foreground">
             Aún no hay facturas emitidas.
           </p>
         ) : (
@@ -81,22 +81,22 @@ export default async function InvoicesPage() {
               {invoices.map((invoice) => (
                 <TableRow key={invoice.id}>
                   <TableCell>
-                    <span className="font-display font-semibold text-text-primary">
+                    <span className="font-display font-semibold text-foreground">
                       {invoice.period}
                     </span>
                     {invoice.cfdi_uuid && (
-                      <p className="font-mono text-caption text-text-muted">
+                      <p className="font-mono text-caption text-muted-foreground/70">
                         CFDI {invoice.cfdi_uuid.slice(0, 8)}…
                       </p>
                     )}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums text-text-secondary">
+                  <TableCell className="text-right font-mono tabular-nums text-foreground/75">
                     {formatMXN(Number(invoice.subtotal))}
                   </TableCell>
-                  <TableCell className="text-right font-mono tabular-nums text-text-secondary">
+                  <TableCell className="text-right font-mono tabular-nums text-foreground/75">
                     {formatMXN(Number(invoice.iva))}
                   </TableCell>
-                  <TableCell className="text-right font-mono font-semibold tabular-nums text-text-primary">
+                  <TableCell className="text-right font-mono font-semibold tabular-nums text-foreground">
                     {formatMXN(Number(invoice.total))}
                   </TableCell>
                   <TableCell>
@@ -116,7 +116,7 @@ export default async function InvoicesPage() {
                         href={`/invoices/${invoice.id}/print`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-semibold text-text-primary underline underline-offset-4 hover:text-text-secondary"
+                        className="font-semibold text-foreground underline underline-offset-4 hover:text-foreground/75"
                       >
                         PDF
                       </a>
@@ -125,12 +125,12 @@ export default async function InvoicesPage() {
                           href={invoice.xml_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold text-text-primary underline underline-offset-4 hover:text-text-secondary"
+                          className="font-semibold text-foreground underline underline-offset-4 hover:text-foreground/75"
                         >
                           XML
                         </a>
                       ) : (
-                        <span className="text-caption text-text-muted">XML —</span>
+                        <span className="text-caption text-muted-foreground/70">XML —</span>
                       )}
                     </div>
                   </TableCell>

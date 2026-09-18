@@ -80,20 +80,20 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
 
   return (
     <>
-      <tr className="border-border-subtle">
-        <td className="px-4 py-3 text-body-s font-semibold text-text-primary">
+      <tr className="border-border">
+        <td className="px-4 py-3 text-body-s font-semibold text-foreground">
           {deposit.tenants?.name ?? "—"}
         </td>
-        <td className="px-4 py-3 text-body-s text-text-secondary">
+        <td className="px-4 py-3 text-body-s text-foreground/75">
           {deposit.creator?.full_name ?? deposit.creator?.email ?? "—"}
         </td>
-        <td className="px-4 py-3 font-mono text-caption tabular-nums text-text-tertiary">
+        <td className="px-4 py-3 font-mono text-caption tabular-nums text-muted-foreground">
           {deposit.reference ?? "—"}
         </td>
-        <td className="px-4 py-3 text-right font-mono text-body-s font-semibold tabular-nums text-text-primary">
+        <td className="px-4 py-3 text-right font-mono text-body-s font-semibold tabular-nums text-foreground">
           {formatMXN(Number(deposit.amount))}
         </td>
-        <td className="px-4 py-3 text-caption text-text-tertiary">
+        <td className="px-4 py-3 text-caption text-muted-foreground">
           {timeAgo(deposit.created_at)}
         </td>
         <td className="px-4 py-3 text-right">
@@ -106,7 +106,7 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
         <td className="px-4 py-3 text-right">
           <div className="flex justify-end gap-2">
             <Button
-              variant="success"
+              variant="default"
               size="sm"
               disabled={busy !== null}
               onClick={handleApprove}
@@ -134,10 +134,10 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
       <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-text-primary">
+            <DialogTitle className="font-display text-h4 text-foreground">
               Rechazar depósito
             </DialogTitle>
-            <DialogDescription className="text-body-s text-text-tertiary">
+            <DialogDescription className="text-body-s text-muted-foreground">
               El cliente verá el depósito como rechazado. Explica el motivo.
             </DialogDescription>
           </DialogHeader>
@@ -156,7 +156,7 @@ export function DepositRow({ deposit }: { deposit: DepositRowData }) {
               Cancelar
             </Button>
             <Button
-              variant="danger"
+              variant="destructive"
               disabled={busy !== null || reason.trim().length < 5}
               onClick={handleReject}
             >

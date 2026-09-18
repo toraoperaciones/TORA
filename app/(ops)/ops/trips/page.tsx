@@ -112,55 +112,55 @@ export default async function OpsTripsPage({
 
       <TripsFilters tenants={tenants ?? []} />
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         {trips.length === 0 ? (
-          <p className="text-body-s text-text-secondary">
+          <p className="text-body-s text-foreground/75">
             No hay viajes con esos filtros.
           </p>
         ) : (
           <>
             <Table>
               <TableHeader>
-                <TableRow className="border-border-subtle hover:bg-transparent">
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Cliente
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Destino
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Salida
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Servicio
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Urgencia
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Estado
                   </TableHead>
-                  <TableHead className="text-right text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
                     Acción
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {trips.map((trip) => (
-                  <TableRow key={trip.id} className="border-border-subtle">
-                    <TableCell className="text-body-s font-semibold text-text-primary">
+                  <TableRow key={trip.id} className="border-border">
+                    <TableCell className="text-body-s font-semibold text-foreground">
                       {trip.tenants?.name ?? "—"}
-                      <p className="text-caption font-normal text-text-secondary">
+                      <p className="text-caption font-normal text-foreground/75">
                         {trip.requester?.full_name ?? ""}
                       </p>
                     </TableCell>
-                    <TableCell className="text-body-s text-text-primary">
+                    <TableCell className="text-body-s text-foreground">
                       {trip.origin} → {trip.destination}
                     </TableCell>
-                    <TableCell className="text-body-s tabular-nums text-text-primary">
+                    <TableCell className="text-body-s tabular-nums text-foreground">
                       {trip.departure_date}
                     </TableCell>
-                    <TableCell className="text-body-s text-text-primary">
+                    <TableCell className="text-body-s text-foreground">
                       {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
                     </TableCell>
                     <TableCell>
@@ -169,8 +169,8 @@ export default async function OpsTripsPage({
                         className={cn(
                           "whitespace-nowrap font-medium",
                           trip.urgency === "urgent"
-                            ? "border-border-default bg-layer-2 text-text-primary font-semibold"
-                            : "border-border-default bg-transparent text-text-primary"
+                            ? "border-border bg-muted/70 text-foreground font-semibold"
+                            : "border-border bg-transparent text-foreground"
                         )}
                       >
                         {trip.urgency === "urgent" ? "Urgente" : "Normal"}
@@ -190,7 +190,7 @@ export default async function OpsTripsPage({
             </Table>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-caption text-text-secondary">
+              <p className="text-caption text-foreground/75">
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">

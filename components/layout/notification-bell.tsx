@@ -83,13 +83,13 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
         aria-label={
           unread > 0 ? `Notificaciones (${unread} sin leer)` : "Notificaciones"
         }
-        className="relative flex h-9 w-9 items-center justify-center rounded-md text-text-tertiary transition-colors hover:bg-layer-2 hover:text-text-primary"
+        className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
       >
         <Bell className="h-4 w-4" aria-hidden />
         {unread > 0 && (
           <span
             aria-hidden
-            className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-offwhite"
+            className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-muted"
           />
         )}
       </button>
@@ -97,13 +97,13 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="right"
-          className="w-full border-border-hairline bg-navy-deep sm:max-w-sm"
+          className="w-full border-border bg-background sm:max-w-sm"
         >
-          <SheetHeader className="border-b border-border-hairline pb-4">
-            <SheetTitle className="font-display text-h4 text-text-primary">
+          <SheetHeader className="border-b border-border pb-4">
+            <SheetTitle className="font-display text-h4 text-foreground">
               Notificaciones
             </SheetTitle>
-            <SheetDescription className="text-caption text-text-tertiary">
+            <SheetDescription className="text-caption text-muted-foreground">
               Actividad de tus viajes y billetera.
             </SheetDescription>
           </SheetHeader>
@@ -112,12 +112,12 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
             {items.length === 0 ? (
               <div className="flex flex-col items-center gap-3 pt-12 text-center">
                 <EmptySearch className="h-24 w-24" />
-                <p className="text-body-s text-text-tertiary">
+                <p className="text-body-s text-muted-foreground">
                   Sin notificaciones por ahora.
                 </p>
               </div>
             ) : (
-              <ul className="flex flex-col divide-y divide-border-subtle">
+              <ul className="flex flex-col divide-y divide-border">
                 {items.map((n) => (
                   <li key={n.id} className="py-3">
                     <div className="flex items-start gap-2.5">
@@ -125,28 +125,28 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
                         aria-hidden
                         className={cn(
                           "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
-                          n.read_at ? "bg-text-muted" : "bg-offwhite"
+                          n.read_at ? "bg-muted-foreground/20" : "bg-muted"
                         )}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-body-s font-medium text-text-primary">
+                        <p className="text-body-s font-medium text-foreground">
                           {TYPE_LABEL[n.type] ?? n.type}
                         </p>
                         {n.payload?.options_count ? (
-                          <p className="mt-0.5 text-caption text-text-tertiary">
+                          <p className="mt-0.5 text-caption text-muted-foreground">
                             {n.payload.options_count} opción
                             {n.payload.options_count === 1 ? "" : "es"} para
                             revisar.
                           </p>
                         ) : null}
-                        <p className="mt-1 text-caption text-text-muted">
+                        <p className="mt-1 text-caption text-muted-foreground/70">
                           {timeAgo(n.created_at)}
                         </p>
                         {canLinkTrips && n.payload?.trip_id && (
                           <Link
                             href={`/trips/${n.payload.trip_id}`}
                             onClick={() => setOpen(false)}
-                            className="mt-2 inline-block text-caption font-semibold text-text-primary underline underline-offset-4"
+                            className="mt-2 inline-block text-caption font-semibold text-foreground underline underline-offset-4"
                           >
                             Ver viaje
                           </Link>

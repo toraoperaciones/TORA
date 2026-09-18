@@ -50,10 +50,10 @@ export function SuspendTenantButton({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">
+          <DialogTitle className="font-display text-h4 text-foreground">
             Suspender a {tenantName}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogDescription className="text-body-s text-foreground/75">
             El cliente dejará de operar y su línea de crédito activa pasará a
             suspendida. Esta acción es manual y reversible desde ADMIN.
           </DialogDescription>

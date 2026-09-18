@@ -54,24 +54,24 @@ export default async function InvoicePrintPage({
   ];
 
   return (
-    <div className="min-h-screen bg-navy-deep py-10 print:bg-white print:py-0">
+    <div className="min-h-screen bg-background py-10 print:bg-white print:py-0">
       <PrintTrigger auto={auto === "1"} />
 
-      <div className="mx-auto w-[210mm] max-w-full bg-white px-[20mm] py-[20mm] text-navy shadow-modal print:shadow-none">
+      <div className="mx-auto w-[210mm] max-w-full bg-white px-[20mm] py-[20mm] text-foreground shadow-2xl print:shadow-none">
         {/* Encabezado */}
-        <div className="flex items-start justify-between border-b-2 border-navy pb-6">
+        <div className="flex items-start justify-between border-b-2 border-border pb-6">
           <div>
             <p className="font-display text-2xl font-bold uppercase tracking-[0.14em]">
               TORA
             </p>
-            <p className="mt-1 text-[11px] leading-relaxed text-graphite">
+            <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
               Infraestructura de viajes corporativos
             </p>
           </div>
           <div className="text-right">
             <p className="font-display text-h3 font-semibold">Factura</p>
             <p className="mt-1 font-mono text-sm">Período {invoice.period}</p>
-            <p className="mt-0.5 text-[11px] uppercase tracking-wider text-graphite">
+            <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted-foreground">
               {invoice.status === "paid"
                 ? "Pagada"
                 : invoice.status === "issued"
@@ -86,18 +86,18 @@ export default async function InvoicePrintPage({
         {/* Datos del receptor */}
         <div className="mt-6 grid grid-cols-2 gap-8">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Receptor
             </p>
             <p className="mt-1 font-display text-body-m font-semibold">
               {tenant?.razon_social ?? tenant?.name ?? "—"}
             </p>
-            <p className="font-mono text-caption text-graphite">
+            <p className="font-mono text-caption text-muted-foreground">
               RFC {tenant?.rfc ?? "—"}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-graphite">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Fecha de emisión
             </p>
             <p className="mt-1 font-mono text-body-s">
@@ -109,14 +109,14 @@ export default async function InvoicePrintPage({
         {/* Conceptos */}
         <table className="mt-8 w-full text-body-s">
           <thead>
-            <tr className="border-b border-navy/20 text-left text-[10px] uppercase tracking-wider text-graphite">
+            <tr className="border-b border-border/20 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="pb-2 font-semibold">Concepto</th>
               <th className="pb-2 text-right font-semibold">Importe</th>
             </tr>
           </thead>
           <tbody>
             {conceptos.map((c) => (
-              <tr key={c.label} className="border-b border-navy/10">
+              <tr key={c.label} className="border-b border-border/10">
                 <td className="py-3">{c.label}</td>
                 <td className="py-3 text-right font-mono tabular-nums">
                   {formatMXN(c.amount)}
@@ -129,19 +129,19 @@ export default async function InvoicePrintPage({
         {/* Totales */}
         <div className="mt-6 flex justify-end">
           <div className="w-64">
-            <div className="flex justify-between py-1 text-body-s text-graphite">
+            <div className="flex justify-between py-1 text-body-s text-muted-foreground">
               <span>Subtotal</span>
               <span className="font-mono tabular-nums">
                 {formatMXN(Number(invoice.subtotal))}
               </span>
             </div>
-            <div className="flex justify-between py-1 text-body-s text-graphite">
+            <div className="flex justify-between py-1 text-body-s text-muted-foreground">
               <span>IVA (16%)</span>
               <span className="font-mono tabular-nums">
                 {formatMXN(Number(invoice.iva))}
               </span>
             </div>
-            <div className="mt-2 flex justify-between border-t-2 border-navy pt-2 font-display text-body-m font-bold">
+            <div className="mt-2 flex justify-between border-t-2 border-border pt-2 font-display text-body-m font-bold">
               <span>Total</span>
               <span className="font-mono tabular-nums">
                 {formatMXN(Number(invoice.total))}
@@ -151,17 +151,17 @@ export default async function InvoicePrintPage({
         </div>
 
         {/* Pie CFDI */}
-        <div className="mt-10 border-t border-navy/20 pt-4">
+        <div className="mt-10 border-t border-border/20 pt-4">
           {invoice.cfdi_uuid ? (
-            <p className="font-mono text-[10px] text-graphite">
+            <p className="font-mono text-[10px] text-muted-foreground">
               CFDI UUID: {invoice.cfdi_uuid}
             </p>
           ) : (
-            <p className="text-[10px] text-graphite">
+            <p className="text-[10px] text-muted-foreground">
               CFDI pendiente de timbrado.
             </p>
           )}
-          <p className="mt-1 text-[10px] text-graphite">
+          <p className="mt-1 text-[10px] text-muted-foreground">
             Este documento es una representación impresa. El CFDI original está
             adjunto.
           </p>
@@ -171,7 +171,7 @@ export default async function InvoicePrintPage({
       <div className="mx-auto mt-6 w-[210mm] max-w-full text-center print:hidden">
         <Link
           href="/invoices"
-          className="text-caption text-text-tertiary underline underline-offset-4 hover:text-text-secondary"
+          className="text-caption text-muted-foreground underline underline-offset-4 hover:text-foreground/75"
         >
           Volver a facturas
         </Link>

@@ -116,9 +116,9 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
   }
 
   return (
-    <Card className="border-border-subtle bg-navy-lift shadow-none">
+    <Card className="border-border bg-card shadow-none">
       <CardHeader>
-        <CardTitle className="font-display text-h4 text-text-primary">
+        <CardTitle className="font-display text-h4 text-foreground">
           Reportar depósito SPEI
         </CardTitle>
       </CardHeader>
@@ -153,7 +153,7 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
                 {...register("amount")}
               />
               {errors.amount && (
-                <p className="text-caption font-semibold text-text-primary">
+                <p className="text-caption font-semibold text-foreground">
                   {errors.amount.message}
                 </p>
               )}
@@ -175,7 +175,6 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
             <Button
               type="submit"
               disabled={submitting}
-              variant={success ? "success" : "default"}
               className="font-display font-semibold"
             >
               {submitting ? "Enviando…" : success ? "Enviado" : "Enviar comprobante"}

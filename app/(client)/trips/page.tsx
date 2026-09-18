@@ -75,47 +75,47 @@ export default async function TripsPage({
         )}
       </div>
 
-      <div className="rounded-lg border border-border-subtle bg-navy-lift p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         {trips.length === 0 ? (
-          <p className="text-body-s text-text-secondary">
+          <p className="text-body-s text-foreground/75">
             Aún no tienes viajes. Solicita el primero en 3 clics.
           </p>
         ) : (
           <>
             <Table>
               <TableHeader>
-                <TableRow className="border-border-subtle hover:bg-transparent">
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Destino
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Fechas
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Servicio
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-text-secondary">
+                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
                     Estado
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {trips.map((trip) => (
-                  <TableRow key={trip.id} className="border-border-subtle">
+                  <TableRow key={trip.id} className="border-border">
                     <TableCell>
                       <Link
                         href={`/trips/${trip.id}`}
-                        className="text-body-s font-semibold text-text-primary underline-offset-4 hover:underline"
+                        className="text-body-s font-semibold text-foreground underline-offset-4 hover:underline"
                       >
                         {trip.destination}
                       </Link>
-                      <p className="text-caption text-text-secondary">Desde {trip.origin}</p>
+                      <p className="text-caption text-foreground/75">Desde {trip.origin}</p>
                     </TableCell>
-                    <TableCell className="text-body-s tabular-nums text-text-primary">
+                    <TableCell className="text-body-s tabular-nums text-foreground">
                       {trip.departure_date}
                       {trip.return_date ? ` → ${trip.return_date}` : ""}
                     </TableCell>
-                    <TableCell className="text-body-s text-text-primary">
+                    <TableCell className="text-body-s text-foreground">
                       {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
                     </TableCell>
                     <TableCell>
@@ -127,7 +127,7 @@ export default async function TripsPage({
             </Table>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-caption text-text-secondary">
+              <p className="text-caption text-foreground/75">
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">

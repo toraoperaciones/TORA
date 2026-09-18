@@ -38,17 +38,17 @@ export function MoneyHero({
     <div
       data-money
       className={cn(
-        "rounded-lg border border-forest/20 bg-navy-lift shadow-glow",
+        "rounded-lg border border-primary/20 bg-card shadow-lg shadow-ring/25",
         scale === "m" ? "p-6" : "p-8",
         className
       )}
     >
-      <p className="text-caption uppercase tracking-wider text-text-tertiary">
+      <p className="text-caption uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
       <p
         className={cn(
-          "mt-2 font-display tabular-nums text-text-primary",
+          "mt-2 font-display tabular-nums text-foreground",
           scale === "m" && "text-display-m",
           scale === "l" && "text-display-l",
           scale === "xl" && "text-display-xl"
@@ -59,16 +59,12 @@ export function MoneyHero({
       {sparkline && sparkline.length >= 2 ? (
         <div
           className={cn(
-            "text-forest",
-            scale === "m" ? "mt-3" : "mt-5"
+            "text-primary",
+            scale === "m" ? "mt-3" : "mt-5",
+            scale === "m" ? "h-6" : "h-8"
           )}
         >
-          <Sparkline
-            points={sparkline}
-            tone="money"
-            width={scale === "m" ? 60 : 120}
-            height={scale === "m" ? 24 : 32}
-          />
+          <Sparkline points={sparkline} tone="money" />
         </div>
       ) : null}
       {children}

@@ -54,10 +54,10 @@ export function ReceiptViewer({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-text-primary">
+          <DialogTitle className="font-display text-h4 text-foreground">
             Comprobante SPEI
           </DialogTitle>
-          <DialogDescription className="text-body-s text-text-secondary">
+          <DialogDescription className="text-body-s text-foreground/75">
             Enlace firmado con validez de 1 hora.
           </DialogDescription>
         </DialogHeader>
@@ -65,11 +65,11 @@ export function ReceiptViewer({
         {loading && <Skeleton className="h-96 w-full" />}
 
         {!loading && error && (
-          <p className="text-body-s font-semibold text-text-primary">{error}</p>
+          <p className="text-body-s font-semibold text-foreground">{error}</p>
         )}
 
         {!loading && signedUrl && isPdf && (
-          <iframe src={signedUrl} title="Comprobante" className="h-96 w-full rounded-md border border-border-subtle" />
+          <iframe src={signedUrl} title="Comprobante" className="h-96 w-full rounded-md border border-border" />
         )}
 
         {!loading && signedUrl && !isPdf && (
@@ -77,7 +77,7 @@ export function ReceiptViewer({
           <img
             src={signedUrl}
             alt="Comprobante SPEI"
-            className="max-h-96 w-full rounded-md border border-border-subtle object-contain"
+            className="max-h-96 w-full rounded-md border border-border object-contain"
           />
         )}
       </DialogContent>
