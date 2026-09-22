@@ -5,14 +5,16 @@
  * - Imprime la tabla email + password nueva (el operador la guarda en el
  *   gestor de secretos; NUNCA se commitea).
  *
+ * Usa la Admin API de GoTrue vía fetch (sin supabase-js: su realtime
+ * requiere WebSocket nativo de Node 22; el script corre en Node 20).
+ *
  * Uso: pnpm exec tsx scripts/rotate-passwords.ts
  */
-import { createClient } from "@supabase/supabase-js";
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const URL_BASE = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!URL || !KEY) {
+if (!URL_BASE || !KEY) {
   console.error("Faltan NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
@@ -54,34 +56,54 @@ function generatePassword(length = 16): string {
   return chars.join("");
 }
 
-async function main() {
-  const admin = createClient(URL, KEY, {
-    auth: { autoRefreshToken: false, persistSession: false },
+async function adminFetch(path: string, init?: RequestInit): Promise<Response> {
+  return fetch(`${URL_BASE}/auth/v1${path}`, {
+    ...init,
+    headers: {
+      apikey: KEY!,
+      Authorization: `Bearer ${KEY!}`,
+      "Content-Type": "application/json",
+      ...(init?.headers ?? {}),
+    },
   });
+}
+
+interface GoTrueUser {
+  id: string;
+  email: string;
+  user_metadata?: Record<string, unknown>;
+}
+
+async function main() {
+  const listRes = await adminFetch("/admin/users?per_page=200");
+  if (!listRes.ok) {
+    console.error(`✗ No pude listar usuarios (HTTP ${listRes.status})`);
+    process.exit(1);
+  }
+  const { users } = (await listRes.json()) as { users: GoTrueUser[] };
+  const byEmail = new Map(users.map((u) => [u.email, u]));
 
   const rows: Array<{ email: string; password: string }> = [];
 
   for (const email of SEED_EMAILS) {
-    const { data, error } = await admin.auth.admin.listUsers({
-      page: 1,
-      perPage: 200,
-    });
-    if (error) throw error;
-    const user = data.users.find((u) => u.email === email);
+    const user = byEmail.get(email);
     if (!user) {
       console.error(`✗ no encontrado: ${email}`);
       continue;
     }
     const password = generatePassword();
-    const { error: updErr } = await admin.auth.admin.updateUserById(user.id, {
-      password,
-      user_metadata: {
-        ...(user.user_metadata ?? {}),
-        must_change_password: true,
-      },
+    const updRes = await adminFetch(`/admin/users/${user.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        password,
+        user_metadata: {
+          ...(user.user_metadata ?? {}),
+          must_change_password: true,
+        },
+      }),
     });
-    if (updErr) {
-      console.error(`✗ error ${email}: ${updErr.message}`);
+    if (!updRes.ok) {
+      console.error(`✗ error ${email}: HTTP ${updRes.status}`);
       continue;
     }
     rows.push({ email, password });
@@ -91,6 +113,9 @@ async function main() {
   console.log("\n=== CREDENCIALES NUEVAS (guardar en gestor de secretos) ===");
   for (const r of rows) {
     console.log(`${r.email}\t${r.password}`);
+  }
+  if (rows.length !== SEED_EMAILS.length) {
+    process.exit(1);
   }
 }
 
