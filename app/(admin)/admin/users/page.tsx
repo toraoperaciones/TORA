@@ -45,7 +45,7 @@ export default async function UsersPage({
     supabase
       .from("users")
       .select(
-        `id, email, full_name, phone, role, status, tenant_id, created_at,
+        `id, email, full_name, phone, role, status, tenant_id, mfa_enabled, created_at,
          tenants (id, name)`
       )
       .order("created_at", { ascending: false }),
@@ -150,6 +150,7 @@ export default async function UsersPage({
                 <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Rol</TableHead>
                 <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Tenant</TableHead>
                 <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Estado</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">MFA</TableHead>
                 <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Creado</TableHead>
                 <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Acciones</TableHead>
               </TableRow>
@@ -175,8 +176,14 @@ export default async function UsersPage({
                         <Badge variant="secondary" className="text-foreground/75">Pendiente</Badge>
                       ) : (
                         <Badge className="border-transparent bg-muted text-foreground/75">
-                          <RiErrorWarningLine className="mr-1 h-3 w-3" /> Suspendido
-                        </Badge>
+                          <RiErrorWarningLine className="mr-1 h-3 w-3" /> Suspendido</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {user.mfa_enabled ? (
+                        <Badge className="border-transparent bg-primary text-primary-foreground">Activo</Badge>
+                      ) : (
+                        <Badge variant="muted">Inactivo</Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-sm text-foreground/75">

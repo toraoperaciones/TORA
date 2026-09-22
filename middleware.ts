@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   //    funciona vía PostgREST (HTTP), no vía pg.
   const { data: profile } = await supabase
     .from("users")
-    .select("role, status")
+    .select("role, status, mfa_enabled")
     .eq("id", user.id)
     .single();
 
@@ -47,6 +47,16 @@ export async function middleware(request: NextRequest) {
   if (status === "pending_approval" || status === "suspended") {
     if (pathname !== "/pending") return redirectTo("/pending");
     return response;
+  }
+
+  // 2.5 MFA: flag encendido + sesión sin segundo factor (AAL1) → /mfa.
+  //     Desde /mfa solo se puede verificar o cerrar sesión.
+  if (profile?.mfa_enabled) {
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal?.currentLevel !== "aal2") {
+      const allowed = pathname === "/mfa" || pathname.startsWith("/auth/");
+      if (!allowed) return redirectTo("/mfa");
+    }
   }
 
   // 3. Usuario activo: fuera de las páginas de auth.
