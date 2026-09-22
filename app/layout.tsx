@@ -47,13 +47,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es-MX" className="dark" suppressHydrationWarning>
+    <html lang="es-MX" className={`${inter.variable} dark`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body
-        className={`${inter.variable} bg-background font-sans text-foreground antialiased`}
-      >
+      <body className="bg-background font-sans text-foreground antialiased">
         <QueryProvider>{children}</QueryProvider>
         <Toaster position="top-right" />
       </body>

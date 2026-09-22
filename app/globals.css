@@ -113,12 +113,13 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
-  --font-heading: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Única fuente del sistema: Inter (variable provista por next/font en <html>). */
+/* Única fuente del sistema: Inter. Familia literal: el @font-face lo emite
+   next/font globalmente, así la cadena no depende de dónde cae la variable. */
 @theme {
-  --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
