@@ -26,7 +26,15 @@ export const PORTAL_HOME: Record<Portal, string> = {
 const STAFF_ALL_ACCESS: Role = "TORA_ADMIN";
 
 /** Rutas accesibles sin sesión. `/auth/*` se cubre por prefijo en isPublicPath. */
-export const PUBLIC_PATHS = ["/", "/login", "/register", "/pending", "/auth"];
+export const PUBLIC_PATHS = [
+  "/",
+  "/login",
+  "/register",
+  "/pending",
+  "/auth",
+  "/aviso-privacidad",
+  "/terminos",
+];
 
 /**
  * Devuelve true si la ruta es pública (accesible sin sesión).
