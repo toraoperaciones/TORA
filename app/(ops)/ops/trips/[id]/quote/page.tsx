@@ -85,7 +85,7 @@ export default async function QuotePage({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <p className="text-caption uppercase tracking-wider text-foreground/75">
+        <p className="text-xs uppercase tracking-wider text-foreground/75">
           <Link href="/ops/inbox" className="hover:underline">
             Bandeja
           </Link>{" "}
@@ -99,7 +99,7 @@ export default async function QuotePage({
 
       <Card className="border-border bg-card shadow-none">
         <CardHeader>
-          <CardTitle className="font-display text-h4 text-foreground">
+          <CardTitle className="text-lg font-semibold text-foreground">
             Resumen del viaje
           </CardTitle>
         </CardHeader>
@@ -107,17 +107,17 @@ export default async function QuotePage({
           <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
             {details.map(([label, value]) => (
               <div key={label}>
-                <dt className="text-caption uppercase tracking-wider text-foreground/75">
+                <dt className="text-xs uppercase tracking-wider text-foreground/75">
                   {label}
                 </dt>
-                <dd className="text-body-s font-medium tabular-nums text-foreground">
+                <dd className="text-sm font-medium tabular-nums text-foreground">
                   {value}
                 </dd>
               </div>
             ))}
           </dl>
           {trip.reason && (
-            <p className="mt-4 border-t border-border pt-4 text-body-s text-foreground/75">
+            <p className="mt-4 border-t border-border pt-4 text-sm text-foreground/75">
               {trip.reason}
             </p>
           )}
@@ -143,12 +143,12 @@ export default async function QuotePage({
       {trip.status === "awaiting_payment" && (
         <Card className="border-border bg-card shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               Pago pendiente
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <p className="text-body-s text-foreground/75">
+            <p className="text-sm text-foreground/75">
               El cliente ya seleccionó una opción. Esperando confirmación de pago
               (automática si el saldo alcanza, o cuando Finanzas apruebe el
               depósito).
@@ -163,20 +163,20 @@ export default async function QuotePage({
       {trip.status === "confirmed" && (
         <Card className="border-border bg-card shadow-none">
           <CardHeader>
-            <CardTitle className="font-display text-h4 text-foreground">
+            <CardTitle className="text-lg font-semibold text-foreground">
               Booking
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <span className="text-caption uppercase tracking-wider text-foreground/75">
+              <span className="text-xs uppercase tracking-wider text-foreground/75">
                 Confirmación
               </span>
-              <span className="text-body-s font-semibold tabular-nums text-foreground">
+              <span className="text-sm font-semibold tabular-nums text-foreground">
                 {booking?.confirmation_number ?? "—"}
               </span>
               {booking?.supplier_reference && (
-                <span className="text-caption text-foreground/75">
+                <span className="text-xs text-foreground/75">
                   Ref. proveedor: {booking.supplier_reference}
                 </span>
               )}
@@ -188,7 +188,7 @@ export default async function QuotePage({
 
       {trip.status === "awaiting_selection" && (
         <div className="flex items-center justify-between rounded-lg border border-border bg-card p-6">
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             El cliente está viendo estas opciones. Puedes reabrir la cotización
             para editarlas.
           </p>

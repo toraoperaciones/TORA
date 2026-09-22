@@ -44,16 +44,16 @@ export function SuspendTenantButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="font-display font-semibold">
+        <Button variant="outline" size="sm" className="font-semibold">
           Suspender cliente
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Suspender a {tenantName}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             El cliente dejará de operar y su línea de crédito activa pasará a
             suspendida. Esta acción es manual y reversible desde ADMIN.
           </DialogDescription>
@@ -62,11 +62,11 @@ export function SuspendTenantButton({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cancelar
           </Button>
-          <Button onClick={handleSuspend} disabled={busy} className="font-display font-semibold">
+          <Button onClick={handleSuspend} disabled={busy} className="font-semibold">
             {busy ? "Suspendiendo…" : "Confirmar suspensión"}
           </Button>
         </DialogFooter>

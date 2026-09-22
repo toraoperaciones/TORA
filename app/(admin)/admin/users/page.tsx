@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { RiErrorWarningLine } from "@remixicon/react";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
@@ -74,7 +74,7 @@ export default async function UsersPage({
     <Link
       key={label + href}
       href={href}
-      className={`rounded-md border px-3 py-1.5 text-caption font-display font-semibold transition-colors ${
+      className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors ${
         active
           ? "border-transparent bg-card text-foreground"
           : "border-border bg-card text-foreground/75 hover:border-foreground/30"
@@ -95,15 +95,15 @@ export default async function UsersPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-display text-h2 text-foreground">Usuarios</h1>
+      <h1 className="text-2xl font-semibold text-foreground">Usuarios</h1>
 
       {pendingCount > 0 && status !== "pending_approval" && (
         <div className="flex items-center justify-between rounded-lg border border-border bg-card p-4">
-          <p className="text-body-s font-semibold text-foreground">
+          <p className="text-sm font-semibold text-foreground">
             {pendingCount} {pendingCount === 1 ? "usuario pendiente" : "usuarios pendientes"} de
             activación.
           </p>
-          <Button asChild className="font-display font-semibold">
+          <Button asChild className="font-semibold">
             <Link href={qs({ status: "pending_approval" })}>Ir a pendientes</Link>
           </Button>
         </div>
@@ -132,26 +132,26 @@ export default async function UsersPage({
           <input type="hidden" name="role" value={role} />
           <input type="hidden" name="tenant" value={tenantFilter} />
           <Input name="q" placeholder="Buscar por nombre o email" defaultValue={params.q ?? ""} />
-          <Button type="submit" variant="outline" className="font-display font-semibold">
+          <Button type="submit" variant="outline" className="font-semibold">
             Buscar
           </Button>
         </form>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-body-s text-foreground/75">No hay usuarios que coincidan con los filtros.</p>
+        <p className="text-sm text-foreground/75">No hay usuarios que coincidan con los filtros.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Nombre</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Email</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Rol</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Tenant</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Estado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Creado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Acciones</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Nombre</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Email</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Rol</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Tenant</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Estado</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Creado</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -162,10 +162,10 @@ export default async function UsersPage({
                     key={user.id}
                     className={isPending ? "border-l-2 border-l-foreground/30" : undefined}
                   >
-                    <TableCell className="text-body-s text-foreground">{user.full_name ?? "—"}</TableCell>
-                    <TableCell className="text-body-s text-foreground/75">{user.email}</TableCell>
-                    <TableCell className="text-body-s text-foreground">{user.role}</TableCell>
-                    <TableCell className="text-body-s text-foreground/75">
+                    <TableCell className="text-sm text-foreground">{user.full_name ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-foreground/75">{user.email}</TableCell>
+                    <TableCell className="text-sm text-foreground">{user.role}</TableCell>
+                    <TableCell className="text-sm text-foreground/75">
                       {user.tenants?.[0]?.name ?? "TORA interno"}
                     </TableCell>
                     <TableCell>
@@ -175,11 +175,11 @@ export default async function UsersPage({
                         <Badge variant="secondary" className="text-foreground/75">Pendiente</Badge>
                       ) : (
                         <Badge className="border-transparent bg-muted text-foreground/75">
-                          <AlertCircle className="mr-1 h-3 w-3" /> Suspendido
+                          <RiErrorWarningLine className="mr-1 h-3 w-3" /> Suspendido
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell className="text-body-s text-foreground/75">
+                    <TableCell className="text-sm text-foreground/75">
                       {formatDate(user.created_at)}
                     </TableCell>
                     <TableCell>

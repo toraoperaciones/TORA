@@ -91,10 +91,10 @@ export function UserActivationDialog({
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Activar usuario
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             {user.full_name ?? "—"} · {user.email}
           </DialogDescription>
         </DialogHeader>
@@ -143,7 +143,7 @@ export function UserActivationDialog({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cancelar
           </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
-import { AlertCircle } from "lucide-react";
+import { RiErrorWarningLine } from "@remixicon/react";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -28,17 +28,17 @@ export function PortalErrorView({
 
   return (
     <div className="flex flex-col items-center gap-5 rounded-lg border border-border bg-card px-6 py-14 text-center">
-      <AlertCircle className="h-7 w-7 text-muted-foreground" aria-hidden />
+      <RiErrorWarningLine className="h-7 w-7 text-muted-foreground" aria-hidden />
       <div>
-        <h2 className="font-display text-h3 font-semibold text-foreground">
+        <h2 className="text-xl font-semibold font-semibold text-foreground">
           Algo no salió como esperábamos.
         </h2>
-        <p className="mx-auto mt-2 max-w-[46ch] text-body-s text-foreground/75">
+        <p className="mx-auto mt-2 max-w-[46ch] text-sm text-foreground/75">
           El error quedó registrado. Reintenta; si persiste, contacta a
           soporte con el código de referencia.
         </p>
         {error.digest ? (
-          <p className="mt-2 font-mono text-caption text-muted-foreground/70">
+          <p className="mt-2 font-mono text-xs text-muted-foreground/70">
             Ref: {error.digest}
           </p>
         ) : null}
@@ -55,10 +55,10 @@ export function PortalNotFoundView() {
     <div className="flex flex-col items-center gap-5 rounded-lg border border-border bg-card px-6 py-14 text-center">
       <EmptySearch className="h-32 w-32" />
       <div>
-        <h2 className="font-display text-h3 font-semibold text-foreground">
+        <h2 className="text-xl font-semibold font-semibold text-foreground">
           Esta página no existe o cambió de dirección.
         </h2>
-        <p className="mt-2 text-body-s text-foreground/75">
+        <p className="mt-2 text-sm text-foreground/75">
           Verifica el enlace o vuelve al inicio.
         </p>
       </div>

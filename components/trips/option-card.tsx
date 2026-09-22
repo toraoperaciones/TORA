@@ -93,7 +93,7 @@ export function OptionCard({
       <CardContent className="flex items-center justify-between gap-4 pt-6">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-h4 text-foreground">{option.provider}</h3>
+            <h3 className="text-lg font-semibold text-foreground">{option.provider}</h3>
             {option.is_selected && (
               <Badge className="border-transparent bg-primary text-foreground">
                 Seleccionada
@@ -101,30 +101,30 @@ export function OptionCard({
             )}
           </div>
           {details && (
-            <p className="mt-1 truncate text-body-s text-foreground/75">{details}</p>
+            <p className="mt-1 truncate text-sm text-foreground/75">{details}</p>
           )}
           {option.expires_at && (
-            <p className="mt-1 text-caption text-foreground/75">
+            <p className="mt-1 text-xs text-foreground/75">
               Vigencia: {new Date(option.expires_at).toLocaleDateString("es-MX")}
             </p>
           )}
         </div>
 
         <div className="flex shrink-0 items-center gap-4">
-          <span className="font-display text-h3 tabular-nums text-foreground">
+          <span className="text-xl font-semibold tabular-nums text-foreground">
             {formatMXN(option.final_price)}
           </span>
           {canSelect && !option.is_selected && (
             <Button
               onClick={handleSelect}
               disabled={selecting}
-              className="font-display font-semibold"
+              className="font-semibold"
             >
               {selecting ? "Seleccionando…" : "Seleccionar"}
             </Button>
           )}
           {option.is_selected && (
-            <Button disabled variant="outline" className="font-display font-semibold">
+            <Button disabled variant="outline" className="font-semibold">
               Seleccionada
             </Button>
           )}

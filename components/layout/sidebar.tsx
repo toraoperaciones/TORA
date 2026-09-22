@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Search } from "lucide-react";
+import { RiLogoutBoxLine, RiSearchLine } from "@remixicon/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -80,15 +80,15 @@ export function PortalSidebar({
             <SidebarMenuButton size="lg" tooltip={fullName || "Usuario"}>
               <span
                 aria-hidden
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted font-display text-caption font-semibold text-foreground/75"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground/75"
               >
                 {(fullName || "T").slice(0, 1).toUpperCase()}
               </span>
               <span className="grid flex-1 leading-tight" data-usercard>
-                <span className="truncate text-body-s font-semibold">
+                <span className="truncate text-sm font-semibold">
                   {fullName || "Usuario"}
                 </span>
-                <span className="truncate text-caption text-muted-foreground">
+                <span className="truncate text-xs text-muted-foreground">
                   {email}
                 </span>
               </span>
@@ -98,9 +98,9 @@ export function PortalSidebar({
             <SidebarMenuButton
               tooltip="Buscar (⌘K)"
               onClick={openPalette}
-              className="text-body-s text-muted-foreground"
+              className="text-sm text-muted-foreground"
             >
-              <Search aria-hidden />
+              <RiSearchLine aria-hidden />
               <span>Buscar</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -109,9 +109,9 @@ export function PortalSidebar({
               tooltip={loggingOut ? "Cerrando sesión…" : "Cerrar sesión"}
               onClick={logout}
               disabled={loggingOut}
-              className="text-body-s text-muted-foreground"
+              className="text-sm text-muted-foreground"
             >
-              <LogOut aria-hidden />
+              <RiLogoutBoxLine aria-hidden />
               <span>{loggingOut ? "Cerrando sesión…" : "Cerrar sesión"}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -26,7 +26,7 @@ export function TripRail({
   // Estados terminales fuera del flujo: el riel no aplica; mensaje directo.
   if (current === -1) {
     return (
-      <p className="text-body-s text-foreground/75">
+      <p className="text-sm text-foreground/75">
         {status === "cancelled"
           ? "Este viaje se canceló. Si necesitas algo similar, solicita uno nuevo."
           : "El cargo de este viaje fue reembolsado a tu billetera."}
@@ -71,7 +71,7 @@ export function TripRail({
             <div className="min-w-0">
               <p
                 className={cn(
-                  "text-body-s font-medium",
+                  "text-sm font-medium",
                   (done || active) && "text-foreground",
                   !done && !active && "text-muted-foreground",
                   money && "text-primary"
@@ -79,13 +79,13 @@ export function TripRail({
               >
                 {milestone.label}
                 {active && (
-                  <span className="ml-2 font-mono text-caption text-muted-foreground">
+                  <span className="ml-2 font-mono text-xs text-muted-foreground">
                     {isViaje ? departureDate : "en curso"}
                   </span>
                 )}
               </p>
               {active && (
-                <p className="mt-0.5 text-caption text-foreground/75">{milestone.hint}</p>
+                <p className="mt-0.5 text-xs text-foreground/75">{milestone.hint}</p>
               )}
             </div>
           </li>

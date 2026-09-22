@@ -43,15 +43,15 @@ export function MoneyHero({
         className
       )}
     >
-      <p className="text-caption uppercase tracking-wider text-muted-foreground">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
       <p
         className={cn(
-          "mt-2 font-display tabular-nums text-foreground",
-          scale === "m" && "text-display-m",
-          scale === "l" && "text-display-l",
-          scale === "xl" && "text-display-xl"
+          "mt-2 tabular-nums text-foreground",
+          scale === "m" && "text-4xl font-semibold",
+          scale === "l" && "text-5xl font-bold",
+          scale === "xl" && "text-6xl font-bold"
         )}
       >
         {formatMXN(value)}

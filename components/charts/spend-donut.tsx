@@ -55,7 +55,7 @@ export function SpendDonut({ slices, centerLabel, className }: SpendDonutProps) 
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-        <span className="pointer-events-none absolute inset-0 flex items-center justify-center font-display text-caption font-semibold tabular-nums text-foreground/75">
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs font-semibold tabular-nums text-foreground/75">
           {centerLabel}
         </span>
       </div>
@@ -64,7 +64,7 @@ export function SpendDonut({ slices, centerLabel, className }: SpendDonutProps) 
         {slices.map((s, i) => (
           <li
             key={s.label}
-            className="flex items-center gap-2.5 text-body-s text-foreground/75"
+            className="flex items-center gap-2.5 text-sm text-foreground/75"
           >
             <span
               aria-hidden

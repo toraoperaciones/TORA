@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { RiMoonLine, RiSunLine } from "@remixicon/react";
 import { useEffect, useState } from "react";
 
 /**
@@ -44,9 +44,9 @@ export function ThemeToggle({ className }: { className?: string }) {
       }
     >
       {mounted && isLight ? (
-        <Moon className="h-4 w-4" aria-hidden />
+        <RiMoonLine className="h-4 w-4" aria-hidden />
       ) : (
-        <Sun className="h-4 w-4" aria-hidden />
+        <RiSunLine className="h-4 w-4" aria-hidden />
       )}
     </button>
   );

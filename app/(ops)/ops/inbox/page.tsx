@@ -1,4 +1,4 @@
-import { ArrowRight, Clock } from "lucide-react";
+import { RiArrowRightLine, RiTimeLine } from "@remixicon/react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -69,8 +69,8 @@ function TripCard({
         <div className="flex flex-wrap items-center gap-2">
           <span
             className={cn(
-              "font-display font-semibold text-foreground",
-              hero ? "text-h3" : "text-body-m"
+              "font-semibold text-foreground",
+              hero ? "text-xl font-semibold" : "text-base"
             )}
           >
             {trip.tenants?.name ?? "—"}
@@ -87,18 +87,18 @@ function TripCard({
         <p
           className={cn(
             "mt-1.5 flex items-center gap-1.5 text-foreground/75",
-            hero ? "text-body-m" : "text-body-s"
+            hero ? "text-base" : "text-sm"
           )}
         >
           {trip.origin}
-          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/70" aria-hidden />
+          <RiArrowRightLine className="h-3.5 w-3.5 text-muted-foreground/70" aria-hidden />
           {trip.destination}
           <span className="text-muted-foreground/70">
             · {trip.passengers} pax
           </span>
         </p>
-        <p className="mt-1 flex items-center gap-1.5 text-caption text-muted-foreground">
-          <Clock className="h-3 w-3" aria-hidden />
+        <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <RiTimeLine className="h-3 w-3" aria-hidden />
           {timeAgo(trip.created_at)} · sale{" "}
           <span className="font-mono">{trip.departure_date}</span> ·{" "}
           {trip.requester?.full_name ?? trip.requester?.email ?? "—"}
@@ -176,10 +176,10 @@ export default async function OpsInboxPage({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-h2 text-foreground">
+        <h1 className="text-2xl font-semibold text-foreground">
           Bandeja de cotización
         </h1>
-        <p className="mt-1 text-body-s text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           {trips.length} solicitud{trips.length === 1 ? "" : "es"} pendiente
           {trips.length === 1 ? "" : "s"}
           {urgentCount > 0
@@ -196,10 +196,10 @@ export default async function OpsInboxPage({
             data-metric
             className="rounded-lg border border-border bg-card px-4 py-3"
           >
-            <p className="text-caption uppercase tracking-wider text-muted-foreground">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
               {m.label}
             </p>
-            <p className="mt-1 font-display text-h2 tabular-nums text-foreground">
+            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
               {m.value}
             </p>
           </div>
@@ -213,7 +213,7 @@ export default async function OpsInboxPage({
             href={`/ops/inbox?filter=${tab.value}`}
             aria-current={filter === tab.value ? "page" : undefined}
             className={cn(
-              "flex h-8 items-center rounded-md px-3 text-body-s transition-colors",
+              "flex h-8 items-center rounded-md px-3 text-sm transition-colors",
               filter === tab.value
                 ? "bg-accent font-semibold text-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -227,7 +227,7 @@ export default async function OpsInboxPage({
       {trips.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-14 text-center">
           <EmptyInvoices className="h-28 w-28" />
-          <p className="text-body-s text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             No hay solicitudes pendientes. Buen trabajo.
           </p>
         </div>

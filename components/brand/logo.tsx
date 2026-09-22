@@ -21,10 +21,10 @@ const SYMBOL_PX: Record<LogoSize, number> = {
 };
 
 const WORDMARK_TEXT: Record<LogoSize, string> = {
-  sm: "text-body-s",
-  md: "text-body-m",
-  lg: "text-h4",
-  xl: "text-h2",
+  sm: "text-sm",
+  md: "text-base",
+  lg: "text-lg font-semibold",
+  xl: "text-2xl font-semibold",
 };
 
 const BRAND_ASSETS = {
@@ -71,7 +71,7 @@ export function Logo({
       {variant === "symbol" && withWordmark && (
         <span
           className={cn(
-            "font-display font-bold uppercase tracking-[0.14em] leading-none",
+            "font-bold uppercase tracking-[0.14em] leading-none",
             WORDMARK_TEXT[size],
             theme === "light" ? "text-foreground" : "text-foreground"
           )}

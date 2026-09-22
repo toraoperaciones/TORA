@@ -132,7 +132,7 @@ export function TripsFilters({ tenants }: { tenants: TenantOption[] }) {
       {(status !== "all" || tenant !== "all" || from || to) && (
         <Button
           variant="ghost"
-          className="font-display font-semibold"
+          className="font-semibold"
           onClick={() => {
             setStatus("all");
             setTenant("all");

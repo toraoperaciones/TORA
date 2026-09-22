@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { RiErrorWarningLine } from "@remixicon/react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -36,18 +36,18 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
       <div className="flex items-start gap-3">
         <span
           aria-hidden
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted font-display text-body-s font-semibold text-foreground/75"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground/75"
         >
           {initials(tenant.name)}
         </span>
         <div className="min-w-0 flex-1">
           <Link
             href={`/admin/tenants/${tenant.id}`}
-            className="block truncate font-display text-body-m font-semibold text-foreground hover:underline"
+            className="block truncate text-base font-semibold text-foreground hover:underline"
           >
             {tenant.name}
           </Link>
-          <p className="truncate font-mono text-caption text-muted-foreground">
+          <p className="truncate font-mono text-xs text-muted-foreground">
             {tenant.rfc ?? "—"}
           </p>
         </div>
@@ -55,18 +55,18 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div>
-          <p className="text-overline uppercase tracking-wider text-muted-foreground/70">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             Línea
           </p>
-          <p className="mt-1 font-display text-body-m font-semibold tabular-nums text-foreground">
+          <p className="mt-1 text-base font-semibold tabular-nums text-foreground">
             {formatMXN(line)}
           </p>
         </div>
         <div>
-          <p className="text-overline uppercase tracking-wider text-muted-foreground/70">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             Crédito usado
           </p>
-          <p className="mt-1 font-display text-body-m font-semibold tabular-nums text-foreground">
+          <p className="mt-1 text-base font-semibold tabular-nums text-foreground">
             {formatMXN(used)}
           </p>
         </div>
@@ -77,7 +77,7 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
           <Badge variant="outline">Activo</Badge>
         ) : tenant.status === "suspended" ? (
           <Badge variant="warning">
-            <AlertCircle className="h-3 w-3" aria-hidden /> Suspendido
+            <RiErrorWarningLine className="h-3 w-3" aria-hidden /> Suspendido
           </Badge>
         ) : (
           <Badge variant="muted">Archivado</Badge>

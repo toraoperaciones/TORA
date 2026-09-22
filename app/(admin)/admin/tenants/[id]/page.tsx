@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { RiErrorWarningLine } from "@remixicon/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -57,38 +57,38 @@ export default async function TenantDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-caption text-foreground/75">
+      <div className="text-xs text-foreground/75">
         <Link href="/admin/tenants" className="hover:underline">
           Tenants
         </Link>{" "}
         → <span className="text-foreground">{tenant.name}</span>
       </div>
 
-      <h1 className="font-display text-h2 text-foreground">{tenant.name}</h1>
+      <h1 className="text-2xl font-semibold text-foreground">{tenant.name}</h1>
 
       <Card>
         <CardContent className="grid gap-4 p-6 sm:grid-cols-2">
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             RFC: <span className="text-foreground">{tenant.rfc ?? "—"}</span>
           </p>
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             Razón social: <span className="text-foreground">{tenant.razon_social ?? "—"}</span>
           </p>
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             Régimen fiscal: <span className="text-foreground">{tenant.regimen_fiscal ?? "—"}</span>
           </p>
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             Estado:{" "}
             {tenant.status === "active" ? (
               <Badge className="border-border bg-muted/70 text-foreground">Activo</Badge>
             ) : (
               <Badge className="border-transparent bg-muted text-foreground/75">
-                <AlertCircle className="mr-1 h-3 w-3" /> {tenant.status}
+                <RiErrorWarningLine className="mr-1 h-3 w-3" /> {tenant.status}
               </Badge>
             )}
           </p>
           {tenant.notes && (
-            <p className="text-body-s text-foreground/75 sm:col-span-2">Notas: {tenant.notes}</p>
+            <p className="text-sm text-foreground/75 sm:col-span-2">Notas: {tenant.notes}</p>
           )}
         </CardContent>
       </Card>
@@ -96,26 +96,26 @@ export default async function TenantDetailPage({
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-foreground/75">Saldo</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-foreground">{formatMXN(balance)}</p>
+            <p className="text-xs uppercase tracking-wider text-foreground/75">Saldo</p>
+            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{formatMXN(balance)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-foreground/75">Viajes totales</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-foreground">{tripsCount ?? 0}</p>
+            <p className="text-xs uppercase tracking-wider text-foreground/75">Viajes totales</p>
+            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{tripsCount ?? 0}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-foreground/75">Usuarios activos</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-foreground">{activeUsers}</p>
+            <p className="text-xs uppercase tracking-wider text-foreground/75">Usuarios activos</p>
+            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">{activeUsers}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <p className="text-caption uppercase tracking-wider text-foreground/75">Crédito disponible</p>
-            <p className="mt-2 font-display text-h3 tabular-nums text-foreground">
+            <p className="text-xs uppercase tracking-wider text-foreground/75">Crédito disponible</p>
+            <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">
               {formatMXN(creditAvailable)}
             </p>
           </CardContent>
@@ -124,7 +124,7 @@ export default async function TenantDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-display text-h4 text-foreground">Configuración de markups</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Configuración de markups</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-3 sm:grid-cols-4">
           {[
@@ -133,7 +133,7 @@ export default async function TenantDetailPage({
             { label: "Autos", value: tenant.markup_cars },
             { label: "Stands", value: tenant.markup_stands },
           ].map((markup) => (
-            <p key={markup.label} className="text-body-s text-foreground/75">
+            <p key={markup.label} className="text-sm text-foreground/75">
               {markup.label}:{" "}
               <span className="tabular-nums font-semibold text-foreground">
                 {(markup.value * 100).toFixed(1)}%
@@ -145,28 +145,28 @@ export default async function TenantDetailPage({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="font-display text-h4 text-foreground">Usuarios</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Usuarios</CardTitle>
           <InviteUserDialog tenant={{ id: tenant.id, name: tenant.name }} />
         </CardHeader>
         <CardContent>
           {(users ?? []).length === 0 ? (
-            <p className="text-body-s text-foreground/75">Sin usuarios.</p>
+            <p className="text-sm text-foreground/75">Sin usuarios.</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Nombre</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Email</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Rol</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Estado</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Nombre</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Email</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Rol</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {(users ?? []).map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="text-body-s text-foreground">{user.full_name ?? "—"}</TableCell>
-                    <TableCell className="text-body-s text-foreground/75">{user.email}</TableCell>
-                    <TableCell className="text-body-s text-foreground">{user.role}</TableCell>
+                    <TableCell className="text-sm text-foreground">{user.full_name ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-foreground/75">{user.email}</TableCell>
+                    <TableCell className="text-sm text-foreground">{user.role}</TableCell>
                     <TableCell>
                       {user.status === "active" ? (
                         <Badge className="border-border bg-muted/70 text-foreground">Activo</Badge>
@@ -174,7 +174,7 @@ export default async function TenantDetailPage({
                         <Badge variant="secondary" className="text-foreground/75">Pendiente</Badge>
                       ) : (
                         <Badge className="border-transparent bg-muted text-foreground/75">
-                          <AlertCircle className="mr-1 h-3 w-3" /> Suspendido
+                          <RiErrorWarningLine className="mr-1 h-3 w-3" /> Suspendido
                         </Badge>
                       )}
                     </TableCell>
@@ -188,25 +188,25 @@ export default async function TenantDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-display text-h4 text-foreground">Últimos viajes</CardTitle>
+          <CardTitle className="text-lg font-semibold text-foreground">Últimos viajes</CardTitle>
         </CardHeader>
         <CardContent>
           {(recentTrips ?? []).length === 0 ? (
-            <p className="text-body-s text-foreground/75">Aún no hay viajes.</p>
+            <p className="text-sm text-foreground/75">Aún no hay viajes.</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Destino</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Salida</TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Estado</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Destino</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Salida</TableHead>
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Estado</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {(recentTrips ?? []).map((trip) => (
                   <TableRow key={trip.id}>
-                    <TableCell className="text-body-s text-foreground">{trip.destination}</TableCell>
-                    <TableCell className="text-body-s text-foreground/75">
+                    <TableCell className="text-sm text-foreground">{trip.destination}</TableCell>
+                    <TableCell className="text-sm text-foreground/75">
                       {formatDate(trip.departure_date)}
                     </TableCell>
                     <TableCell>

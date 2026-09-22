@@ -40,14 +40,14 @@ function ConfirmDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="font-display font-semibold">
+        <Button variant="outline" className="font-semibold">
           {trigger}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">{title}</DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogTitle className="text-lg font-semibold text-foreground">{title}</DialogTitle>
+          <DialogDescription className="text-sm text-foreground/75">
             {description}
           </DialogDescription>
         </DialogHeader>
@@ -55,7 +55,7 @@ function ConfirmDialog({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cancelar
           </Button>
@@ -65,7 +65,7 @@ function ConfirmDialog({
               void onConfirm();
             }}
             disabled={busy}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             {confirmLabel}
           </Button>

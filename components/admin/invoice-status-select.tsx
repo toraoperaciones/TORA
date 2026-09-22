@@ -49,7 +49,7 @@ export function InvoiceStatusSelect({
 
   return (
     <Select value={value} onValueChange={(v) => void change(v)} disabled={saving}>
-      <SelectTrigger className="h-8 w-32 text-caption">
+      <SelectTrigger className="h-8 w-32 text-xs">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

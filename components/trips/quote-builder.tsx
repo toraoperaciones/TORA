@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Plus, Trash2 } from "lucide-react";
+import { RiErrorWarningLine, RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -216,10 +216,10 @@ export function QuoteBuilder({
   return (
     <Card className="border-border bg-card shadow-none">
       <CardHeader>
-        <CardTitle className="font-display text-h4 text-foreground">
+        <CardTitle className="text-lg font-semibold text-foreground">
           Opciones de cotización
         </CardTitle>
-        <CardDescription className="text-body-s text-foreground/75">
+        <CardDescription className="text-sm text-foreground/75">
           Markup aplicado: {(markup * 100).toFixed(0)}% ({serviceType}). El precio
           final se calcula automáticamente, pero puedes ajustarlo por opción.
         </CardDescription>
@@ -237,7 +237,7 @@ export function QuoteBuilder({
               className="rounded-lg border border-border p-4"
             >
               <div className="mb-3 flex items-center justify-between">
-                <p className="text-caption font-semibold uppercase tracking-wider text-foreground/75">
+                <p className="text-xs font-semibold uppercase tracking-wider text-foreground/75">
                   Opción {index + 1}
                 </p>
                 <Button
@@ -248,7 +248,7 @@ export function QuoteBuilder({
                   onClick={() => removeOption(opt.key)}
                   aria-label={`Eliminar opción ${index + 1}`}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <RiDeleteBinLine className="h-4 w-4" />
                 </Button>
               </div>
 
@@ -337,12 +337,12 @@ export function QuoteBuilder({
                   {margin !== null && (
                     <p
                       className={cn(
-                        "flex items-center gap-1.5 text-caption font-semibold",
+                        "flex items-center gap-1.5 text-xs font-semibold",
                         isMarginHealthy(net, final) ? "text-foreground/75" : "text-foreground"
                       )}
                     >
                       {!isMarginHealthy(net, final) && (
-                        <AlertCircle className="h-3.5 w-3.5" aria-hidden />
+                        <RiErrorWarningLine className="h-3.5 w-3.5" aria-hidden />
                       )}
                       Margen: {margin.toFixed(1)}%
                       {!isMarginHealthy(net, final) && " — margen bajo, revisa la captura"}
@@ -360,12 +360,12 @@ export function QuoteBuilder({
             variant="outline"
             onClick={addOption}
             disabled={!editable || options.length >= MAX_OPTIONS}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
-            <Plus className="h-4 w-4" />
+            <RiAddLine className="h-4 w-4" />
             Agregar opción
           </Button>
-          <p className="text-caption text-foreground/75">
+          <p className="text-xs text-foreground/75">
             {options.length} de {MAX_OPTIONS} opciones usadas
           </p>
         </div>
@@ -377,7 +377,7 @@ export function QuoteBuilder({
               variant="outline"
               disabled={sending}
               onClick={() => submit(false)}
-              className="font-display font-semibold"
+              className="font-semibold"
             >
               Guardar borrador
             </Button>
@@ -385,13 +385,13 @@ export function QuoteBuilder({
               type="button"
               disabled={sending}
               onClick={() => setDialogOpen(true)}
-              className="font-display font-semibold"
+              className="font-semibold"
             >
               Enviar al cliente
             </Button>
           </div>
         ) : (
-          <p className="border-t border-border pt-4 text-body-s text-foreground/75">
+          <p className="border-t border-border pt-4 text-sm text-foreground/75">
             Este trip ya no admite edición de opciones desde su estado actual.
           </p>
         )}
@@ -400,10 +400,10 @@ export function QuoteBuilder({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-foreground">
+            <DialogTitle className="text-lg font-semibold text-foreground">
               Enviar al cliente
             </DialogTitle>
-            <DialogDescription className="text-body-s text-foreground/75">
+            <DialogDescription className="text-sm text-foreground/75">
               ¿Enviar estas {options.length} opciones al cliente? No podrás
               modificarlas sin antes reabrirlas.
             </DialogDescription>
@@ -412,7 +412,7 @@ export function QuoteBuilder({
             <Button
               variant="outline"
               onClick={() => setDialogOpen(false)}
-              className="font-display font-semibold"
+              className="font-semibold"
             >
               Cancelar
             </Button>
@@ -422,7 +422,7 @@ export function QuoteBuilder({
                 setDialogOpen(false);
                 submit(true);
               }}
-              className="font-display font-semibold"
+              className="font-semibold"
             >
               {sending ? "Enviando…" : "Enviar"}
             </Button>

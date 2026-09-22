@@ -33,10 +33,10 @@ export function KpiCard({
         className
       )}
     >
-      <p className="text-caption uppercase tracking-wider text-muted-foreground">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
-      <p className="mt-2 font-display text-display-m tabular-nums text-foreground">
+      <p className="mt-2 text-4xl font-semibold tabular-nums text-foreground">
         {isMoney ? formatMXN(animated) : Math.round(animated).toString()}
       </p>
       {sparkline && sparkline.length >= 2 ? (

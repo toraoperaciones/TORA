@@ -1,24 +1,24 @@
+import type { RemixiconComponentType } from "@remixicon/react";
 import {
-  AlertCircle,
-  Building2,
-  CreditCard,
-  FileText,
-  Inbox,
-  LayoutDashboard,
-  Plane,
-  Receipt,
-  Target,
-  Users,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react";
+  RiBankCardLine,
+  RiBuildingLine,
+  RiDashboardLine,
+  RiErrorWarningLine,
+  RiFileTextLine,
+  RiFlightTakeoffLine,
+  RiFocus3Line,
+  RiInboxLine,
+  RiReceiptLine,
+  RiTeamLine,
+  RiWalletLine,
+} from "@remixicon/react";
 
 import type { Role } from "@/lib/auth/roles";
 
 export interface NavItemDef {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: RemixiconComponentType;
 }
 
 /**
@@ -40,10 +40,10 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
     {
       type: "flat",
       items: [
-        { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
-        { href: "/trips", label: "Viajes", icon: Plane },
-        { href: "/wallet", label: "Billetera", icon: Wallet },
-        { href: "/invoices", label: "Facturas", icon: FileText },
+        { href: "/dashboard", label: "Inicio", icon: RiDashboardLine },
+        { href: "/trips", label: "Viajes", icon: RiFlightTakeoffLine },
+        { href: "/wallet", label: "Billetera", icon: RiWalletLine },
+        { href: "/invoices", label: "Facturas", icon: RiFileTextLine },
       ],
     },
   ],
@@ -51,9 +51,9 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
     {
       type: "flat",
       items: [
-        { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },
-        { href: "/invoices", label: "Facturas", icon: FileText },
-        { href: "/trips", label: "Viajes", icon: Plane },
+        { href: "/dashboard", label: "Inicio", icon: RiDashboardLine },
+        { href: "/invoices", label: "Facturas", icon: RiFileTextLine },
+        { href: "/trips", label: "Viajes", icon: RiFlightTakeoffLine },
       ],
     },
   ],
@@ -61,10 +61,10 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
     {
       type: "flat",
       items: [
-        { href: "/ops/inbox", label: "Bandeja", icon: Inbox },
-        { href: "/ops/trips", label: "Viajes", icon: Plane },
-        { href: "/ops/incidents", label: "Incidentes", icon: AlertCircle },
-        { href: "/ops/clients", label: "Clientes", icon: Building2 },
+        { href: "/ops/inbox", label: "Bandeja", icon: RiInboxLine },
+        { href: "/ops/trips", label: "Viajes", icon: RiFlightTakeoffLine },
+        { href: "/ops/incidents", label: "Incidentes", icon: RiErrorWarningLine },
+        { href: "/ops/clients", label: "Clientes", icon: RiBuildingLine },
       ],
     },
   ],
@@ -75,10 +75,10 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
         {
           label: "Finanzas",
           items: [
-            { href: "/finance/deposits", label: "Depósitos SPEI", icon: Receipt },
-            { href: "/finance/dashboard", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/finance/credit", label: "Líneas de crédito", icon: CreditCard },
-            { href: "/finance/invoices", label: "Facturas", icon: FileText },
+            { href: "/finance/deposits", label: "Depósitos SPEI", icon: RiReceiptLine },
+            { href: "/finance/dashboard", label: "Dashboard", icon: RiDashboardLine },
+            { href: "/finance/credit", label: "Líneas de crédito", icon: RiBankCardLine },
+            { href: "/finance/invoices", label: "Facturas", icon: RiFileTextLine },
           ],
         },
       ],
@@ -91,25 +91,25 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
         {
           label: "Administración",
           items: [
-            { href: "/admin/tenants", label: "Tenants", icon: Building2 },
-            { href: "/admin/users", label: "Usuarios", icon: Users },
-            { href: "/admin/pipeline", label: "Pipeline", icon: Target },
-            { href: "/admin/invoices", label: "Facturas", icon: FileText },
+            { href: "/admin/tenants", label: "Tenants", icon: RiBuildingLine },
+            { href: "/admin/users", label: "Usuarios", icon: RiTeamLine },
+            { href: "/admin/pipeline", label: "Pipeline", icon: RiFocus3Line },
+            { href: "/admin/invoices", label: "Facturas", icon: RiFileTextLine },
           ],
         },
         {
           label: "Operación",
           items: [
-            { href: "/ops/inbox", label: "Bandeja Ops", icon: Inbox },
-            { href: "/ops/incidents", label: "Incidentes", icon: AlertCircle },
+            { href: "/ops/inbox", label: "Bandeja Ops", icon: RiInboxLine },
+            { href: "/ops/incidents", label: "Incidentes", icon: RiErrorWarningLine },
           ],
         },
         {
           label: "Finanzas",
           items: [
-            { href: "/finance/deposits", label: "Depósitos", icon: Receipt },
-            { href: "/finance/dashboard", label: "Dashboard Fin.", icon: LayoutDashboard },
-            { href: "/finance/credit", label: "Crédito", icon: CreditCard },
+            { href: "/finance/deposits", label: "Depósitos", icon: RiReceiptLine },
+            { href: "/finance/dashboard", label: "Dashboard Fin.", icon: RiDashboardLine },
+            { href: "/finance/credit", label: "Crédito", icon: RiBankCardLine },
           ],
         },
       ],

@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { RiLogoutBoxLine } from "@remixicon/react";
 import { usePathname } from "next/navigation";
 
 import { Logo } from "@/components/brand/logo";
@@ -41,15 +41,15 @@ export function SidebarNavSheetContent({
         <div className="mb-4 flex items-center gap-3 px-4">
           <span
             aria-hidden
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted font-display text-caption font-semibold text-foreground/75"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground/75"
           >
             {(fullName || "T").slice(0, 1).toUpperCase()}
           </span>
           <span className="min-w-0" data-usercard>
-            <span className="block truncate text-body-s font-semibold">
+            <span className="block truncate text-sm font-semibold">
               {fullName || "Usuario"}
             </span>
-            <span className="block truncate text-caption text-muted-foreground">
+            <span className="block truncate text-xs text-muted-foreground">
               {email}
             </span>
           </span>
@@ -67,11 +67,11 @@ export function SidebarNavSheetContent({
           onClick={logout}
           disabled={loggingOut}
           className={cn(
-            "flex h-9 flex-1 items-center gap-3 rounded-md px-3 text-body-s text-muted-foreground",
+            "flex h-9 flex-1 items-center gap-3 rounded-md px-3 text-sm text-muted-foreground",
             "transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
           )}
         >
-          <LogOut className="h-4 w-4 shrink-0" aria-hidden />
+          <RiLogoutBoxLine className="h-4 w-4 shrink-0" aria-hidden />
           {loggingOut ? "Cerrando sesión…" : "Cerrar sesión"}
         </button>
       </div>

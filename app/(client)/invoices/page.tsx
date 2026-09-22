@@ -54,15 +54,15 @@ export default async function InvoicesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-h2 text-foreground">Facturas</h1>
-        <p className="mt-1 text-body-s text-muted-foreground">
+        <h1 className="text-2xl font-semibold text-foreground">Facturas</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           CFDI mensual consolidado de tu empresa.
         </p>
       </div>
 
       <div className="rounded-lg border border-border bg-card">
         {invoices.length === 0 ? (
-          <p className="py-10 text-center text-body-s text-muted-foreground">
+          <p className="py-10 text-center text-sm text-muted-foreground">
             Aún no hay facturas emitidas.
           </p>
         ) : (
@@ -81,11 +81,11 @@ export default async function InvoicesPage() {
               {invoices.map((invoice) => (
                 <TableRow key={invoice.id}>
                   <TableCell>
-                    <span className="font-display font-semibold text-foreground">
+                    <span className="font-semibold text-foreground">
                       {invoice.period}
                     </span>
                     {invoice.cfdi_uuid && (
-                      <p className="font-mono text-caption text-muted-foreground/70">
+                      <p className="font-mono text-xs text-muted-foreground/70">
                         CFDI {invoice.cfdi_uuid.slice(0, 8)}…
                       </p>
                     )}
@@ -111,7 +111,7 @@ export default async function InvoicesPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-3 text-body-s">
+                    <div className="flex items-center justify-end gap-3 text-sm">
                       <a
                         href={`/invoices/${invoice.id}/print`}
                         target="_blank"
@@ -130,7 +130,7 @@ export default async function InvoicesPage() {
                           XML
                         </a>
                       ) : (
-                        <span className="text-caption text-muted-foreground/70">XML —</span>
+                        <span className="text-xs text-muted-foreground/70">XML —</span>
                       )}
                     </div>
                   </TableCell>

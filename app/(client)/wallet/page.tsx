@@ -54,7 +54,7 @@ export default async function WalletPage({
     return (
       <div className="flex flex-col gap-8">
         <h1>Billetera</h1>
-        <p className="text-body-s text-foreground/75">
+        <p className="text-sm text-foreground/75">
           Tu usuario no tiene tenant asignado.
         </p>
       </div>
@@ -95,7 +95,7 @@ export default async function WalletPage({
 
       <div className="rounded-lg border border-border bg-card p-6">
         {transactions.length === 0 ? (
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             Aún no hay transacciones registradas.
           </p>
         ) : (
@@ -103,22 +103,22 @@ export default async function WalletPage({
             <Table>
               <TableHeader>
                 <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Fecha
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Tipo
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Referencia
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Estado
                   </TableHead>
-                  <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                     Monto
                   </TableHead>
-                  <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                     Comprobante
                   </TableHead>
                 </TableRow>
@@ -126,13 +126,13 @@ export default async function WalletPage({
               <TableBody>
                 {transactions.map((tx) => (
                   <TableRow key={tx.id} className="border-border">
-                    <TableCell className="text-body-s text-foreground">
+                    <TableCell className="text-sm text-foreground">
                       {formatDate(tx.created_at)}
                     </TableCell>
-                    <TableCell className="text-body-s text-foreground">
+                    <TableCell className="text-sm text-foreground">
                       {TX_TYPE_LABEL[tx.type] ?? tx.type}
                     </TableCell>
-                    <TableCell className="max-w-[220px] truncate text-body-s text-foreground/75">
+                    <TableCell className="max-w-[220px] truncate text-sm text-foreground/75">
                       {tx.reference ?? "—"}
                     </TableCell>
                     <TableCell>
@@ -149,14 +149,14 @@ export default async function WalletPage({
                               : "Por pagar"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right text-body-s font-semibold tabular-nums text-foreground">
+                    <TableCell className="text-right text-sm font-semibold tabular-nums text-foreground">
                       {formatMXN(Number(tx.amount))}
                     </TableCell>
                     <TableCell className="text-right">
                       {tx.receipt_url ? (
                         <ViewReceiptButton path={tx.receipt_url} />
                       ) : (
-                        <span className="text-caption text-foreground/75">—</span>
+                        <span className="text-xs text-foreground/75">—</span>
                       )}
                     </TableCell>
                   </TableRow>
@@ -165,7 +165,7 @@ export default async function WalletPage({
             </Table>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-caption text-foreground/75">
+              <p className="text-xs text-foreground/75">
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">
@@ -196,7 +196,7 @@ function ViewReceiptButton({ path }: { path: string }) {
   return (
     <form action="/api/receipts/signed-url" method="POST">
       <input type="hidden" name="path" value={path} />
-      <Button type="submit" variant="outline" size="sm" className="font-display font-semibold">
+      <Button type="submit" variant="outline" size="sm" className="font-semibold">
         Ver comprobante
       </Button>
     </form>

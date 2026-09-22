@@ -114,7 +114,7 @@ export default async function OpsTripsPage({
 
       <div className="rounded-lg border border-border bg-card p-6">
         {trips.length === 0 ? (
-          <p className="text-body-s text-foreground/75">
+          <p className="text-sm text-foreground/75">
             No hay viajes con esos filtros.
           </p>
         ) : (
@@ -122,25 +122,25 @@ export default async function OpsTripsPage({
             <Table>
               <TableHeader>
                 <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Cliente
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Destino
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Salida
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Servicio
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Urgencia
                   </TableHead>
-                  <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                     Estado
                   </TableHead>
-                  <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                  <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                     Acción
                   </TableHead>
                 </TableRow>
@@ -148,19 +148,19 @@ export default async function OpsTripsPage({
               <TableBody>
                 {trips.map((trip) => (
                   <TableRow key={trip.id} className="border-border">
-                    <TableCell className="text-body-s font-semibold text-foreground">
+                    <TableCell className="text-sm font-semibold text-foreground">
                       {trip.tenants?.name ?? "—"}
-                      <p className="text-caption font-normal text-foreground/75">
+                      <p className="text-xs font-normal text-foreground/75">
                         {trip.requester?.full_name ?? ""}
                       </p>
                     </TableCell>
-                    <TableCell className="text-body-s text-foreground">
+                    <TableCell className="text-sm text-foreground">
                       {trip.origin} → {trip.destination}
                     </TableCell>
-                    <TableCell className="text-body-s tabular-nums text-foreground">
+                    <TableCell className="text-sm tabular-nums text-foreground">
                       {trip.departure_date}
                     </TableCell>
-                    <TableCell className="text-body-s text-foreground">
+                    <TableCell className="text-sm text-foreground">
                       {SERVICE_LABEL[trip.service_type] ?? trip.service_type}
                     </TableCell>
                     <TableCell>
@@ -180,7 +180,7 @@ export default async function OpsTripsPage({
                       <StatusBadge status={trip.status} />
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button asChild variant="outline" size="sm" className="font-display font-semibold">
+                      <Button asChild variant="outline" size="sm" className="font-semibold">
                         <Link href={`/ops/trips/${trip.id}/quote`}>Ver</Link>
                       </Button>
                     </TableCell>
@@ -190,7 +190,7 @@ export default async function OpsTripsPage({
             </Table>
 
             <div className="mt-4 flex items-center justify-between">
-              <p className="text-caption text-foreground/75">
+              <p className="text-xs text-foreground/75">
                 Página {page} de {totalPages}
               </p>
               <div className="flex gap-2">

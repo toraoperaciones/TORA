@@ -87,14 +87,14 @@ export function NewIncidentDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="font-display font-semibold">Nuevo incidente</Button>
+        <Button className="font-semibold">Nuevo incidente</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Nuevo incidente
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             Registra el problema para dar seguimiento.
           </DialogDescription>
         </DialogHeader>
@@ -165,11 +165,11 @@ export function NewIncidentDialog({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cancelar
           </Button>
-          <Button onClick={handleCreate} disabled={saving} className="font-display font-semibold">
+          <Button onClick={handleCreate} disabled={saving} className="font-semibold">
             {saving ? "Creando…" : "Crear incidente"}
           </Button>
         </DialogFooter>
@@ -210,17 +210,17 @@ export function ResolveIncidentDialog({ incidentId }: { incidentId: string }) {
         <Button
           variant="outline"
           size="sm"
-          className="font-display font-semibold"
+          className="font-semibold"
         >
           Ver
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Resolver incidente
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             Describe cómo se resolvió. Quedará registrado con tu usuario y fecha.
           </DialogDescription>
         </DialogHeader>
@@ -240,11 +240,11 @@ export function ResolveIncidentDialog({ incidentId }: { incidentId: string }) {
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cerrar
           </Button>
-          <Button onClick={handleResolve} disabled={saving} className="font-display font-semibold">
+          <Button onClick={handleResolve} disabled={saving} className="font-semibold">
             {saving ? "Guardando…" : "Marcar como resuelto"}
           </Button>
         </DialogFooter>

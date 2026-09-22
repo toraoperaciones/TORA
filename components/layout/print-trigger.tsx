@@ -1,6 +1,6 @@
 "use client";
 
-import { Printer } from "lucide-react";
+import { RiPrinterLine } from "@remixicon/react";
 import { useEffect } from "react";
 
 /**
@@ -18,9 +18,9 @@ export function PrintTrigger({ auto }: { auto: boolean }) {
     <button
       type="button"
       onClick={() => window.print()}
-      className="no-print fixed bottom-6 right-6 flex h-11 items-center gap-2 rounded-md bg-card px-5 font-display text-body-s font-semibold text-foreground shadow-xl transition-colors hover:bg-accent print:hidden"
+      className="no-print fixed bottom-6 right-6 flex h-11 items-center gap-2 rounded-md bg-card px-5 text-sm font-semibold text-foreground shadow-xl transition-colors hover:bg-accent print:hidden"
     >
-      <Printer className="h-4 w-4" aria-hidden />
+      <RiPrinterLine className="h-4 w-4" aria-hidden />
       Imprimir / Guardar PDF
     </button>
   );

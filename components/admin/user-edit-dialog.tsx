@@ -97,11 +97,11 @@ export function UserEditDialog({ user, tenants, trigger }: UserEditDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger ?? <Button variant="outline" size="sm" className="font-display font-semibold">Editar</Button>}</DialogTrigger>
+      <DialogTrigger asChild>{trigger ?? <Button variant="outline" size="sm" className="font-semibold">Editar</Button>}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">Editar usuario</DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogTitle className="text-lg font-semibold text-foreground">Editar usuario</DialogTitle>
+          <DialogDescription className="text-sm text-foreground/75">
             {user.full_name ?? "—"} · {user.email}
           </DialogDescription>
         </DialogHeader>
@@ -158,10 +158,10 @@ export function UserEditDialog({ user, tenants, trigger }: UserEditDialogProps) 
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} className="font-display font-semibold">
+          <Button variant="outline" onClick={() => setOpen(false)} className="font-semibold">
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="font-display font-semibold">
+          <Button onClick={handleSave} disabled={saving} className="font-semibold">
             {saving ? "Guardando…" : "Guardar"}
           </Button>
         </DialogFooter>

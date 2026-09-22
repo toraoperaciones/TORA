@@ -37,7 +37,7 @@ export function UserStatusButtons({
       size="sm"
       onClick={() => void toggle()}
       disabled={saving}
-      className="font-display font-semibold"
+      className="font-semibold"
     >
       {saving ? "…" : suspended ? "Reactivar" : "Suspender"}
     </Button>

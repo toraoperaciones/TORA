@@ -111,7 +111,7 @@ export default async function IncidentsPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1>Incidentes</h1>
-          <p className="mt-1 text-body-s text-foreground/75">
+          <p className="mt-1 text-sm text-foreground/75">
             {openCount} abiert{openCount === 1 ? "o" : "os"}
           </p>
         </div>
@@ -130,7 +130,7 @@ export default async function IncidentsPage({
             asChild
             variant={statusFilter === tab.value ? "default" : "outline"}
             size="sm"
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             <a href={`/ops/incidents?status=${tab.value}`}>{tab.label}</a>
           </Button>
@@ -139,33 +139,33 @@ export default async function IncidentsPage({
 
       <div className="rounded-lg border border-border bg-card p-6">
         {incidents.length === 0 ? (
-          <p className="text-body-s text-foreground/75">No hay incidentes abiertos.</p>
+          <p className="text-sm text-foreground/75">No hay incidentes abiertos.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Severidad
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Tipo
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Trip
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Descripción
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Estado
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Creado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Acción
                 </TableHead>
               </TableRow>
@@ -183,29 +183,29 @@ export default async function IncidentsPage({
                       {incident.severity}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-body-s text-foreground">
+                  <TableCell className="text-sm text-foreground">
                     {INCIDENT_TYPE_LABEL[incident.type] ?? incident.type}
                   </TableCell>
-                  <TableCell className="text-body-s text-foreground">
+                  <TableCell className="text-sm text-foreground">
                     {incident.trips?.destination ?? "—"}
                   </TableCell>
-                  <TableCell className="text-body-s text-foreground">
+                  <TableCell className="text-sm text-foreground">
                     {incident.trips?.tenants?.name ?? "—"}
                   </TableCell>
-                  <TableCell className="max-w-[240px] truncate text-body-s text-foreground/75">
+                  <TableCell className="max-w-[240px] truncate text-sm text-foreground/75">
                     {incident.description}
                   </TableCell>
-                  <TableCell className="text-body-s text-foreground">
+                  <TableCell className="text-sm text-foreground">
                     {STATUS_LABEL[incident.status] ?? incident.status}
                   </TableCell>
-                  <TableCell className="text-caption text-foreground/75">
+                  <TableCell className="text-xs text-foreground/75">
                     {new Date(incident.created_at).toLocaleDateString("es-MX")}
                   </TableCell>
                   <TableCell className="text-right">
                     {incident.status === "open" || incident.status === "in_progress" ? (
                       <ResolveIncidentDialog incidentId={incident.id} />
                     ) : (
-                      <span className="text-caption text-foreground/75">—</span>
+                      <span className="text-xs text-foreground/75">—</span>
                     )}
                   </TableCell>
                 </TableRow>

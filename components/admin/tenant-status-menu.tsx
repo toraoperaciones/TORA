@@ -70,19 +70,19 @@ export function TenantStatusMenu({
       <Dialog open={confirm !== null} onOpenChange={(open) => !open && setConfirm(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-display text-h4 text-foreground">
+            <DialogTitle className="text-lg font-semibold text-foreground">
               {confirm ? LABELS[confirm] : ""} tenant
             </DialogTitle>
-            <DialogDescription className="text-body-s text-foreground/75">
+            <DialogDescription className="text-sm text-foreground/75">
               Esta acción cambia el estado del tenant. Los usuarios del tenant seguirán
               pudiendo iniciar sesión; el bloqueo por suspensión se aplica en el portal.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirm(null)} className="font-display font-semibold">
+            <Button variant="outline" onClick={() => setConfirm(null)} className="font-semibold">
               Cancelar
             </Button>
-            <Button onClick={handleConfirm} disabled={saving} className="font-display font-semibold">
+            <Button onClick={handleConfirm} disabled={saving} className="font-semibold">
               {saving ? "Aplicando…" : "Confirmar"}
             </Button>
           </DialogFooter>

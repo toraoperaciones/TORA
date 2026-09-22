@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { RiNotification3Line } from "@remixicon/react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -85,7 +85,7 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
         }
         className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground"
       >
-        <Bell className="h-4 w-4" aria-hidden />
+        <RiNotification3Line className="h-4 w-4" aria-hidden />
         {unread > 0 && (
           <span
             aria-hidden
@@ -100,10 +100,10 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
           className="w-full border-border bg-background sm:max-w-sm"
         >
           <SheetHeader className="border-b border-border pb-4">
-            <SheetTitle className="font-display text-h4 text-foreground">
+            <SheetTitle className="text-lg font-semibold text-foreground">
               Notificaciones
             </SheetTitle>
-            <SheetDescription className="text-caption text-muted-foreground">
+            <SheetDescription className="text-xs text-muted-foreground">
               Actividad de tus viajes y billetera.
             </SheetDescription>
           </SheetHeader>
@@ -112,7 +112,7 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
             {items.length === 0 ? (
               <div className="flex flex-col items-center gap-3 pt-12 text-center">
                 <EmptySearch className="h-24 w-24" />
-                <p className="text-body-s text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Sin notificaciones por ahora.
                 </p>
               </div>
@@ -129,24 +129,24 @@ export function NotificationBell({ canLinkTrips }: { canLinkTrips: boolean }) {
                         )}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-body-s font-medium text-foreground">
+                        <p className="text-sm font-medium text-foreground">
                           {TYPE_LABEL[n.type] ?? n.type}
                         </p>
                         {n.payload?.options_count ? (
-                          <p className="mt-0.5 text-caption text-muted-foreground">
+                          <p className="mt-0.5 text-xs text-muted-foreground">
                             {n.payload.options_count} opción
                             {n.payload.options_count === 1 ? "" : "es"} para
                             revisar.
                           </p>
                         ) : null}
-                        <p className="mt-1 text-caption text-muted-foreground/70">
+                        <p className="mt-1 text-xs text-muted-foreground/70">
                           {timeAgo(n.created_at)}
                         </p>
                         {canLinkTrips && n.payload?.trip_id && (
                           <Link
                             href={`/trips/${n.payload.trip_id}`}
                             onClick={() => setOpen(false)}
-                            className="mt-2 inline-block text-caption font-semibold text-foreground underline underline-offset-4"
+                            className="mt-2 inline-block text-xs font-semibold text-foreground underline underline-offset-4"
                           >
                             Ver viaje
                           </Link>

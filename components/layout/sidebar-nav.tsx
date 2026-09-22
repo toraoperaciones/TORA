@@ -42,7 +42,7 @@ function NavRow({
         asChild
         isActive={active}
         tooltip={item.label}
-        className="h-9 gap-2.5 text-body-s"
+        className="h-9 gap-2.5 text-sm"
       >
         <Link
           href={item.href}

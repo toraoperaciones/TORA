@@ -78,15 +78,15 @@ export function InviteUserDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button className="font-display font-semibold">Invitar usuario</Button>
+          <Button className="font-semibold">Invitar usuario</Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Invitar usuario · {tenant.name}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             Crea el usuario con acceso inmediato. Comparte la contraseña temporal por un
             canal seguro.
           </DialogDescription>
@@ -139,10 +139,10 @@ export function InviteUserDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} className="font-display font-semibold">
+          <Button variant="outline" onClick={() => setOpen(false)} className="font-semibold">
             Cancelar
           </Button>
-          <Button onClick={handleInvite} disabled={saving} className="font-display font-semibold">
+          <Button onClick={handleInvite} disabled={saving} className="font-semibold">
             {saving ? "Creando…" : "Invitar"}
           </Button>
         </DialogFooter>

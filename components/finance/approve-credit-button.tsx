@@ -70,16 +70,16 @@ export function ApproveCreditButton({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="font-display font-semibold">
+        <Button size="sm" className="font-semibold">
           Aprobar crédito
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Aprobar crédito — {destination}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             Cubre el cargo de {formatMXN(chargeAmount)} del trip a {destination} y
             confirma la reserva. El cargo queda pendiente de pago a 30 días.
           </DialogDescription>
@@ -100,7 +100,7 @@ export function ApproveCreditButton({
               value={limit}
               onChange={(e) => setLimit(e.target.value)}
             />
-            <p className="text-caption text-foreground/75">
+            <p className="text-xs text-foreground/75">
               Mínimo requerido: {formatMXN(chargeAmount)}
             </p>
           </div>
@@ -110,11 +110,11 @@ export function ApproveCreditButton({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cancelar
           </Button>
-          <Button onClick={handleApprove} disabled={saving} className="font-display font-semibold">
+          <Button onClick={handleApprove} disabled={saving} className="font-semibold">
             {saving ? "Aprobando…" : "Aprobar"}
           </Button>
         </DialogFooter>

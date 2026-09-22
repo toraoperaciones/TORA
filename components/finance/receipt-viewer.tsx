@@ -54,10 +54,10 @@ export function ReceiptViewer({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Comprobante SPEI
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             Enlace firmado con validez de 1 hora.
           </DialogDescription>
         </DialogHeader>
@@ -65,7 +65,7 @@ export function ReceiptViewer({
         {loading && <Skeleton className="h-96 w-full" />}
 
         {!loading && error && (
-          <p className="text-body-s font-semibold text-foreground">{error}</p>
+          <p className="text-sm font-semibold text-foreground">{error}</p>
         )}
 
         {!loading && signedUrl && isPdf && (

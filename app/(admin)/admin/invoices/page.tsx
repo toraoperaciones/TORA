@@ -52,7 +52,7 @@ export default async function AdminInvoicesPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-h2 text-foreground">Facturas</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Facturas</h1>
         <InvoiceUploadDialog tenants={tenants} />
       </div>
 
@@ -62,7 +62,7 @@ export default async function AdminInvoicesPage({
             <a
               key={period}
               href={`/admin/invoices${params.period === period ? "" : `?period=${period}`}`}
-              className={`rounded-md border px-3 py-1.5 text-caption font-display font-semibold ${
+              className={`rounded-md border px-3 py-1.5 text-xs font-semibold ${
                 params.period === period
                   ? "border-transparent bg-card text-foreground"
                   : "border-border bg-card text-foreground/75 hover:border-foreground/30"
@@ -72,7 +72,7 @@ export default async function AdminInvoicesPage({
             </a>
           ))}
           {params.period && (
-            <a href="/admin/invoices" className="text-caption text-foreground/75 underline">
+            <a href="/admin/invoices" className="text-xs text-foreground/75 underline">
               limpiar
             </a>
           )}
@@ -80,40 +80,40 @@ export default async function AdminInvoicesPage({
       )}
 
       {filtered.length === 0 ? (
-        <p className="text-body-s text-foreground/75">Aún no hay facturas emitidas.</p>
+        <p className="text-sm text-foreground/75">Aún no hay facturas emitidas.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-card">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Periodo</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Cliente</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Subtotal</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">IVA</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Total</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">CFDI UUID</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Estado</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Archivos</TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">Cambiar estado</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Periodo</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Cliente</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Subtotal</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">IVA</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Total</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">CFDI UUID</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Estado</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Archivos</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">Cambiar estado</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((invoice) => (
                 <TableRow key={invoice.id}>
-                  <TableCell className="font-display text-body-s font-semibold text-foreground">
+                  <TableCell className="text-sm font-semibold text-foreground">
                     {invoice.period}
                   </TableCell>
-                  <TableCell className="text-body-s text-foreground">{invoice.tenants?.[0]?.name ?? "—"}</TableCell>
-                  <TableCell className="tabular-nums text-body-s text-foreground/75">
+                  <TableCell className="text-sm text-foreground">{invoice.tenants?.[0]?.name ?? "—"}</TableCell>
+                  <TableCell className="tabular-nums text-sm text-foreground/75">
                     {formatMXN(invoice.subtotal)}
                   </TableCell>
-                  <TableCell className="tabular-nums text-body-s text-foreground/75">
+                  <TableCell className="tabular-nums text-sm text-foreground/75">
                     {formatMXN(invoice.iva)}
                   </TableCell>
-                  <TableCell className="tabular-nums text-body-s font-semibold text-foreground">
+                  <TableCell className="tabular-nums text-sm font-semibold text-foreground">
                     {formatMXN(invoice.total)}
                   </TableCell>
-                  <TableCell className="max-w-40 truncate text-caption text-foreground/75">
+                  <TableCell className="max-w-40 truncate text-xs text-foreground/75">
                     {invoice.cfdi_uuid ?? "—"}
                   </TableCell>
                   <TableCell>                      <Badge
@@ -135,7 +135,7 @@ export default async function AdminInvoicesPage({
                       </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 text-caption font-display font-semibold">
+                    <div className="flex gap-1 text-xs font-semibold">
                       {invoice.pdf_url ? (
                         <a
                           href={`/api/receipts/signed-url?path=${encodeURIComponent(invoice.pdf_url)}&bucket=invoices`}

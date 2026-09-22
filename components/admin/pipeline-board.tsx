@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { RiAddLine } from "@remixicon/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -61,7 +61,7 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="text-body-s text-foreground/75">
+        <p className="text-sm text-foreground/75">
           {leads.length} leads · total estimado{" "}
           <span className="tabular-nums font-semibold text-foreground">
             {formatMXN(leads.reduce((acc, l) => acc + (l.estimated_monthly_spend ?? 0), 0))}
@@ -69,7 +69,7 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
           /mes
         </p>
         <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-1 h-4 w-4" /> Nuevo lead
+          <RiAddLine className="mr-1 h-4 w-4" /> Nuevo lead
         </Button>
       </div>
 
@@ -82,15 +82,15 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
               className="flex flex-col gap-3 rounded-lg border border-border bg-muted p-3"
             >
               <div className="flex items-baseline justify-between">
-                <h2 className="font-display text-h5 text-foreground">{col.label}</h2>
-                <span className="text-caption text-foreground/75">
+                <h2 className="text-base font-semibold text-foreground">{col.label}</h2>
+                <span className="text-xs text-foreground/75">
                   {columnLeads.length} ·{" "}
                   <span className="tabular-nums">{formatMXN(columnTotal(col.key))}</span>
                 </span>
               </div>
 
               {columnLeads.length === 0 ? (
-                <p className="text-caption text-foreground/75">Sin leads</p>
+                <p className="text-xs text-foreground/75">Sin leads</p>
               ) : (
                 columnLeads.map((lead) => (
                   <LeadDetailDialog
@@ -102,15 +102,15 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
                         disabled={moving === lead.id}
                         className="w-full rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-foreground/30"
                       >
-                        <p className="font-display text-h4 text-foreground">{lead.company_name}</p>
+                        <p className="text-lg font-semibold text-foreground">{lead.company_name}</p>
                         {lead.contact_name && (
-                          <p className="text-body-s text-foreground/75">{lead.contact_name}</p>
+                          <p className="text-sm text-foreground/75">{lead.contact_name}</p>
                         )}
-                        <p className="text-caption text-foreground/75">{lead.contact_email ?? "—"}</p>
-                        <p className="mt-2 tabular-nums text-body-s font-semibold text-foreground">
+                        <p className="text-xs text-foreground/75">{lead.contact_email ?? "—"}</p>
+                        <p className="mt-2 tabular-nums text-sm font-semibold text-foreground">
                           {formatMXN(lead.estimated_monthly_spend ?? 0)}
                         </p>
-                        <p className="text-caption text-foreground/75">
+                        <p className="text-xs text-foreground/75">
                           {lead.last_contact_at ? timeAgoEs(lead.last_contact_at) : "Sin contacto"}
                         </p>
                         <div className="mt-3 flex gap-2">
@@ -123,7 +123,7 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
                               e.stopPropagation();
                               void moveLead(lead, -1);
                             }}
-                            className="h-8 px-2 font-display font-semibold"
+                            className="h-8 px-2 font-semibold"
                             aria-label="Mover a la etapa anterior"
                           >
                             ←
@@ -137,7 +137,7 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
                               e.stopPropagation();
                               void moveLead(lead, 1);
                             }}
-                            className="h-8 px-2 font-display font-semibold"
+                            className="h-8 px-2 font-semibold"
                             aria-label="Mover a la etapa siguiente"
                           >
                             →

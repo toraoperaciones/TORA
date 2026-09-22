@@ -79,10 +79,10 @@ export function LoginForm() {
         <div className="mb-2 flex justify-center">
           <Logo variant="lockup" theme="light" size="lg" />
         </div>
-        <CardTitle className="font-display text-h2 text-foreground">
+        <CardTitle className="text-2xl font-semibold text-foreground">
           Inicia sesión
         </CardTitle>
-        <CardDescription className="text-body-s text-muted-foreground">
+        <CardDescription className="text-sm text-muted-foreground">
           Accede a tu cuenta corporativa.
         </CardDescription>
       </CardHeader>
@@ -98,7 +98,7 @@ export function LoginForm() {
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-caption font-semibold text-foreground">
+              <p className="text-xs font-semibold text-foreground">
                 {errors.email.message}
               </p>
             )}
@@ -114,7 +114,7 @@ export function LoginForm() {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-caption font-semibold text-foreground">
+              <p className="text-xs font-semibold text-foreground">
                 {errors.password.message}
               </p>
             )}
@@ -138,7 +138,7 @@ export function LoginForm() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-body-s text-muted-foreground">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           ¿No tienes cuenta?{" "}
           <Link
             href="/register"

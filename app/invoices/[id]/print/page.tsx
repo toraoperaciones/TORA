@@ -61,7 +61,7 @@ export default async function InvoicePrintPage({
         {/* Encabezado */}
         <div className="flex items-start justify-between border-b-2 border-border pb-6">
           <div>
-            <p className="font-display text-2xl font-bold uppercase tracking-[0.14em]">
+            <p className="text-2xl font-bold uppercase tracking-[0.14em]">
               TORA
             </p>
             <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
@@ -69,7 +69,7 @@ export default async function InvoicePrintPage({
             </p>
           </div>
           <div className="text-right">
-            <p className="font-display text-h3 font-semibold">Factura</p>
+            <p className="text-xl font-semibold font-semibold">Factura</p>
             <p className="mt-1 font-mono text-sm">Período {invoice.period}</p>
             <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted-foreground">
               {invoice.status === "paid"
@@ -89,10 +89,10 @@ export default async function InvoicePrintPage({
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Receptor
             </p>
-            <p className="mt-1 font-display text-body-m font-semibold">
+            <p className="mt-1 text-base font-semibold">
               {tenant?.razon_social ?? tenant?.name ?? "—"}
             </p>
-            <p className="font-mono text-caption text-muted-foreground">
+            <p className="font-mono text-xs text-muted-foreground">
               RFC {tenant?.rfc ?? "—"}
             </p>
           </div>
@@ -100,14 +100,14 @@ export default async function InvoicePrintPage({
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Fecha de emisión
             </p>
-            <p className="mt-1 font-mono text-body-s">
+            <p className="mt-1 font-mono text-sm">
               {new Date(invoice.created_at).toLocaleDateString("es-MX")}
             </p>
           </div>
         </div>
 
         {/* Conceptos */}
-        <table className="mt-8 w-full text-body-s">
+        <table className="mt-8 w-full text-sm">
           <thead>
             <tr className="border-b border-border/20 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
               <th className="pb-2 font-semibold">Concepto</th>
@@ -129,19 +129,19 @@ export default async function InvoicePrintPage({
         {/* Totales */}
         <div className="mt-6 flex justify-end">
           <div className="w-64">
-            <div className="flex justify-between py-1 text-body-s text-muted-foreground">
+            <div className="flex justify-between py-1 text-sm text-muted-foreground">
               <span>Subtotal</span>
               <span className="font-mono tabular-nums">
                 {formatMXN(Number(invoice.subtotal))}
               </span>
             </div>
-            <div className="flex justify-between py-1 text-body-s text-muted-foreground">
+            <div className="flex justify-between py-1 text-sm text-muted-foreground">
               <span>IVA (16%)</span>
               <span className="font-mono tabular-nums">
                 {formatMXN(Number(invoice.iva))}
               </span>
             </div>
-            <div className="mt-2 flex justify-between border-t-2 border-border pt-2 font-display text-body-m font-bold">
+            <div className="mt-2 flex justify-between border-t-2 border-border pt-2 text-base font-bold">
               <span>Total</span>
               <span className="font-mono tabular-nums">
                 {formatMXN(Number(invoice.total))}
@@ -171,7 +171,7 @@ export default async function InvoicePrintPage({
       <div className="mx-auto mt-6 w-[210mm] max-w-full text-center print:hidden">
         <Link
           href="/invoices"
-          className="text-caption text-muted-foreground underline underline-offset-4 hover:text-foreground/75"
+          className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground/75"
         >
           Volver a facturas
         </Link>

@@ -139,10 +139,10 @@ export default async function FinanceCreditPage() {
 
       {awaitingTrips.length > 0 && (
         <div className="rounded-lg border border-border bg-card p-6">
-          <h2 className="font-display text-h4 text-foreground">
+          <h2 className="text-lg font-semibold text-foreground">
             Solicitudes de crédito pendientes
           </h2>
-          <p className="mt-1 text-body-s text-foreground/75">
+          <p className="mt-1 text-sm text-foreground/75">
             Trips con opción seleccionada cuyo saldo no cubre. Aprobar crédito
             confirma la reserva y deja el cargo a 30 días.
           </p>
@@ -153,10 +153,10 @@ export default async function FinanceCreditPage() {
                 className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted px-4 py-3"
               >
                 <div>
-                  <p className="text-body-s font-semibold text-foreground">
+                  <p className="text-sm font-semibold text-foreground">
                     {tenantNames.get(t.tenant_id) ?? t.tenant_id} → {t.destination}
                   </p>
-                  <p className="text-caption text-foreground/75 tabular-nums">
+                  <p className="text-xs text-foreground/75 tabular-nums">
                     Cargo pendiente: {formatMXN(t.charge_amount)}
                   </p>
                 </div>
@@ -180,30 +180,30 @@ export default async function FinanceCreditPage() {
 
       <div className="rounded-lg border border-border bg-card p-6">
         {tenants.length === 0 ? (
-          <p className="text-body-s text-foreground/75">Sin clientes registrados.</p>
+          <p className="text-sm text-foreground/75">Sin clientes registrados.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Límite aprobado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Utilizado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Disponible
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Interés acumulado
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Estado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Acciones
                 </TableHead>
               </TableRow>
@@ -229,22 +229,22 @@ export default async function FinanceCreditPage() {
 
                 return (
                   <TableRow key={tenant.id} className="border-border align-top">
-                    <TableCell className="text-body-s font-semibold text-foreground">
+                    <TableCell className="text-sm font-semibold text-foreground">
                       {tenant.name}
-                      <p className="text-caption font-normal text-foreground/75">
+                      <p className="text-xs font-normal text-foreground/75">
                         RFC {tenant.rfc ?? "—"} · crédito {tenant.credit_days}d
                       </p>
                       {/* Movimientos expandibles: charges pending_payment */}
                       {tenantCharges.length > 0 && (
                         <details className="mt-2">
-                          <summary className="cursor-pointer text-caption font-normal text-foreground/75 hover:underline">
+                          <summary className="cursor-pointer text-xs font-normal text-foreground/75 hover:underline">
                             Ver movimientos ({tenantCharges.length})
                           </summary>
                           <ul className="mt-2 flex flex-col gap-1 border-l border-border pl-3">
                             {tenantCharges.map((charge) => (
                               <li
                                 key={charge.id}
-                                className="flex items-center justify-between gap-3 text-caption text-foreground"
+                                className="flex items-center justify-between gap-3 text-xs text-foreground"
                               >
                                 <span>
                                   {charge.reference ?? charge.id.slice(0, 8)} ·{" "}
@@ -260,18 +260,18 @@ export default async function FinanceCreditPage() {
                         </details>
                       )}
                     </TableCell>
-                    <TableCell className="text-right text-body-s tabular-nums text-foreground">
+                    <TableCell className="text-right text-sm tabular-nums text-foreground">
                       {line ? formatMXN(limit) : "—"}
                     </TableCell>
-                    <TableCell className="text-right text-body-s tabular-nums text-foreground">
+                    <TableCell className="text-right text-sm tabular-nums text-foreground">
                       {used > 0 ? formatMXN(used) : "—"}
                     </TableCell>
-                    <TableCell className="text-right text-body-s tabular-nums text-foreground">
+                    <TableCell className="text-right text-sm tabular-nums text-foreground">
                       {line ? formatMXN(Math.max(0, limit - used)) : "—"}
                     </TableCell>
                     <TableCell
                       className={cn(
-                        "text-right text-body-s tabular-nums",
+                        "text-right text-sm tabular-nums",
                         interest > 0 ? "font-semibold text-foreground" : "text-foreground/75"
                       )}
                     >

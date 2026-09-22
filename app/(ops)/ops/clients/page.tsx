@@ -104,22 +104,22 @@ export default async function OpsClientsPage() {
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
-              <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+              <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                 Nombre
               </TableHead>
-              <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+              <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                 RFC
               </TableHead>
-              <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+              <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                 Saldo
               </TableHead>
-              <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+              <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                 Viajes activos
               </TableHead>
-              <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+              <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                 Último viaje
               </TableHead>
-              <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+              <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                 Estado
               </TableHead>
             </TableRow>
@@ -127,26 +127,26 @@ export default async function OpsClientsPage() {
           <TableBody>
             {tenantsWithStats.map((tenant) => (
               <TableRow key={tenant.id} className="border-border align-top">
-                <TableCell className="text-body-s font-semibold text-foreground">
+                <TableCell className="text-sm font-semibold text-foreground">
                   {tenant.name}
                   {/* Detalle expandible nativo: últimos trips + transacciones */}
                   <details className="mt-2">
-                    <summary className="cursor-pointer text-caption font-normal text-foreground/75 hover:underline">
+                    <summary className="cursor-pointer text-xs font-normal text-foreground/75 hover:underline">
                       Ver actividad reciente
                     </summary>
                     <div className="mt-2 grid gap-4 border-l border-border pl-3 lg:grid-cols-2">
                       <div>
-                        <p className="text-caption uppercase tracking-wider text-foreground/75">
+                        <p className="text-xs uppercase tracking-wider text-foreground/75">
                           Últimos viajes
                         </p>
                         {tenant.recentTrips.length === 0 ? (
-                          <p className="text-caption text-foreground/75">Sin viajes.</p>
+                          <p className="text-xs text-foreground/75">Sin viajes.</p>
                         ) : (
                           <ul className="mt-1 flex flex-col gap-1">
                             {tenant.recentTrips.map((trip) => (
                               <li
                                 key={trip.id}
-                                className="flex items-center justify-between gap-2 text-caption text-foreground"
+                                className="flex items-center justify-between gap-2 text-xs text-foreground"
                               >
                                 <span>
                                   {trip.destination} · {trip.departure_date}
@@ -158,17 +158,17 @@ export default async function OpsClientsPage() {
                         )}
                       </div>
                       <div>
-                        <p className="text-caption uppercase tracking-wider text-foreground/75">
+                        <p className="text-xs uppercase tracking-wider text-foreground/75">
                           Últimas transacciones
                         </p>
                         {tenant.recentTxs.length === 0 ? (
-                          <p className="text-caption text-foreground/75">Sin movimientos.</p>
+                          <p className="text-xs text-foreground/75">Sin movimientos.</p>
                         ) : (
                           <ul className="mt-1 flex flex-col gap-1">
                             {tenant.recentTxs.map((tx) => (
                               <li
                                 key={tx.id}
-                                className="flex items-center justify-between gap-2 text-caption text-foreground"
+                                className="flex items-center justify-between gap-2 text-xs text-foreground"
                               >
                                 <span>
                                   {TX_TYPE_LABEL[tx.type] ?? tx.type} ·{" "}
@@ -185,16 +185,16 @@ export default async function OpsClientsPage() {
                     </div>
                   </details>
                 </TableCell>
-                <TableCell className="text-body-s tabular-nums text-foreground/75">
+                <TableCell className="text-sm tabular-nums text-foreground/75">
                   {tenant.rfc ?? "—"}
                 </TableCell>
-                <TableCell className="text-right text-body-s font-semibold tabular-nums text-foreground">
+                <TableCell className="text-right text-sm font-semibold tabular-nums text-foreground">
                   {formatMXN(tenant.balance)}
                 </TableCell>
-                <TableCell className="text-right text-body-s tabular-nums text-foreground">
+                <TableCell className="text-right text-sm tabular-nums text-foreground">
                   {tenant.activeTripsCount}
                 </TableCell>
-                <TableCell className="text-body-s text-foreground">
+                <TableCell className="text-sm text-foreground">
                   {tenant.lastTrip
                     ? `${tenant.lastTrip.destination} · ${tenant.lastTrip.departure_date}`
                     : "—"}

@@ -5,8 +5,6 @@
 
 /* Preset b6rtDkAbY — bloque :root exacto validado por el usuario */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.153 0.006 107.1);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.153 0.006 107.1);
   --popover: oklch(1 0 0);
@@ -37,6 +35,8 @@
   --sidebar-accent-foreground: oklch(0.228 0.013 107.4);
   --sidebar-border: oklch(0.93 0.007 106.5);
   --sidebar-ring: oklch(0.737 0.021 106.9);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.153 0.006 107.1);
 }
 
 /* Preset b6rtDkAbY — bloque .dark exacto validado por el usuario */
@@ -113,6 +113,8 @@
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
 }
 
 /* Única fuente del sistema: Inter (variable provista por next/font en <html>). */
@@ -141,7 +143,7 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply antialiased bg-background text-foreground;
   }
 
   /* Todo número monetario / métrico: dígitos tabulares */

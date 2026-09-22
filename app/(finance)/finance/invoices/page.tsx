@@ -97,7 +97,7 @@ export default async function FinanceInvoicesPage({
             asChild
             variant={statusFilter === tab.value ? "default" : "outline"}
             size="sm"
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             <Link
               href={`/finance/invoices?status=${tab.value}${params.tenant ? `&tenant=${params.tenant}` : ""}`}
@@ -111,7 +111,7 @@ export default async function FinanceInvoicesPage({
           asChild
           variant={!params.tenant ? "default" : "outline"}
           size="sm"
-          className="font-display font-semibold"
+          className="font-semibold"
         >
           <Link
             href={`/finance/invoices?status=${statusFilter}`}
@@ -125,7 +125,7 @@ export default async function FinanceInvoicesPage({
             asChild
             variant={params.tenant === tenant.id ? "default" : "outline"}
             size="sm"
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             <Link
               href={`/finance/invoices?status=${statusFilter}&tenant=${tenant.id}`}
@@ -138,30 +138,30 @@ export default async function FinanceInvoicesPage({
 
       <div className="rounded-lg border border-border bg-card p-6">
         {invoices.length === 0 ? (
-          <p className="text-body-s text-foreground/75">Aún no hay facturas emitidas.</p>
+          <p className="text-sm text-foreground/75">Aún no hay facturas emitidas.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Periodo
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Subtotal
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   IVA
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Total
                 </TableHead>
-                <TableHead className="text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Estado
                 </TableHead>
-                <TableHead className="text-right text-caption uppercase tracking-wider text-foreground/75">
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Descargas
                 </TableHead>
               </TableRow>
@@ -169,24 +169,24 @@ export default async function FinanceInvoicesPage({
             <TableBody>
               {invoices.map((invoice) => (
                 <TableRow key={invoice.id} className="border-border">
-                  <TableCell className="text-body-s font-semibold text-foreground">
+                  <TableCell className="text-sm font-semibold text-foreground">
                     {invoice.period}
                     {invoice.cfdi_uuid && (
-                      <p className="text-caption font-normal text-foreground/75">
+                      <p className="text-xs font-normal text-foreground/75">
                         CFDI {invoice.cfdi_uuid.slice(0, 8)}…
                       </p>
                     )}
                   </TableCell>
-                  <TableCell className="text-body-s text-foreground">
+                  <TableCell className="text-sm text-foreground">
                     {invoice.tenants?.name ?? "—"}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-foreground">
+                  <TableCell className="text-right text-sm tabular-nums text-foreground">
                     {formatMXN(Number(invoice.subtotal))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s tabular-nums text-foreground">
+                  <TableCell className="text-right text-sm tabular-nums text-foreground">
                     {formatMXN(Number(invoice.iva))}
                   </TableCell>
-                  <TableCell className="text-right text-body-s font-semibold tabular-nums text-foreground">
+                  <TableCell className="text-right text-sm font-semibold tabular-nums text-foreground">
                     {formatMXN(Number(invoice.total))}
                   </TableCell>
                   <TableCell>
@@ -201,7 +201,7 @@ export default async function FinanceInvoicesPage({
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2 text-body-s">
+                    <div className="flex justify-end gap-2 text-sm">
                       {invoice.pdf_url ? (
                         <a
                           href={invoice.pdf_url}
@@ -212,7 +212,7 @@ export default async function FinanceInvoicesPage({
                           PDF
                         </a>
                       ) : (
-                        <span className="text-caption text-foreground/75">PDF —</span>
+                        <span className="text-xs text-foreground/75">PDF —</span>
                       )}
                       {invoice.xml_url ? (
                         <a
@@ -224,7 +224,7 @@ export default async function FinanceInvoicesPage({
                           XML
                         </a>
                       ) : (
-                        <span className="text-caption text-foreground/75">XML —</span>
+                        <span className="text-xs text-foreground/75">XML —</span>
                       )}
                     </div>
                   </TableCell>

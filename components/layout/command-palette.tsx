@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, FileText, Plane, Search, Users } from "lucide-react";
+import { RiTimeLine, RiFileTextLine, RiFlightTakeoffLine, RiSearchLine, RiTeamLine } from "@remixicon/react";
 import { Command } from "cmdk";
 import Fuse from "fuse.js";
 import { useRouter } from "next/navigation";
@@ -262,12 +262,12 @@ export function CommandPalette({ role }: { role: Role }) {
         <DialogTitle className="sr-only">Buscar</DialogTitle>
         <Command shouldFilter={false} loop>
           <div className="flex items-center gap-3 border-b border-border px-4">
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground/70" aria-hidden />
+            <RiSearchLine className="h-4 w-4 shrink-0 text-muted-foreground/70" aria-hidden />
             <Command.Input
               value={query}
               onValueChange={setQuery}
               placeholder="Buscar viajes, facturas, personas o acciones…"
-              className="h-13 w-full bg-transparent py-4 text-body-m text-foreground outline-none placeholder:text-muted-foreground/70"
+              className="h-13 w-full bg-transparent py-4 text-base text-foreground outline-none placeholder:text-muted-foreground/70"
             />
             <kbd className="rounded border border-border bg-muted/50 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground/70">
               esc
@@ -278,19 +278,19 @@ export function CommandPalette({ role }: { role: Role }) {
             {!query.trim() && recentItems.length > 0 && (
               <Command.Group
                 heading="Recientes"
-                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
               >
                 {recentItems.map((r) => (
                   <Item key={`recent-${r.href}`} onSelect={() => go(r.href)}>
-                    <Clock className="h-4 w-4 text-muted-foreground/70" aria-hidden />
+                    <RiTimeLine className="h-4 w-4 text-muted-foreground/70" aria-hidden />
                     <span className="flex-1">{r.label}</span>
-                    <span className="text-caption text-muted-foreground/70">{r.hint}</span>
+                    <span className="text-xs text-muted-foreground/70">{r.hint}</span>
                   </Item>
                 ))}
               </Command.Group>
             )}
 
-            <Command.Empty className="px-3 py-6 text-center text-body-s text-muted-foreground">
+            <Command.Empty className="px-3 py-6 text-center text-sm text-muted-foreground">
               {isEmpty
                 ? query.trim().length >= 2
                   ? "Sin resultados."
@@ -301,19 +301,19 @@ export function CommandPalette({ role }: { role: Role }) {
             {hasEntities && (
               <Command.Group
                 heading="Resultados"
-                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
               >
                 {hits.map((hit) => (
                   <Item key={hit.id} onSelect={() => go(hit.href)}>
                     {hit.kind === "trip" ? (
-                      <Plane className="h-4 w-4" aria-hidden />
+                      <RiFlightTakeoffLine className="h-4 w-4" aria-hidden />
                     ) : hit.kind === "invoice" ? (
-                      <FileText className="h-4 w-4" aria-hidden />
+                      <RiFileTextLine className="h-4 w-4" aria-hidden />
                     ) : (
-                      <Users className="h-4 w-4" aria-hidden />
+                      <RiTeamLine className="h-4 w-4" aria-hidden />
                     )}
                     <span className="flex-1 truncate">{hit.label}</span>
-                    <span className="text-caption text-muted-foreground/70">{hit.hint}</span>
+                    <span className="text-xs text-muted-foreground/70">{hit.hint}</span>
                   </Item>
                 ))}
               </Command.Group>
@@ -321,7 +321,7 @@ export function CommandPalette({ role }: { role: Role }) {
 
             <Command.Group
               heading="Navegación"
-              className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
+              className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
             >
               {navMatches.map(({ item, hint }) => (
                 <Item
@@ -331,7 +331,7 @@ export function CommandPalette({ role }: { role: Role }) {
                 >
                   <item.icon className="h-4 w-4" aria-hidden />
                   <span className="flex-1">{item.label}</span>
-                  <span className="text-caption text-muted-foreground/70">{hint}</span>
+                  <span className="text-xs text-muted-foreground/70">{hint}</span>
                 </Item>
               ))}
             </Command.Group>
@@ -339,7 +339,7 @@ export function CommandPalette({ role }: { role: Role }) {
             {actionMatches.length > 0 && (
               <Command.Group
                 heading="Acciones"
-                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-overline [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
               >
                 {actionMatches.map((action) => (
                   <Item
@@ -354,7 +354,7 @@ export function CommandPalette({ role }: { role: Role }) {
             )}
           </Command.List>
 
-          <div className="flex items-center gap-4 border-t border-border px-4 py-2.5 text-caption text-muted-foreground/70">
+          <div className="flex items-center gap-4 border-t border-border px-4 py-2.5 text-xs text-muted-foreground/70">
             <span>↑↓ navegar</span>
             <span>↵ seleccionar</span>
             <span>esc cerrar</span>
@@ -378,7 +378,7 @@ function Item({
     <Command.Item
       onSelect={onSelect}
       keywords={keywords ? [keywords] : undefined}
-      className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 text-body-s text-foreground/75 transition-colors data-[selected=true]:bg-muted data-[selected=true]:text-foreground"
+      className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 text-sm text-foreground/75 transition-colors data-[selected=true]:bg-muted data-[selected=true]:text-foreground"
     >
       {children}
     </Command.Item>

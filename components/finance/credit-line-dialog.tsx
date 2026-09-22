@@ -57,17 +57,17 @@ export function CreditLineDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button variant="outline" size="sm" className="font-display font-semibold">
+          <Button variant="outline" size="sm" className="font-semibold">
             Ajustar
           </Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Línea de crédito — {tenant.name}
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             El crédito es a 30 días sin interés. Después aplica la tasa mensual.
           </DialogDescription>
         </DialogHeader>
@@ -104,11 +104,11 @@ export function CreditLineDialog({
           <Button
             variant="outline"
             onClick={() => setOpen(false)}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="font-display font-semibold">
+          <Button onClick={handleSave} disabled={saving} className="font-semibold">
             {saving ? "Guardando…" : "Guardar"}
           </Button>
         </DialogFooter>

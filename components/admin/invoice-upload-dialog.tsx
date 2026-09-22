@@ -140,12 +140,12 @@ export function InvoiceUploadDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="font-display font-semibold">Subir factura</Button>
+        <Button className="font-semibold">Subir factura</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">Subir factura</DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogTitle className="text-lg font-semibold text-foreground">Subir factura</DialogTitle>
+          <DialogDescription className="text-sm text-foreground/75">
             PDF + XML al bucket privado `invoices`. El cliente solo puede leerlos.
           </DialogDescription>
         </DialogHeader>
@@ -166,7 +166,7 @@ export function InvoiceUploadDialog({
               </SelectContent>
             </Select>
             {errors.tenantId && (
-              <p className="text-caption font-semibold text-foreground">{errors.tenantId.message}</p>
+              <p className="text-xs font-semibold text-foreground">{errors.tenantId.message}</p>
             )}
           </div>
 
@@ -175,7 +175,7 @@ export function InvoiceUploadDialog({
               <Label htmlFor="inv-period">Período (YYYY-MM)</Label>
               <Input id="inv-period" placeholder="2025-03" {...register("period")} />
               {errors.period && (
-                <p className="text-caption font-semibold text-foreground">{errors.period.message}</p>
+                <p className="text-xs font-semibold text-foreground">{errors.period.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-2">
@@ -193,7 +193,7 @@ export function InvoiceUploadDialog({
                 {...register("subtotal")}
               />
               {errors.subtotal && (
-                <p className="text-caption font-semibold text-foreground">{errors.subtotal.message}</p>
+                <p className="text-xs font-semibold text-foreground">{errors.subtotal.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-2">
@@ -209,7 +209,7 @@ export function InvoiceUploadDialog({
             </div>
           </div>
 
-          <div className="text-caption text-foreground/75">
+          <div className="text-xs text-foreground/75">
             Total calculado: <span className="tabular-nums font-semibold text-foreground">${total.toFixed(2)} MXN</span>
           </div>
 
@@ -235,10 +235,10 @@ export function InvoiceUploadDialog({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="font-display font-semibold">
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="font-semibold">
               Cancelar
             </Button>
-            <Button type="submit" disabled={saving} className="font-display font-semibold">
+            <Button type="submit" disabled={saving} className="font-semibold">
               {saving ? "Subiendo…" : "Subir factura"}
             </Button>
           </DialogFooter>

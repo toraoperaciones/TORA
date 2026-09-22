@@ -110,14 +110,14 @@ export function TenantFormDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="font-display font-semibold">Nuevo tenant</Button>
+        <Button className="font-semibold">Nuevo tenant</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-display text-h4 text-foreground">
+          <DialogTitle className="text-lg font-semibold text-foreground">
             Nuevo tenant
           </DialogTitle>
-          <DialogDescription className="text-body-s text-foreground/75">
+          <DialogDescription className="text-sm text-foreground/75">
             Alta de cliente corporativo. Los markups definen el margen embebido.
           </DialogDescription>
         </DialogHeader>
@@ -127,7 +127,7 @@ export function TenantFormDialog() {
             <Label htmlFor="tenant-name">Nombre</Label>
             <Input id="tenant-name" placeholder="Grupo Salinas SA de CV" {...register("name")} />
             {errors.name && (
-              <p className="text-caption font-semibold text-foreground">{errors.name.message}</p>
+              <p className="text-xs font-semibold text-foreground">{errors.name.message}</p>
             )}
           </div>
 
@@ -135,7 +135,7 @@ export function TenantFormDialog() {
             <Label htmlFor="tenant-rfc">RFC (opcional)</Label>
             <Input id="tenant-rfc" placeholder="GSA240101XYZ" {...register("rfc")} />
             {errors.rfc && (
-              <p className="text-caption font-semibold text-foreground">{errors.rfc.message}</p>
+              <p className="text-xs font-semibold text-foreground">{errors.rfc.message}</p>
             )}
           </div>
 
@@ -188,7 +188,7 @@ export function TenantFormDialog() {
                 })}
               />
               {errors[field.name] && (
-                <p className="text-caption font-semibold text-foreground">
+                <p className="text-xs font-semibold text-foreground">
                   {errors[field.name]?.message}
                 </p>
               )}
@@ -205,11 +205,11 @@ export function TenantFormDialog() {
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
-              className="font-display font-semibold"
+              className="font-semibold"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={saving} className="font-display font-semibold">
+            <Button type="submit" disabled={saving} className="font-semibold">
               {saving ? "Creando…" : "Crear tenant"}
             </Button>
           </DialogFooter>

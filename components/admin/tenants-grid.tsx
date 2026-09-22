@@ -50,7 +50,7 @@ export function TenantsGrid({ tenants }: { tenants: TenantRow[] }) {
               aria-selected={filter === f.key}
               onClick={() => setFilter(f.key)}
               className={cn(
-                "h-8 rounded-md px-3 text-body-s transition-colors",
+                "h-8 rounded-md px-3 text-sm transition-colors",
                 filter === f.key
                   ? "bg-accent font-semibold text-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -75,7 +75,7 @@ export function TenantsGrid({ tenants }: { tenants: TenantRow[] }) {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-14 text-center">
           <EmptySearch className="h-28 w-28" />
-          <p className="text-body-s text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Ningún tenant coincide con el filtro actual.
           </p>
         </div>
