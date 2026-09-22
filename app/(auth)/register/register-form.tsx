@@ -19,12 +19,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { passwordSchema, PASSWORD_RULES_TEXT } from "@/lib/auth/password-policy";
 import { createClient } from "@/lib/supabase/client";
 
 const registerSchema = z.object({
   fullName: z.string().min(1, "El nombre es requerido"),
   email: z.string().email("Correo inválido"),
-  password: z.string().min(8, "Mínimo 8 caracteres"),
+  password: passwordSchema,
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;
@@ -124,7 +125,7 @@ export function RegisterForm() {
               id="password"
               type="password"
               autoComplete="new-password"
-              placeholder="Mínimo 8 caracteres"
+              placeholder="Mínimo 12 caracteres"
               {...register("password")}
             />
             {errors.password && (
@@ -132,6 +133,7 @@ export function RegisterForm() {
                 {errors.password.message}
               </p>
             )}
+            <p className="text-xs text-foreground/75">{PASSWORD_RULES_TEXT}</p>
           </div>
 
           <p className="max-w-[75ch] text-xs text-foreground/75">

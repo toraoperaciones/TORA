@@ -49,12 +49,23 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // 2.4 Rotación de passwords: el seed rota con must_change_password=true;
+  // el usuario debe definir una nueva antes de tocar cualquier otra ruta.
+  const mustChange = user.user_metadata?.must_change_password === true;
+  if (mustChange) {
+    const allowed = pathname === "/cambiar-password" || pathname.startsWith("/auth/");
+    if (!allowed) return redirectTo("/cambiar-password");
+  }
+
   // 2.5 MFA: flag encendido + sesión sin segundo factor (AAL1) → /mfa.
   //     Desde /mfa solo se puede verificar o cerrar sesión.
   if (profile?.mfa_enabled) {
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     if (aal?.currentLevel !== "aal2") {
-      const allowed = pathname === "/mfa" || pathname.startsWith("/auth/");
+      const allowed =
+        pathname === "/mfa" ||
+        pathname === "/cambiar-password" ||
+        pathname.startsWith("/auth/");
       if (!allowed) return redirectTo("/mfa");
     }
   }
