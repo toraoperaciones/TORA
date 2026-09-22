@@ -1,4 +1,4 @@
-import type { ErrorEvent, EventHint } from "@sentry/nextjs";
+import type { ErrorEvent } from "@sentry/nextjs";
 
 /**
  * Config compartido de Sentry: solo producción (dev/preview no queman cuota),
@@ -10,7 +10,7 @@ export function sentryOptions() {
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled: process.env.NODE_ENV === "production",
     tracesSampleRate: 0.1,
-    beforeSend(event: ErrorEvent, hint: EventHint) {
+    beforeSend(event: ErrorEvent) {
       // Nunca enviar PII: correos, llaves ni URLs de recibos/facturas.
       const strip = (u?: string) =>
         u?.replace(/(receipts|invoices)\/[^\s"?]+/g, "$1/[redacted]");

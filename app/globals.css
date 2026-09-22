@@ -1,9 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/*
- ---break---
- */
 @custom-variant dark (&:is(.dark *));
 
 /* Preset b6rtDkAbY — bloque :root exacto validado por el usuario */
@@ -118,78 +115,9 @@
   --color-chart-1: var(--chart-1);
 }
 
-/* Fuentes TORA: Space Grotesk display, Inter cuerpo, JetBrains datos.
-   next/font provee las variables en <html> (cero flash, cero request). */
+/* Única fuente del sistema: Inter (variable provista por next/font en <html>). */
 @theme {
   --font-sans: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif,
-    system-ui, sans-serif;
-  --font-body: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, "SF Mono",
-    monospace;
-
-  /* Escala tipográfica TORA — base 16px */
-  --text-display-xl: 6rem;
-  --text-display-xl--line-height: 1.05;
-  --text-display-xl--letter-spacing: -0.02em;
-  --text-display-xl--font-weight: 700;
-
-  --text-display-l: 3.5rem;
-  --text-display-l--line-height: 1.15;
-  --text-display-l--letter-spacing: -0.02em;
-  --text-display-l--font-weight: 700;
-
-  --text-display-m: 2.5rem;
-  --text-display-m--line-height: 1.2;
-  --text-display-m--letter-spacing: -0.01em;
-  --text-display-m--font-weight: 600;
-
-  --text-h1: 2rem;
-  --text-h1--line-height: 1.25;
-  --text-h1--letter-spacing: -0.01em;
-  --text-h1--font-weight: 600;
-
-  --text-h2: 1.5rem;
-  --text-h2--line-height: 1.3;
-  --text-h2--letter-spacing: 0;
-  --text-h2--font-weight: 600;
-
-  --text-h3: 1.25rem;
-  --text-h3--line-height: 1.35;
-  --text-h3--letter-spacing: 0;
-  --text-h3--font-weight: 500;
-
-  --text-h4: 1.125rem;
-  --text-h4--line-height: 1.4;
-  --text-h4--letter-spacing: 0;
-  --text-h4--font-weight: 600;
-
-  --text-body-l: 1.125rem;
-  --text-body-l--line-height: 1.6;
-  --text-body-l--letter-spacing: 0;
-  --text-body-l--font-weight: 400;
-
-  --text-body-m: 1rem;
-  --text-body-m--line-height: 1.6;
-  --text-body-m--letter-spacing: 0;
-  --text-body-m--font-weight: 400;
-
-  --text-body-s: 0.875rem;
-  --text-body-s--line-height: 1.5;
-  --text-body-s--letter-spacing: 0;
-  --text-body-s--font-weight: 400;
-
-  --text-caption: 0.75rem;
-  --text-caption--line-height: 1.4;
-  --text-caption--letter-spacing: 0.02em;
-  --text-caption--font-weight: 500;
-
-  --text-overline: 0.6875rem;
-  --text-overline--line-height: 1.3;
-  --text-overline--letter-spacing: 0.08em;
-  --text-overline--font-weight: 600;
-
-  --ease-tora: cubic-bezier(0.16, 1, 0.3, 1); /* out-expo */
 }
 
 @layer base {
@@ -213,41 +141,18 @@
   }
 
   body {
-    @apply font-body antialiased bg-background text-foreground;
-    font-feature-settings: "cv11", "ss01";
-  }
-
-  h1 {
-    @apply font-display text-h1;
-  }
-
-  h2 {
-    @apply font-display text-h2;
-  }
-
-  h3 {
-    @apply font-display text-h3;
-  }
-
-  h4 {
-    @apply font-body text-h4;
+    @apply bg-background text-foreground antialiased;
   }
 
   /* Todo número monetario / métrico: dígitos tabulares */
-  .tabular-nums,
   [data-money],
   [data-metric] {
     font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum", "ss01";
   }
 
   ::selection {
     background-color: var(--primary);
     color: var(--primary-foreground);
-  }
-
-  ::placeholder {
-    color: var(--muted-foreground);
   }
 
   /* Scrollbar sutil */
@@ -264,11 +169,6 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--ring);
-  }
-
-  /* Longitud de línea máxima para texto corrido */
-  .prose-tora {
-    max-width: 75ch;
   }
 
   /* Impresión: nunca cortar una fila de tabla entre páginas */
@@ -291,50 +191,3 @@
     }
   }
 }
-
-@layer utilities {
-  /* Noise sutil para fondos hero */
-  .bg-noise {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
-  }
-
-  /* Radial depth muy sutil para heros */
-  .bg-radial-depth {
-    background: radial-gradient(
-      ellipse at top,
-      color-mix(in oklab, var(--foreground) 4%, transparent) 0%,
-      transparent 60%
-    );
-  }
-
-  /* Skeleton shimmer */
-  .animate-shimmer {
-    background: linear-gradient(
-      90deg,
-      var(--muted) 0%,
-      var(--accent) 50%,
-      var(--muted) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.6s var(--ease-tora) infinite;
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-
-  .text-balance {
-    text-wrap: balance;
-  }
-  .text-pretty {
-    text-wrap: pretty;
-  }
-}
-/*
- ---break---
- */

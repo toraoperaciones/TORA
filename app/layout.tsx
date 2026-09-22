@@ -1,29 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 
 import { QueryProvider } from "@/components/providers/query-provider";
 
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
-
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -66,7 +52,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body
-        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrains.variable} bg-background font-body text-foreground antialiased`}
+        className={`${inter.variable} bg-background font-sans text-foreground antialiased`}
       >
         <QueryProvider>{children}</QueryProvider>
         <Toaster position="top-right" />

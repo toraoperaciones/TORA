@@ -77,10 +77,10 @@ export function RegisterForm() {
         <div className="mb-2 flex justify-center">
           <Logo variant="lockup" theme="light" size="lg" />
         </div>
-        <CardTitle className="font-display text-h2 text-foreground">
+        <CardTitle className="text-2xl font-semibold text-foreground">
           Crea tu cuenta
         </CardTitle>
-        <CardDescription className="text-body-s text-foreground/75">
+        <CardDescription className="text-sm text-foreground/75">
           Registra tu empresa en TORA.
         </CardDescription>
       </CardHeader>
@@ -96,7 +96,7 @@ export function RegisterForm() {
               {...register("fullName")}
             />
             {errors.fullName && (
-              <p className="text-caption font-semibold text-foreground">
+              <p className="text-xs font-semibold text-foreground">
                 {errors.fullName.message}
               </p>
             )}
@@ -112,7 +112,7 @@ export function RegisterForm() {
               {...register("email")}
             />
             {errors.email && (
-              <p className="text-caption font-semibold text-foreground">
+              <p className="text-xs font-semibold text-foreground">
                 {errors.email.message}
               </p>
             )}
@@ -128,26 +128,26 @@ export function RegisterForm() {
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-caption font-semibold text-foreground">
+              <p className="text-xs font-semibold text-foreground">
                 {errors.password.message}
               </p>
             )}
           </div>
 
-          <p className="prose-tora text-caption text-foreground/75">
+          <p className="max-w-[75ch] text-xs text-foreground/75">
             Tu cuenta será revisada por el equipo de TORA antes de activarse.
           </p>
 
           <Button
             type="submit"
             disabled={submitting}
-            className="font-display font-semibold"
+            className="font-semibold"
           >
             {submitting ? "Creando cuenta…" : "Crear cuenta"}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-body-s text-foreground/75">
+        <p className="mt-6 text-center text-sm text-foreground/75">
           ¿Ya tienes cuenta?{" "}
           <Link
             href="/login"
