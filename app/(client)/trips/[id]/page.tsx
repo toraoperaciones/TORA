@@ -5,9 +5,11 @@ import { StatusBadge } from "@/components/trips/status-badge";
 import { TripRail } from "@/components/trips/trip-rail";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientContext } from "@/lib/auth/tenant";
+import { getSpeiInstructions } from "@/lib/business/payment-methods";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
+import { formatMXN } from "@/lib/utils";
 
 const SERVICE_LABEL: Record<string, string> = {
   flight: "Vuelo",
@@ -34,12 +36,15 @@ export default async function TripDetailPage({
   const { data: trip } = await supabase
     .from("trips")
     .select(
-      "id, destination, origin, departure_date, return_date, passengers, service_type, urgency, reason, status, notes"
+      "id, destination, origin, departure_date, return_date, passengers, service_type, urgency, reason, status, notes, paid_at"
     )
     .eq("id", id)
     .single();
 
   if (!trip) notFound();
+
+  const isCashPending = trip.status === "awaiting_payment";
+  const spei = isCashPending ? await getSpeiInstructions(id) : null;
 
   // ⚠️ REGLA DE ORO: columnas explícitas. net_price NUNCA se selecciona,
   // por lo que jamás viaja en el RSC payload al navegador.
@@ -68,6 +73,91 @@ export default async function TripDetailPage({
         <h1>{trip.destination}</h1>
         <StatusBadge status={trip.status} />
       </div>
+
+      {/* Instrucciones SPEI — solo cash en awaiting_payment. */}
+      {isCashPending && (
+        <Card className="border-border bg-card shadow-none">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-foreground">
+              Esperando pago — transferencia SPEI
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {spei ? (
+              <>
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4">
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-foreground/75">
+                      CLABE
+                    </dt>
+                    <dd className="font-mono text-sm font-medium tabular-nums text-foreground">
+                      {spei.clabe}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-foreground/75">
+                      Beneficiario
+                    </dt>
+                    <dd className="text-sm font-medium text-foreground">
+                      {spei.beneficiary}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-foreground/75">
+                      Monto
+                    </dt>
+                    <dd className="text-sm font-semibold tabular-nums text-foreground">
+                      {formatMXN(spei.amount)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-foreground/75">
+                      Referencia
+                    </dt>
+                    <dd className="font-mono text-sm font-medium tabular-nums text-foreground">
+                      {spei.reference}
+                    </dd>
+                  </div>
+                </dl>
+                <p className="text-sm text-foreground/75">
+                  Al subir tu comprobante, Finanzas lo valida y el viaje se
+                  confirma automáticamente.
+                </p>
+                {ctx.role === "CLIENT_ADMIN" && (
+                  <a
+                    href={`/wallet?trip=${trip.id}`}
+                    className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    Subir comprobante
+                  </a>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-foreground/75">
+                El pago está pendiente. TORA está configurando los datos de
+                transferencia — contacta a tu ejecutivo para continuar.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Confirmación cash: pago liquidado. */}
+      {trip.status === "confirmed" && trip.paid_at && (
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5">
+          <p className="text-sm text-foreground">
+            Pago confirmado. Viaje listo.
+          </p>
+          <span className="text-xs text-muted-foreground">
+            {new Date(trip.paid_at).toLocaleDateString("es-MX", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              timeZone: "America/Mexico_City",
+            })}
+          </span>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="border-border bg-card shadow-none">

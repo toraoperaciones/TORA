@@ -15,7 +15,7 @@ export default async function TenantsPage() {
     .select(
       `id, name, rfc, razon_social, credit_limit, credit_days,
        markup_flights, markup_hotels, markup_cars, markup_stands,
-       status, notes, created_at,
+       status, notes, created_at, payment_method, spei_clabe, spei_beneficiary,
        credit_lines (approved_limit, used_amount, status)`
     )
     .order("created_at", { ascending: false });

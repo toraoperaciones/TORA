@@ -1,8 +1,13 @@
 import { RiErrorWarningLine } from "@remixicon/react";
 import Link from "next/link";
 
+import { EditTenantDialog } from "@/components/admin/edit-tenant-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  PAYMENT_METHOD_LABEL,
+  type PaymentMethod,
+} from "@/lib/business/payment-method";
 import { formatMXN } from "@/lib/utils";
 
 export interface TenantRow {
@@ -11,6 +16,9 @@ export interface TenantRow {
   rfc: string | null;
   credit_limit: number | string;
   status: string;
+  payment_method?: PaymentMethod | null;
+  spei_clabe?: string | null;
+  spei_beneficiary?: string | null;
   credit_lines?:
     | Array<{ approved_limit: number | string; used_amount: number | string; status: string }>
     | null;
@@ -73,18 +81,35 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-        {tenant.status === "active" ? (
-          <Badge variant="outline">Activo</Badge>
-        ) : tenant.status === "suspended" ? (
-          <Badge variant="warning">
-            <RiErrorWarningLine className="h-3 w-3" aria-hidden /> Suspendido
-          </Badge>
-        ) : (
-          <Badge variant="muted">Archivado</Badge>
-        )}
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/admin/tenants/${tenant.id}`}>Ver</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {tenant.status === "active" ? (
+            <Badge variant="outline">Activo</Badge>
+          ) : tenant.status === "suspended" ? (
+            <Badge variant="warning">
+              <RiErrorWarningLine className="h-3 w-3" aria-hidden /> Suspendido
+            </Badge>
+          ) : (
+            <Badge variant="muted">Archivado</Badge>
+          )}
+          {tenant.payment_method && (
+            <Badge variant="muted" className="whitespace-nowrap">
+              {PAYMENT_METHOD_LABEL[tenant.payment_method as PaymentMethod] ??
+                tenant.payment_method}
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <EditTenantDialog
+            tenantId={tenant.id}
+            tenantName={tenant.name}
+            paymentMethod={(tenant.payment_method as PaymentMethod) ?? "prepaid"}
+            speiClabe={tenant.spei_clabe ?? null}
+            speiBeneficiary={tenant.spei_beneficiary ?? null}
+          />
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/admin/tenants/${tenant.id}`}>Ver</Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

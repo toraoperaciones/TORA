@@ -34,6 +34,7 @@ const PAGE_SIZE = 20;
 
 interface SearchParams {
   page?: string;
+  trip?: string;
 }
 
 export const metadata: Metadata = pageMetadata("Billetera");
@@ -43,7 +44,7 @@ export default async function WalletPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, trip: tripParam } = await searchParams;
   const page = Math.max(1, Number(pageParam ?? "1") || 1);
 
   const ctx = await getClientContext();
@@ -61,7 +62,7 @@ export default async function WalletPage({
     );
   }
 
-  const [balance, txs] = await Promise.all([
+  const [balance, txs, pendingCashTrips] = await Promise.all([
     import("@/lib/business/wallet").then((m) => m.getBalance(tenantId)),
     supabase
       .from("wallet_transactions")
@@ -71,6 +72,14 @@ export default async function WalletPage({
       .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false })
       .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1),
+    // Trips cash que esperan SPEI (el comprobante puede vincularse a uno).
+    supabase
+      .from("trips")
+      .select("id, destination, departure_date")
+      .eq("tenant_id", tenantId)
+      .eq("status", "awaiting_payment")
+      .eq("payment_method_snapshot", "cash")
+      .order("created_at", { ascending: false }),
   ]);
 
   const transactions = (txs.data ?? []) as Array<{
@@ -85,13 +94,28 @@ export default async function WalletPage({
   const totalCount = txs.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
+  const cashTrips = (pendingCashTrips.data ?? []) as Array<{
+    id: string;
+    destination: string;
+    departure_date: string;
+  }>;
+
   return (
     <div className="flex flex-col gap-8">
       <h1>Billetera</h1>
 
       <MoneyHero label="Saldo actual" amount={balance} scale="m" />
 
-      {ctx.role === "CLIENT_ADMIN" && <ReceiptUpload tenantId={tenantId} />}
+      {ctx.role === "CLIENT_ADMIN" && (
+        <ReceiptUpload
+          tenantId={tenantId}
+          cashTrips={cashTrips.map((t) => ({
+            id: t.id,
+            label: `${t.destination} · sale ${t.departure_date}`,
+          }))}
+          preselectedTripId={tripParam ?? null}
+        />
+      )}
 
       <div className="rounded-lg border border-border bg-card p-6">
         {transactions.length === 0 ? (

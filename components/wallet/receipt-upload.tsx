@@ -13,6 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
@@ -26,11 +33,29 @@ const receiptSchema = z.object({
 type ReceiptFormInput = z.input<typeof receiptSchema>;
 type ReceiptFormOutput = z.output<typeof receiptSchema>;
 
-export function ReceiptUpload({ tenantId }: { tenantId: string }) {
+export interface CashTripOption {
+  id: string;
+  label: string;
+}
+
+export function ReceiptUpload({
+  tenantId,
+  cashTrips,
+  preselectedTripId,
+}: {
+  tenantId: string;
+  cashTrips: CashTripOption[];
+  preselectedTripId: string | null;
+}) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [tripId, setTripId] = useState<string>(
+    preselectedTripId && cashTrips.some((t) => t.id === preselectedTripId)
+      ? preselectedTripId
+      : "none"
+  );
 
   const {
     register,
@@ -94,6 +119,7 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
         status: "pending",
         reference: values.reference || null,
         receipt_url: path,
+        related_trip_id: tripId !== "none" ? tripId : null,
         created_by: user?.id ?? null,
       });
 
@@ -170,6 +196,27 @@ export function ReceiptUpload({ tenantId }: { tenantId: string }) {
               />
             </div>
           </div>
+
+          {cashTrips.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="trip-select">
+                Aplicar a un viaje pendiente (opcional)
+              </Label>
+              <Select value={tripId} onValueChange={setTripId}>
+                <SelectTrigger id="trip-select" className="w-full">
+                  <SelectValue placeholder="Sin vincular a un viaje" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sin vincular a un viaje</SelectItem>
+                  {cashTrips.map((trip) => (
+                    <SelectItem key={trip.id} value={trip.id}>
+                      {trip.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="flex items-center gap-3">
             <Button

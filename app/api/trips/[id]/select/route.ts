@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 
+import { processTripCharge } from "@/lib/business/payment-methods";
 import { createClient } from "@/lib/supabase/server";
 
 /**
  * POST /api/trips/[id]/select
- * Selección de opción de viaje por CLIENT_ADMIN.
+ * Selección de opción de viaje por CLIENT_ADMIN, diferenciada por método
+ * de pago:
  *
- * Deliberadamente DELGADO: la lógica crítica (validaciones de estado,
- * marcado de opciones, charge, balance, booking) vive en la RPC
- * `select_trip_option` (security definer, transaccional). NUNCA usar
- * el cliente admin (service role) aquí.
+ * - prepaid: la lógica crítica vive en la RPC `select_trip_option`
+ *   (security definer, transaccional). NUNCA usar service-role aquí.
+ * - cash: `processTripCharge` crea el charge pendiente y produce
+ *   instrucciones SPEI; el trip queda pending_payment hasta que FINANCE
+ *   apruebe el depósito vinculado (approve_deposit v2).
+ * - credit: Sprint 2 — se rechaza con 400.
  */
 export async function POST(
   request: Request,
@@ -46,6 +50,36 @@ export async function POST(
       { error: "Solo CLIENT_ADMIN puede seleccionar opciones" },
       { status: 403 }
     );
+  }
+
+  // Método del trip: snapshot al crear; si es anterior al modelo, el del tenant.
+  const { data: trip } = await supabase
+    .from("trips")
+    .select("payment_method_snapshot, tenants(payment_method)")
+    .eq("id", tripId)
+    .single();
+  if (!trip) {
+    return NextResponse.json({ error: "Trip no encontrado" }, { status: 404 });
+  }
+  const tenantRow = Array.isArray(trip.tenants) ? trip.tenants[0] : trip.tenants;
+  const method: "cash" | "prepaid" | "credit" =
+    (trip.payment_method_snapshot as "cash" | "prepaid" | "credit" | null) ??
+    (tenantRow?.payment_method as "cash" | "prepaid" | "credit" | undefined) ??
+    "prepaid";
+
+  if (method === "credit") {
+    return NextResponse.json(
+      { error: "Crédito disponible en Sprint 2" },
+      { status: 400 }
+    );
+  }
+
+  if (method === "cash") {
+    const result = await processTripCharge(tripId, body.option_id);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    return NextResponse.json(result);
   }
 
   const { data, error } = await supabase.rpc("select_trip_option", {

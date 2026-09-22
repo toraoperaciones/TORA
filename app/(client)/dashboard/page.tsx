@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { RiArrowRightLine } from "@remixicon/react";
+import { RiArrowRightLine, RiBankCardLine, RiWalletLine } from "@remixicon/react";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 
@@ -16,6 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientContext } from "@/lib/auth/tenant";
 import { statusLabel } from "@/lib/business/trip-machine";
+import {
+  PAYMENT_METHOD_LABEL,
+  type PaymentMethod,
+} from "@/lib/business/payment-methods";
 import {
   getBalance,
   getMonthlySpend,
@@ -63,30 +67,44 @@ export default async function DashboardPage() {
     timeZone: "America/Mexico_City",
   });
 
-  const [balance, monthlySpend, spendSeries, categories, upcoming, recentTxs] =
-    await Promise.all([
-      tenantId ? getBalance(tenantId) : Promise.resolve(0),
-      tenantId ? getMonthlySpend(tenantId) : Promise.resolve(0),
-      tenantId ? getSpendSeries(tenantId, 14) : Promise.resolve([]),
-      tenantId ? getSpendByCategory(tenantId) : Promise.resolve([]),
-      tenantId
-        ? supabase
-            .from("trips")
-            .select("id, destination, departure_date, status")
-            .eq("tenant_id", tenantId)
-            .gte("departure_date", today)
-            .order("departure_date", { ascending: true })
-            .limit(3)
-        : Promise.resolve({ data: [] }),
-      tenantId
-        ? supabase
-            .from("wallet_transactions")
-            .select("id, amount, type, status, created_at")
-            .eq("tenant_id", tenantId)
-            .order("created_at", { ascending: false })
-            .limit(5)
-        : Promise.resolve({ data: [] }),
-    ]);
+  const [
+    tenantRow,
+    balance,
+    monthlySpend,
+    spendSeries,
+    categories,
+    upcoming,
+    recentTxs,
+  ] = await Promise.all([
+    tenantId
+      ? supabase.from("tenants").select("payment_method").eq("id", tenantId).single()
+      : Promise.resolve({ data: null }),
+    tenantId ? getBalance(tenantId) : Promise.resolve(0),
+    tenantId ? getMonthlySpend(tenantId) : Promise.resolve(0),
+    tenantId ? getSpendSeries(tenantId, 14) : Promise.resolve([]),
+    tenantId ? getSpendByCategory(tenantId) : Promise.resolve([]),
+    tenantId
+      ? supabase
+          .from("trips")
+          .select("id, destination, departure_date, status")
+          .eq("tenant_id", tenantId)
+          .gte("departure_date", today)
+          .order("departure_date", { ascending: true })
+          .limit(3)
+      : Promise.resolve({ data: [] }),
+    tenantId
+      ? supabase
+          .from("wallet_transactions")
+          .select("id, amount, type, status, created_at")
+          .eq("tenant_id", tenantId)
+          .order("created_at", { ascending: false })
+          .limit(5)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const paymentMethod: PaymentMethod =
+    ((tenantRow.data as { payment_method?: PaymentMethod } | null)?.payment_method) ??
+    "prepaid";
 
   const upcomingTrips = (upcoming.data ?? []) as Array<{
     id: string;
@@ -104,6 +122,13 @@ export default async function DashboardPage() {
 
   const seriesPoints = spendSeries.map((p) => p.amount);
   const name = firstName(ctx.fullName);
+
+  const methodIcon =
+    paymentMethod === "cash" ? (
+      <RiBankCardLine className="h-4 w-4 text-muted-foreground" aria-hidden />
+    ) : paymentMethod === "prepaid" ? (
+      <RiWalletLine className="h-4 w-4 text-muted-foreground" aria-hidden />
+    ) : null;
 
   return (
     <div className="flex flex-col gap-8">
@@ -177,6 +202,29 @@ export default async function DashboardPage() {
               value={0}
               className="h-full"
             />
+          )}
+        </StaggerItem>
+        <StaggerItem className="lg:col-span-3">
+          {tenantId && (
+            <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5">
+              <div className="flex min-w-0 items-center gap-3">
+                {methodIcon}
+                <div className="min-w-0">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                    Método de pago
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    {PAYMENT_METHOD_LABEL[paymentMethod]}
+                    {paymentMethod === "prepaid" &&
+                      ` · Saldo disponible: ${formatMXN(balance)} MXN`}
+                    {paymentMethod === "cash" &&
+                      " · Cada viaje requiere SPEI previo."}
+                    {paymentMethod === "credit" &&
+                      " · Disponible: próximo corte — Sprint 2."}
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
         </StaggerItem>
       </Stagger>

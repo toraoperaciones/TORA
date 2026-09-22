@@ -47,6 +47,81 @@ export async function createTenantAction(input: CreateTenantInput): Promise<Ok |
   return { ok: true, tenant_id: (data as { tenant_id?: string })?.tenant_id };
 }
 
+export interface UpdateTenantInput {
+  tenant_id: string;
+  payment_method: "cash" | "prepaid" | "credit";
+  spei_clabe: string | null;
+  spei_beneficiary: string | null;
+}
+
+/**
+ * Edita método de pago + datos SPEI de un tenant (RLS: solo TORA_ADMIN
+ * tiene UPDATE en tenants). Cada campo cambiado queda en tenant_audit_log.
+ */
+export async function updateTenantAction(input: UpdateTenantInput): Promise<Ok | Err> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: current } = await supabase
+    .from("tenants")
+    .select("payment_method, spei_clabe, spei_beneficiary")
+    .eq("id", input.tenant_id)
+    .single();
+  if (!current) return { ok: false, error: "Tenant no encontrado" };
+
+  const { error } = await supabase
+    .from("tenants")
+    .update({
+      payment_method: input.payment_method,
+      spei_clabe: input.spei_clabe,
+      spei_beneficiary: input.spei_beneficiary,
+    })
+    .eq("id", input.tenant_id);
+  if (error) return { ok: false, error: error.message };
+
+  const changes: Array<{ field: string; old_value: string | null; new_value: string | null }> = [];
+  if (current.payment_method !== input.payment_method) {
+    changes.push({
+      field: "payment_method",
+      old_value: current.payment_method,
+      new_value: input.payment_method,
+    });
+  }
+  if ((current.spei_clabe ?? null) !== (input.spei_clabe ?? null)) {
+    changes.push({
+      field: "spei_clabe",
+      old_value: current.spei_clabe,
+      new_value: input.spei_clabe,
+    });
+  }
+  if ((current.spei_beneficiary ?? null) !== (input.spei_beneficiary ?? null)) {
+    changes.push({
+      field: "spei_beneficiary",
+      old_value: current.spei_beneficiary,
+      new_value: input.spei_beneficiary,
+    });
+  }
+
+  if (changes.length > 0) {
+    const { error: logError } = await supabase.from("tenant_audit_log").insert(
+      changes.map((c) => ({
+        tenant_id: input.tenant_id,
+        changed_by: user?.id ?? null,
+        field: c.field,
+        old_value: c.old_value,
+        new_value: c.new_value,
+      }))
+    );
+    if (logError) return { ok: false, error: `Cambio aplicado pero sin log: ${logError.message}` };
+  }
+
+  revalidatePath("/admin/tenants");
+  return { ok: true };
+}
+
 export async function toggleTenantStatusAction(
   tenantId: string,
   newStatus: "active" | "suspended" | "archived"

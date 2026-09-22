@@ -8,8 +8,14 @@ import {
   ConfirmBookingButton,
   ReopenQuoteButton,
 } from "@/components/ops/trip-actions";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ServiceType } from "@/lib/business/markup";
+import {
+  PAYMENT_METHOD_LABEL,
+  type PaymentMethod,
+} from "@/lib/business/payment-methods";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
@@ -38,15 +44,17 @@ export default async function QuotePage({
     .from("trips")
     .select(
       `id, origin, destination, departure_date, return_date, passengers,
-       service_type, urgency, reason, status, requester_id,
-       tenants:tenant_id (name, markup_flights, markup_hotels, markup_cars, markup_stands),
+       service_type, urgency, reason, status, requester_id, payment_method_snapshot,
+       tenants:tenant_id (name, payment_method, markup_flights, markup_hotels, markup_cars, markup_stands),
        requester:requester_id (full_name, email)`
     )
     .eq("id", id)
     .single();
 
   if (!trip) redirect("/ops/trips");
-  if (!QUOTABLE_STATUSES.includes(trip.status)) redirect("/ops/trips");
+  if (!QUOTABLE_STATUSES.includes(trip.status) && trip.status !== "awaiting_payment") {
+    redirect("/ops/trips");
+  }
 
   // OPS SÍ ve net_price (asimetría intencional del modelo de negocio).
   const { data: options } = await supabase
@@ -57,6 +65,11 @@ export default async function QuotePage({
 
   const tenant = Array.isArray(trip.tenants) ? trip.tenants[0] : trip.tenants;
   const requester = Array.isArray(trip.requester) ? trip.requester[0] : trip.requester;
+
+  const method: PaymentMethod =
+    (trip.payment_method_snapshot as PaymentMethod | null) ??
+    (tenant?.payment_method as PaymentMethod | undefined) ??
+    "prepaid";
 
   const markups = {
     markup_flights: Number(tenant?.markup_flights ?? 0.06),
@@ -71,6 +84,20 @@ export default async function QuotePage({
     .eq("trip_id", id)
     .maybeSingle();
 
+  // El link a /finance/deposits solo para quien puede entrar a ese portal.
+  let viewerRole = "";
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    const { data: viewer } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    viewerRole = (viewer?.role as string) ?? "";
+  }
+
   const details: Array<[string, string]> = [
     ["Cliente", tenant?.name ?? "—"],
     ["Solicitante", requester?.full_name ?? requester?.email ?? "—"],
@@ -81,6 +108,8 @@ export default async function QuotePage({
     ["Servicio", SERVICE_LABEL[trip.service_type] ?? trip.service_type],
     ["Urgencia", trip.urgency === "urgent" ? "Urgente" : "Normal"],
   ];
+
+  const showQuoteBuilder = QUOTABLE_STATUSES.includes(trip.status);
 
   return (
     <div className="flex flex-col gap-8">
@@ -93,7 +122,12 @@ export default async function QuotePage({
         </p>
         <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
           <h1>Cotizar viaje</h1>
-          <StatusBadge status={trip.status} />
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="font-medium">
+              {PAYMENT_METHOD_LABEL[method]}
+            </Badge>
+            <StatusBadge status={trip.status} />
+          </div>
         </div>
       </div>
 
@@ -124,21 +158,47 @@ export default async function QuotePage({
         </CardContent>
       </Card>
 
-      <QuoteBuilder
-        tripId={trip.id}
-        serviceType={trip.service_type as ServiceType}
-        markups={markups}
-        existingOptions={(options ?? []).map((o) => ({
-          id: o.id,
-          provider: o.provider,
-          net_price: Number(o.net_price),
-          final_price: Number(o.final_price),
-          details: (o.details as Record<string, unknown> | null) ?? null,
-          expires_at: o.expires_at,
-        }))}
-        tripStatus={trip.status}
-        requesterId={trip.requester_id}
-      />
+      {/* Cash pendiente de pago: el flujo es automático vía approve_deposit. */}
+      {trip.status === "awaiting_payment" && method === "cash" && (
+        <Card className="border-border bg-card shadow-none">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-foreground">
+              Esperando comprobante SPEI
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <p className="text-sm text-foreground/75">
+              El cliente seleccionó opción y debe transferir por SPEI. Al aprobar
+              el comprobante en Depósitos, el viaje se confirma automáticamente.
+            </p>
+            {viewerRole === "TORA_ADMIN" && (
+              <div>
+                <Button asChild variant="outline" size="sm" className="font-semibold">
+                  <Link href="/finance/deposits">Ver en depósitos</Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {showQuoteBuilder && (
+        <QuoteBuilder
+          tripId={trip.id}
+          serviceType={trip.service_type as ServiceType}
+          markups={markups}
+          existingOptions={(options ?? []).map((o) => ({
+            id: o.id,
+            provider: o.provider,
+            net_price: Number(o.net_price),
+            final_price: Number(o.final_price),
+            details: (o.details as Record<string, unknown> | null) ?? null,
+            expires_at: o.expires_at,
+          }))}
+          tripStatus={trip.status}
+          requesterId={trip.requester_id}
+        />
+      )}
 
       {trip.status === "awaiting_payment" && (
         <Card className="border-border bg-card shadow-none">
@@ -149,9 +209,9 @@ export default async function QuotePage({
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <p className="text-sm text-foreground/75">
-              El cliente ya seleccionó una opción. Esperando confirmación de pago
-              (automática si el saldo alcanza, o cuando Finanzas apruebe el
-              depósito).
+              {method === "cash"
+                ? "Esperando pago del cliente (SPEI)."
+                : "El cliente ya seleccionó una opción. Esperando confirmación de pago (automática si el saldo alcanza, o cuando Finanzas apruebe el depósito)."}
             </p>
             <div>
               <ConfirmBookingButton tripId={trip.id} />
