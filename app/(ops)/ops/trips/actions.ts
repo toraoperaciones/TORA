@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import type { Role } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/server";
+import { notifyUser } from "@/lib/whatsapp/notify";
+import { templates } from "@/lib/whatsapp/templates";
 
 const OPS_ROLES: Role[] = ["TORA_OPS", "TORA_ADMIN"];
 
@@ -29,6 +31,34 @@ async function requireOpsRole() {
     return { supabase, error: "No autorizado" as const };
   }
   return { supabase, error: null };
+}
+
+/**
+ * Notificación de opciones enviadas (in-app + WhatsApp si opt-in).
+ * Llamada por QuoteBuilder tras un replace_trip_options exitoso con envío;
+ * un solo dueño de la notificación (antes la insertaba el cliente directo).
+ */
+export async function notifyTripOptionsSentAction(input: {
+  tripId: string;
+  requesterId: string;
+  requesterName: string;
+  destination: string;
+  optionsCount: number;
+}): Promise<void> {
+  const { error: authErr } = await requireOpsRole();
+  if (authErr) return;
+
+  await notifyUser({
+    userId: input.requesterId,
+    type: "trip_options_sent",
+    payload: { trip_id: input.tripId, options_count: input.optionsCount },
+    whatsappText: templates.tripOptionsReady({
+      fullName: input.requesterName,
+      destination: input.destination,
+      optionCount: input.optionsCount,
+      tripUrl: `${process.env.NEXT_PUBLIC_APP_URL}/trips/${input.tripId}`,
+    }),
+  });
 }
 
 /**

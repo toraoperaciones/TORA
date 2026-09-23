@@ -4,6 +4,7 @@ import { PortalShell } from "@/components/layout/portal-shell";
 import { createClient } from "@/lib/supabase/server";
 
 import { ProfileMfaCard } from "./profile-mfa-card";
+import { WhatsAppSettings } from "./whatsapp-settings";
 
 export const metadata = { title: "Mi perfil · TORA" };
 
@@ -21,7 +22,9 @@ export default async function PerfilPage() {
   const [{ data: profile }, { data: factors }] = await Promise.all([
     supabase
       .from("users")
-      .select("full_name, email, role, mfa_enabled, mfa_enabled_at")
+      .select(
+        "full_name, email, role, mfa_enabled, mfa_enabled_at, phone, whatsapp_enabled"
+      )
       .eq("id", user.id)
       .single(),
     supabase.auth.mfa.listFactors(),
@@ -43,6 +46,10 @@ export default async function PerfilPage() {
           flagEnabled={profile.mfa_enabled ?? false}
           hasVerifiedFactor={Boolean(verifiedTotp)}
           enabledAt={profile.mfa_enabled_at}
+        />
+        <WhatsAppSettings
+          initialPhone={profile.phone ?? ""}
+          initialEnabled={profile.whatsapp_enabled ?? false}
         />
       </div>
     </PortalShell>

@@ -187,6 +187,8 @@ export default async function QuotePage({
           tripId={trip.id}
           serviceType={trip.service_type as ServiceType}
           markups={markups}
+          requesterName={requester?.full_name ?? requester?.email ?? ""}
+          destination={trip.destination}
           existingOptions={(options ?? []).map((o) => ({
             id: o.id,
             provider: o.provider,

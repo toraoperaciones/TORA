@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { notifyUser } from "@/lib/whatsapp/notify";
+import { templates } from "@/lib/whatsapp/templates";
 
 interface ActionOk {
   ok: true;
@@ -29,6 +31,25 @@ export async function approveDepositAction(
     p_transaction_id: transactionId,
   });
   if (error) return { ok: false, error: error.message };
+
+  // Notificación al creador del depósito (in-app + WhatsApp si opt-in).
+  const { data: deposit } = await supabase
+    .from("wallet_transactions")
+    .select("tenant_id, amount, created_by, users:created_by (full_name)")
+    .eq("id", transactionId)
+    .single();
+  if (deposit?.created_by) {
+    const creator = Array.isArray(deposit.users) ? deposit.users[0] : deposit.users;
+    await notifyUser({
+      userId: deposit.created_by,
+      type: "deposit_validated",
+      payload: { deposit_id: transactionId, amount: Number(deposit.amount) },
+      whatsappText: templates.depositValidated({
+        fullName: creator?.full_name ?? "",
+        amount: Number(deposit.amount).toFixed(2),
+      }),
+    });
+  }
 
   revalidatePath("/finance/deposits");
   revalidatePath("/finance/dashboard");
@@ -162,6 +183,29 @@ export async function settleCreditTripAction(
     p_payment_reference: paymentReference.trim(),
   });
   if (error) return { ok: false, error: error.message };
+
+  // Notificación al solicitante del trip (in-app + WhatsApp si opt-in).
+  const { data: trip } = await supabase
+    .from("trips")
+    .select(
+      `destination, credit_due_date, requester_id,
+       requester:requester_id (full_name)`
+    )
+    .eq("id", tripId)
+    .single();
+  if (trip) {
+    const requester = Array.isArray(trip.requester) ? trip.requester[0] : trip.requester;
+    await notifyUser({
+      userId: trip.requester_id,
+      type: "credit_settled",
+      payload: { trip_id: tripId, reference: paymentReference.trim() },
+      whatsappText: templates.creditApproved({
+        fullName: requester?.full_name ?? "",
+        destination: trip.destination,
+        dueDate: trip.credit_due_date ?? "—",
+      }),
+    });
+  }
 
   revalidatePath("/finance/credit");
   revalidatePath("/finance/dashboard");

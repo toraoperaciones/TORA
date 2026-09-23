@@ -34,6 +34,7 @@ import {
 } from "@/lib/business/markup";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
+import { notifyTripOptionsSentAction } from "@/app/(ops)/ops/trips/actions";
 
 const MAX_OPTIONS = 4;
 
@@ -88,6 +89,8 @@ export function QuoteBuilder({
   existingOptions,
   tripStatus,
   requesterId,
+  requesterName,
+  destination,
 }: {
   tripId: string;
   serviceType: ServiceType;
@@ -95,6 +98,8 @@ export function QuoteBuilder({
   existingOptions: ExistingOption[];
   tripStatus: string;
   requesterId: string | null;
+  requesterName: string;
+  destination: string;
 }) {
   const router = useRouter();
   const [options, setOptions] = useState<DraftOption[]>(() =>
@@ -193,12 +198,14 @@ export function QuoteBuilder({
       return;
     }
 
-    // Mock de email: rastro auditable en notifications.
+    // Notificación in-app + WhatsApp (server action; el cliente no inserta).
     if (send && requesterId) {
-      await supabase.from("notifications").insert({
-        user_id: requesterId,
-        type: "trip_options_sent",
-        payload: { trip_id: tripId, options_count: options.length },
+      await notifyTripOptionsSentAction({
+        tripId,
+        requesterId,
+        requesterName,
+        destination,
+        optionsCount: options.length,
       });
     }
 

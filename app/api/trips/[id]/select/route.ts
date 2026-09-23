@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 
 import { processTripCharge } from "@/lib/business/payment-methods";
 import { createClient } from "@/lib/supabase/server";
-
+import { notifyUser } from "@/lib/whatsapp/notify";
+import { templates } from "@/lib/whatsapp/templates";
 /**
  * POST /api/trips/[id]/select
  * Selección de opción de viaje por CLIENT_ADMIN, diferenciada por método
@@ -81,6 +82,23 @@ export async function POST(
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
+    if (result.tripStatus === "awaiting_payment") {
+      const { data: tripInfo } = await supabase
+        .from("trips")
+        .select(`destination, requester_id`)
+        .eq("id", tripId)
+        .single();
+      if (tripInfo) {
+        // Cash en espera de SPEI: solo in-app (el mensaje real llega al
+        // validar el depósito, con el texto de saldo actualizado).
+        await notifyUser({
+          userId: tripInfo.requester_id,
+          type: "trip_pending_payment",
+          payload: { trip_id: tripId },
+          whatsappText: "",
+        });
+      }
+    }
     return NextResponse.json(result);
   }
 
@@ -91,6 +109,37 @@ export async function POST(
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
+  }
+
+  // Prepaid: la RPC confirma directo (o queda awaiting_payment por saldo).
+  const rpc = data as { status?: string } | null;
+  if (rpc?.status) {
+    const { data: tripInfo } = await supabase
+      .from("trips")
+      .select(
+        `destination, departure_date, requester_id,
+         requester:requester_id (full_name)`
+      )
+      .eq("id", tripId)
+      .single();
+    if (tripInfo) {
+      const requester = Array.isArray(tripInfo.requester)
+        ? tripInfo.requester[0]
+        : tripInfo.requester;
+      const confirmed = rpc.status === "confirmed";
+      await notifyUser({
+        userId: tripInfo.requester_id,
+        type: confirmed ? "trip_confirmed" : "trip_pending_payment",
+        payload: { trip_id: tripId, trip_status: rpc.status },
+        whatsappText: confirmed
+          ? templates.tripConfirmed({
+              fullName: requester?.full_name ?? "",
+              destination: tripInfo.destination,
+              departureDate: tripInfo.departure_date,
+            })
+          : "", // awaiting_payment: solo in-app; el SPEI ya llega por approve_deposit.
+      });
+    }
   }
 
   return NextResponse.json(data);
