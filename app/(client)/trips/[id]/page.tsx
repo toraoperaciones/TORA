@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 import { OptionCard, type TripOptionPublic } from "@/components/trips/option-card";
 import { StatusBadge } from "@/components/trips/status-badge";
 import { TripRail } from "@/components/trips/trip-rail";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getClientContext } from "@/lib/auth/tenant";
 import { getSpeiInstructions } from "@/lib/business/payment-methods";
@@ -36,7 +38,7 @@ export default async function TripDetailPage({
   const { data: trip } = await supabase
     .from("trips")
     .select(
-      "id, destination, origin, departure_date, return_date, passengers, service_type, urgency, reason, status, notes, paid_at"
+      "id, destination, origin, departure_date, return_date, passengers, service_type, urgency, reason, status, notes, paid_at, credit_due_date, payment_method_snapshot"
     )
     .eq("id", id)
     .single();
@@ -45,6 +47,20 @@ export default async function TripDetailPage({
 
   const isCashPending = trip.status === "awaiting_payment";
   const spei = isCashPending ? await getSpeiInstructions(id) : null;
+
+  // Sprint 2 — avisos de crédito (cargado, no pagado).
+  const dueDate = "credit_due_date" in trip ? (trip.credit_due_date as string | null) : null;
+  const isCreditPending =
+    trip.status === "confirmed" && !trip.paid_at && trip.payment_method_snapshot === "credit";
+  const isSuspended = trip.status === "suspended";
+  const dueDateEs = dueDate
+    ? new Date(`${dueDate}T12:00:00Z`).toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    : null;
 
   // ⚠️ REGLA DE ORO: columnas explícitas. net_price NUNCA se selecciona,
   // por lo que jamás viaja en el RSC payload al navegador.
@@ -140,6 +156,30 @@ export default async function TripDetailPage({
             )}
           </CardContent>
         </Card>
+      )}
+
+      {/* Sprint 2 — crédito: vencimiento, política de mora y suspensión. */}
+      {isSuspended && (
+        <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-5">
+          <p className="text-sm font-semibold text-destructive">
+            Viaje suspendido por mora. Contacta a TORA para regularizar.
+          </p>
+          <Button asChild variant="outline" className="self-start font-semibold">
+            <Link href="/soporte">Contactar a TORA</Link>
+          </Button>
+        </div>
+      )}
+      {isCreditPending && !isSuspended && (
+        <div className="rounded-lg border border-border bg-card p-5">
+          <p className="text-sm text-foreground">
+            Este cargo se cobrará el{" "}
+            <span className="font-semibold tabular-nums">{dueDateEs ?? "—"}</span>.
+          </p>
+          <p className="mt-1 text-sm text-foreground/75">
+            Si no se paga, se aplicará un interés del 2.5% mensual a partir del
+            día 31.
+          </p>
+        </div>
       )}
 
       {/* Confirmación cash: pago liquidado. */}

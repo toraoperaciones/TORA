@@ -15,6 +15,8 @@ export interface TenantRow {
   name: string;
   rfc: string | null;
   credit_limit: number | string;
+  credit_used?: number | string;
+  credit_days?: number;
   status: string;
   payment_method?: PaymentMethod | null;
   spei_clabe?: string | null;
@@ -37,7 +39,11 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
   const line = activeLine
     ? Number(activeLine.approved_limit)
     : Number(tenant.credit_limit);
-  const used = Number(activeLine?.used_amount ?? 0);
+  // Sprint 2: en tenants a crédito el uso real vive en tenants.credit_used.
+  const used =
+    tenant.payment_method === "credit"
+      ? Number(tenant.credit_used ?? 0)
+      : Number(activeLine?.used_amount ?? 0);
 
   return (
     <div className="flex flex-col rounded-lg border border-border bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-border">
@@ -77,6 +83,9 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
           <p className="mt-1 text-base font-semibold tabular-nums text-foreground">
             {formatMXN(used)}
           </p>
+          {tenant.payment_method === "credit" && (
+            <p className="text-xs text-muted-foreground">a {tenant.credit_days ?? 30} días</p>
+          )}
         </div>
       </div>
 
@@ -105,6 +114,8 @@ export function TenantCard({ tenant }: { tenant: TenantRow }) {
             paymentMethod={(tenant.payment_method as PaymentMethod) ?? "prepaid"}
             speiClabe={tenant.spei_clabe ?? null}
             speiBeneficiary={tenant.spei_beneficiary ?? null}
+            creditLimit={Number(tenant.credit_limit ?? 0)}
+            creditDays={tenant.credit_days ?? 30}
           />
           <Button variant="outline" size="sm" asChild>
             <Link href={`/admin/tenants/${tenant.id}`}>Ver</Link>

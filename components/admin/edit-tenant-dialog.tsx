@@ -39,6 +39,8 @@ const editSchema = z.object({
     .optional()
     .refine((v) => !v || /^\d{18}$/.test(v), "CLABE debe tener 18 dígitos"),
   spei_beneficiary: z.string().optional(),
+  credit_limit: z.coerce.number().min(0),
+  credit_days: z.coerce.number().int().min(1).max(365),
 });
 
 type EditFormInput = z.input<typeof editSchema>;
@@ -50,12 +52,16 @@ export function EditTenantDialog({
   paymentMethod,
   speiClabe,
   speiBeneficiary,
+  creditLimit,
+  creditDays,
 }: {
   tenantId: string;
   tenantName: string;
   paymentMethod: PaymentMethod;
   speiClabe: string | null;
   speiBeneficiary: string | null;
+  creditLimit: number;
+  creditDays: number;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -65,6 +71,7 @@ export function EditTenantDialog({
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<EditFormInput, unknown, EditFormOutput>({
     resolver: zodResolver(editSchema),
@@ -72,8 +79,13 @@ export function EditTenantDialog({
       payment_method: paymentMethod,
       spei_clabe: speiClabe ?? "",
       spei_beneficiary: speiBeneficiary ?? "",
+      credit_limit: creditLimit,
+      credit_days: creditDays,
     },
   });
+
+  // Sprint 2: el límite/días solo son editables para tenants a crédito.
+  const isCredit = watch("payment_method") === "credit";
 
   async function onSubmit(values: EditFormOutput) {
     setSaving(true);
@@ -82,6 +94,8 @@ export function EditTenantDialog({
       payment_method: values.payment_method,
       spei_clabe: values.spei_clabe || null,
       spei_beneficiary: values.spei_beneficiary || null,
+      credit_limit: values.credit_limit,
+      credit_days: values.credit_days,
     });
     setSaving(false);
 
@@ -161,6 +175,33 @@ export function EditTenantDialog({
               {...register("spei_beneficiary")}
             />
           </div>
+
+          {isCredit && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="edit-credit-limit">Límite de crédito (MXN)</Label>
+                <Input
+                  id="edit-credit-limit"
+                  type="number"
+                  min="0"
+                  step="1000"
+                  className="tabular-nums"
+                  {...register("credit_limit")}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="edit-credit-days">Días de crédito</Label>
+                <Input
+                  id="edit-credit-days"
+                  type="number"
+                  min="1"
+                  max="365"
+                  className="tabular-nums"
+                  {...register("credit_days")}
+                />
+              </div>
+            </div>
+          )}
 
           <DialogFooter>
             <Button

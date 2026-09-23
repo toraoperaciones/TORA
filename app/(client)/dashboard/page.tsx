@@ -77,7 +77,11 @@ export default async function DashboardPage() {
     recentTxs,
   ] = await Promise.all([
     tenantId
-      ? supabase.from("tenants").select("payment_method").eq("id", tenantId).single()
+      ? supabase
+          .from("tenants")
+          .select("payment_method, credit_limit, credit_used")
+          .eq("id", tenantId)
+          .single()
       : Promise.resolve({ data: null }),
     tenantId ? getBalance(tenantId) : Promise.resolve(0),
     tenantId ? getMonthlySpend(tenantId) : Promise.resolve(0),
@@ -102,9 +106,17 @@ export default async function DashboardPage() {
       : Promise.resolve({ data: [] }),
   ]);
 
-  const paymentMethod: PaymentMethod =
-    ((tenantRow.data as { payment_method?: PaymentMethod } | null)?.payment_method) ??
-    "prepaid";
+  const tenantData =
+    (tenantRow.data as
+      | { payment_method?: PaymentMethod; credit_limit?: string | number; credit_used?: string | number }
+      | null) ?? null;
+  const paymentMethod: PaymentMethod = tenantData?.payment_method ?? "prepaid";
+
+  // Sprint 2 — cupo de crédito real para la card de método.
+  const creditLimit = Number(tenantData?.credit_limit ?? 0);
+  const creditUsed = Number(tenantData?.credit_used ?? 0);
+  const creditAvailable = Math.max(0, creditLimit - creditUsed);
+  const creditUsage = creditLimit > 0 ? creditUsed / creditLimit : 0;
 
   const upcomingTrips = (upcoming.data ?? []) as Array<{
     id: string;
@@ -206,8 +218,8 @@ export default async function DashboardPage() {
         </StaggerItem>
         <StaggerItem className="lg:col-span-3">
           {tenantId && (
-            <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5">
-              <div className="flex min-w-0 items-center gap-3">
+            <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-5">
+              <div className="flex items-center gap-3">
                 {methodIcon}
                 <div className="min-w-0">
                   <p className="text-xs uppercase tracking-wider text-muted-foreground">
@@ -220,10 +232,20 @@ export default async function DashboardPage() {
                     {paymentMethod === "cash" &&
                       " · Cada viaje requiere SPEI previo."}
                     {paymentMethod === "credit" &&
-                      " · Disponible: próximo corte — Sprint 2."}
+                      ` · Disponible: ${formatMXN(creditAvailable)} de ${formatMXN(creditLimit)}.`}
                   </p>
                 </div>
               </div>
+              {paymentMethod === "credit" &&
+                (creditUsage >= 1 ? (
+                  <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm font-semibold text-destructive">
+                    Sin crédito disponible. Contacta a TORA.
+                  </p>
+                ) : creditUsage > 0.8 ? (
+                  <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm font-semibold text-foreground">
+                    Estás cerca del límite de tu línea.
+                  </p>
+                ) : null)}
             </div>
           )}
         </StaggerItem>

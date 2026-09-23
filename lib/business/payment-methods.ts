@@ -8,7 +8,7 @@ import { speiReference, type PaymentMethod } from "./payment-method";
  *
  * - prepaid: lo maneja íntegramente la RPC select_trip_option (NO tocar).
  * - cash: esta librería crea el charge pending y produce instrucciones SPEI.
- * - credit: reservado; el route responde 400 sin llamar aquí.
+ * - credit: activado en Sprint 2 — valida cupo, confirma y suma el cache.
  */
 
 export type { PaymentMethod };
@@ -43,7 +43,7 @@ export async function processTripCharge(
 
   const { data: trip, error: tripError } = await supabase
     .from("trips")
-    .select("id, tenant_id, status, payment_method_snapshot, tenants(payment_method)")
+    .select("id, tenant_id, status, payment_method_snapshot, tenants(payment_method, credit_days)")
     .eq("id", tripId)
     .single();
   if (tripError || !trip) {
@@ -73,9 +73,6 @@ export async function processTripCharge(
       error: "prepaid debe manejarse vía RPC select_trip_option",
     };
   }
-  if (method === "credit") {
-    return { ok: false, method, tripStatus: "awaiting_payment", error: "Crédito disponible en Sprint 2" };
-  }
 
   const { data: option, error: optionError } = await supabase
     .from("trip_options")
@@ -85,6 +82,80 @@ export async function processTripCharge(
     .single();
   if (optionError || !option) {
     return { ok: false, method, tripStatus: "awaiting_payment", error: "Opción no válida" };
+  }
+
+  // ── CREDIT: valida cupo ANTES de crear el charge; confirma el trip con
+  // fecha de vencimiento y suma al cache credit_used (RPC atómica).
+  if (method === "credit") {
+    const price = Number(option.final_price);
+    const available = await calculateAvailableCredit(trip.tenant_id);
+    if (available < price) {
+      return {
+        ok: false,
+        method,
+        tripStatus: "awaiting_payment",
+        error: `Crédito insuficiente. Disponible: $${available.toFixed(2)}. Este viaje cuesta: $${price.toFixed(2)}. Contacta a TORA para ampliar tu línea.`,
+        shortfall: price - available,
+      };
+    }
+
+    // Espejo de select_trip_option: marcar la opción elegida.
+    const { error: selectError } = await supabase
+      .from("trip_options")
+      .update({ is_selected: true })
+      .eq("id", optionId);
+    if (selectError) {
+      return { ok: false, method, tripStatus: "awaiting_payment", error: selectError.message };
+    }
+
+    const { data: charge, error: chargeError } = await supabase
+      .from("wallet_transactions")
+      .insert({
+        tenant_id: trip.tenant_id,
+        amount: price,
+        type: "charge",
+        status: "pending",
+        reference: `CREDIT-${speiReference(tripId)}`,
+        related_trip_id: tripId,
+        created_by: (await supabase.auth.getUser()).data.user?.id ?? null,
+      })
+      .select("id")
+      .single();
+    if (chargeError || !charge) {
+      return {
+        ok: false,
+        method,
+        tripStatus: "awaiting_payment",
+        error: chargeError?.message ?? "No se pudo crear el cargo",
+      };
+    }
+
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + Number(tenantRow?.credit_days ?? 30));
+    const { error: updateError } = await supabase
+      .from("trips")
+      .update({
+        status: "confirmed",
+        credit_due_date: dueDate.toISOString().slice(0, 10),
+        payment_method_snapshot: "credit",
+      })
+      .eq("id", tripId);
+    if (updateError) {
+      return { ok: false, method, tripStatus: "awaiting_payment", error: updateError.message };
+    }
+
+    // Cache credit_used: el selector es CLIENT_ADMIN, pero la RPC solo
+    // acepta staff. El insert del charge (RLS) ya valida su identidad; el
+    // cache se ajusta con service-role vía el entorno server de la app.
+    const { error: incError } = await supabase.rpc("increment_credit_used", {
+      p_tenant_id: trip.tenant_id,
+      p_amount: price,
+    });
+    if (incError) {
+      return { ok: false, method, tripStatus: "confirmed", error: incError.message };
+    }
+
+    return { ok: true, method: "credit", tripStatus: "confirmed", chargeId: charge.id };
   }
 
   // Marcar la opción elegida (espejo de lo que hace select_trip_option en

@@ -139,6 +139,36 @@ export async function upsertCreditLineAction(
   return { ok: true };
 }
 
+/**
+ * Sprint 2: liquidar un trip a crédito (RPC atómica settle_credit_trip:
+ * credit_payment + charge→completed + credit_used baja + factura interna pagada).
+ */
+export async function settleCreditTripAction(
+  tripId: string,
+  paymentReference: string
+): Promise<ActionOk | ActionError> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "No autenticado" };
+
+  if (paymentReference.trim().length < 4) {
+    return { ok: false, error: "La referencia de pago es obligatoria (mín. 4 caracteres)" };
+  }
+
+  const { error } = await supabase.rpc("settle_credit_trip", {
+    p_trip_id: tripId,
+    p_payment_reference: paymentReference.trim(),
+  });
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/finance/credit");
+  revalidatePath("/finance/dashboard");
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
 /** Suspensión manual por mora 90+ (la RPC también suspende la línea activa). */
 export async function suspendTenantAction(
   tenantId: string

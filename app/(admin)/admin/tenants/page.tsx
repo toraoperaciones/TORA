@@ -13,7 +13,7 @@ export default async function TenantsPage() {
   const { data: tenants } = await supabase
     .from("tenants")
     .select(
-      `id, name, rfc, razon_social, credit_limit, credit_days,
+      `id, name, rfc, razon_social, credit_limit, credit_days, credit_used,
        markup_flights, markup_hotels, markup_cars, markup_stands,
        status, notes, created_at, payment_method, spei_clabe, spei_beneficiary,
        credit_lines (approved_limit, used_amount, status)`

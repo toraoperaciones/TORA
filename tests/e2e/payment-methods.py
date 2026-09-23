@@ -88,7 +88,7 @@ wait_server()
 
 def login(page, email):
     page.context.clear_cookies()
-    page.goto(BASE + "/login", wait_until="networkidle")
+    page.goto(BASE + "/login", wait_until="networkidle", timeout=90000)
     page.wait_for_timeout(1000)
     page.fill("#email", email)
     page.fill("#password", PW[email])
@@ -108,7 +108,7 @@ def login(page, email):
         page.get_by_role("button", name="Guardar contraseña").click()
         page.wait_for_timeout(1800)
         PW[email] = new_pw
-        page.goto(BASE + "/", wait_until="domcontentloaded")
+        page.goto(BASE + "/", wait_until="domcontentloaded", timeout=90000)
         page.wait_for_timeout(800)
 
 
@@ -158,15 +158,47 @@ prepaid_trip_id, prepaid_opt_id = make_trip(ACERO, "E2E Prepaid " + STAMP)
 print(f"fixtures: cash={cash_trip_id[:8]} prepaid={prepaid_trip_id[:8]}")
 
 
+def click_select(page, trip_id, tries=4):
+    """Click en Seleccionar con reintento; devuelve (status, body) de la
+    respuesta /select o None. En dev el click puede caer antes de hidratar."""
+    seen = []
+
+    def on_response(resp):
+        if "/select" in resp.url:
+            try:
+                seen.append((resp.status, resp.text()))
+            except Exception:
+                seen.append((resp.status, ""))
+
+    page.on("response", on_response)
+    try:
+        for _ in range(tries):
+            page.get_by_role("button", name="Seleccionar").first.click()
+            for _ in range(10):
+                page.wait_for_timeout(1000)
+                if seen:
+                    return seen[0]
+    finally:
+        page.remove_listener("response", on_response)
+    return None
+
+
 def ops_quote(page, trip_id, option_id, shot):
     login(page, "ops@tora.mx")
-    page.goto(BASE + f"/ops/trips/{trip_id}/quote", wait_until="domcontentloaded")
+    page.goto(BASE + f"/ops/trips/{trip_id}/quote", wait_until="networkidle", timeout=90000)
     page.wait_for_timeout(900)
     page.screenshot(path=f"/tmp/sprint1-payments/{shot}")
-    page.fill(f"#net-{option_id}", "4000")
-    page.wait_for_timeout(400)
-    page.get_by_role("button", name="Enviar al cliente").click()
-    page.get_by_role("dialog").get_by_role("button", name="Enviar").click()
+    # Click con reintentos: en dev el click puede caer antes de hidratar.
+    for _attempt in range(3):
+        page.fill(f"#net-{option_id}", "4000")
+        page.wait_for_timeout(400)
+        page.get_by_role("button", name="Enviar al cliente").click()
+        try:
+            page.get_by_role("dialog").get_by_role("button", name="Enviar")\
+                .click(timeout=8000)
+            break
+        except Exception:
+            page.wait_for_timeout(1500)
     page.wait_for_timeout(1500)
 
 
@@ -176,6 +208,7 @@ with sync_playwright() as p:
     # ══ FLUJO CASH ════════════════════════════════════════════════
     ctx = browser.new_context(viewport={"width": 1440, "height": 900})
     page = ctx.new_page()
+    page.set_default_timeout(90000)
 
     ops_quote(page, cash_trip_id, cash_opt_id, "08-ops-trip-metodo.png")
     st = api("GET", f"/rest/v1/trips?id=eq.{cash_trip_id}&select=status")[0]["status"]
@@ -183,21 +216,24 @@ with sync_playwright() as p:
           st in ("options_sent", "awaiting_selection"), st)
 
     login(page, "admin@vcm.mx")
-    page.goto(BASE + "/dashboard", wait_until="domcontentloaded")
+    page.goto(BASE + "/dashboard", wait_until="domcontentloaded", timeout=90000)
     page.wait_for_timeout(900)
     body = page.inner_text("body")
     check("CASH: dashboard muestra método 'Contado'", "Contado" in body)
     page.screenshot(path="/tmp/sprint1-payments/02-dashboard-cliente-cash.png")
 
-    page.goto(BASE + "/trips/new", wait_until="domcontentloaded")
+    page.goto(BASE + "/trips/new", wait_until="domcontentloaded", timeout=90000)
     page.wait_for_timeout(600)
     body = page.inner_text("body")
     check("CASH: banner en trips/new", "Este viaje se pagará con" in body)
     page.screenshot(path="/tmp/sprint1-payments/03-trips-new-aviso-metodo.png")
 
-    page.goto(BASE + f"/trips/{cash_trip_id}", wait_until="domcontentloaded")
-    page.wait_for_timeout(900)
-    page.get_by_role("button", name="Seleccionar").first.click()
+    for _attempt in range(3):
+        page.goto(BASE + f"/trips/{cash_trip_id}", wait_until="domcontentloaded", timeout=90000)
+        page.wait_for_timeout(900)
+        r = click_select(page, cash_trip_id)
+        if r and r[0] == 200:
+            break
     badge_ok = False
     for i in range(12):
         page.wait_for_timeout(2500)
@@ -215,7 +251,7 @@ with sync_playwright() as p:
         print("  [aviso] SPEI card no apareció en el polling; revisar snapshots")
     page.screenshot(path="/tmp/sprint1-payments/04-trip-detail-cash-instrucciones.png")
 
-    page.goto(BASE + f"/wallet?trip={cash_trip_id}", wait_until="networkidle")
+    page.goto(BASE + f"/wallet?trip={cash_trip_id}", wait_until="domcontentloaded", timeout=90000)
     sel_ok = False
     for i in range(10):
         page.wait_for_timeout(2000)
@@ -248,12 +284,20 @@ with sync_playwright() as p:
     receipt_path = dep[0]["receipt_url"] if dep else None
 
     login(page, "finanzas@tora.mx")
-    page.goto(BASE + "/finance/deposits", wait_until="domcontentloaded")
+    page.goto(BASE + "/finance/deposits", wait_until="domcontentloaded", timeout=90000)
     page.wait_for_timeout(1200)
     row = page.locator("tr", has_text="E2E" + STAMP).first
     check("DEPOSITS: depósito E2E en cola", row.count() > 0)
-    row.get_by_role("button", name="Aprobar").click()
-    page.wait_for_timeout(3000)
+    # click robusto: en dev el primer click puede caer antes de hidratar;
+    # la fuente de verdad es la BD, no el toast
+    for _attempt in range(4):
+        page.wait_for_load_state("networkidle")
+        row.get_by_role("button", name="Aprobar").click()
+        page.wait_for_timeout(4000)
+        _t = api("GET", f"/rest/v1/trips?id=eq.{cash_trip_id}&select=status")
+        if _t and _t[0]["status"] == "confirmed":
+            break
+    page.wait_for_timeout(1500)
 
     t = api("GET", f"/rest/v1/trips?id=eq.{cash_trip_id}&select=status,paid_at")[0]
     check("CASH: trip confirmado", t["status"] == "confirmed", t["status"])
@@ -268,13 +312,14 @@ with sync_playwright() as p:
     # ══ FLUJO PREPAID ═════════════════════════════════════════════
     ctx2 = browser.new_context(viewport={"width": 1440, "height": 900})
     page2 = ctx2.new_page()
+    page2.set_default_timeout(90000)
 
     ops_quote(page2, prepaid_trip_id, prepaid_opt_id, "08-ops-trip-metodo-prepaid.png")
     st = api("GET", f"/rest/v1/trips?id=eq.{prepaid_trip_id}&select=status")[0]["status"]
     check("PREPAID: cotización enviada", st in ("options_sent", "awaiting_selection"), st)
 
     login(page2, "admin@aceronorte.mx")
-    page2.goto(BASE + "/dashboard", wait_until="domcontentloaded")
+    page2.goto(BASE + "/dashboard", wait_until="domcontentloaded", timeout=90000)
     page2.wait_for_timeout(900)
     body = page2.inner_text("body")
     check("PREPAID: dashboard muestra método 'Prepago'", "Prepago" in body)
@@ -285,9 +330,12 @@ with sync_playwright() as p:
     baln = sum(float(x["amount"]) * (1 if x["type"] in ("deposit", "refund") else -1) for x in bal)
     check("PREPAID: saldo > 0 en BD", baln > 0, f"{baln:.2f}")
 
-    page2.goto(BASE + f"/trips/{prepaid_trip_id}", wait_until="domcontentloaded")
-    page2.wait_for_timeout(900)
-    page2.get_by_role("button", name="Seleccionar").first.click()
+    for _attempt in range(3):
+        page2.goto(BASE + f"/trips/{prepaid_trip_id}", wait_until="domcontentloaded", timeout=90000)
+        page2.wait_for_timeout(900)
+        r = click_select(page2, prepaid_trip_id)
+        if r and r[0] == 200:
+            break
     page2.wait_for_timeout(3000)
     body = page2.inner_text("body")
     check("PREPAID: confirmación visible ('Confirmado')", "Confirmado" in body)
@@ -303,7 +351,8 @@ with sync_playwright() as p:
     # 09 — mobile 375
     ctx3 = browser.new_context(viewport={"width": 375, "height": 812})
     page3 = ctx3.new_page()
-    page3.goto(BASE + "/dashboard", wait_until="domcontentloaded")
+    page3.set_default_timeout(90000)
+    page3.goto(BASE + "/dashboard", wait_until="domcontentloaded", timeout=90000)
     page3.wait_for_timeout(900)
     page3.screenshot(path="/tmp/sprint1-payments/09-mobile-375.png")
     ctx3.close()
@@ -312,8 +361,9 @@ with sync_playwright() as p:
     # 06/07 — admin tenants
     ctx4 = browser.new_context(viewport={"width": 1440, "height": 900})
     page4 = ctx4.new_page()
+    page4.set_default_timeout(90000)
     login(page4, "admin@tora.mx")
-    page4.goto(BASE + "/admin/tenants", wait_until="domcontentloaded")
+    page4.goto(BASE + "/admin/tenants", wait_until="domcontentloaded", timeout=90000)
     page4.wait_for_timeout(1000)
     body = page4.inner_text("body")
     check("ADMIN: badges de método visibles (Prepago/Contado)", "Prepago" in body and "Contado" in body)

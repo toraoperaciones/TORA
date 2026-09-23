@@ -1,5 +1,7 @@
 import { ApproveCreditButton } from "@/components/finance/approve-credit-button";
 import { CreditApprovalBanner } from "@/components/finance/credit-approval-banner";
+import { KpiCard } from "@/components/finance/kpi-card";
+import { SettleCreditDialog } from "@/components/finance/settle-credit-dialog";
 import { SuspendTenantButton } from "@/components/finance/suspend-tenant-button";
 import { CreditLineDialog } from "@/components/finance/credit-line-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -26,9 +28,20 @@ interface TenantRow {
   id: string;
   name: string;
   rfc: string | null;
+  payment_method: string;
   credit_limit: string | number;
+  credit_used: string | number;
   credit_days: number;
   status: string;
+}
+
+interface CreditTripRow {
+  id: string;
+  destination: string;
+  credit_due_date: string | null;
+  status: string;
+  tenants: { name: string } | null;
+  trip_options: Array<{ final_price: string | number; is_selected: boolean }> | null;
 }
 
 interface CreditLineRow {
@@ -58,10 +71,10 @@ export const metadata: Metadata = pageMetadata("Crédito");
 export default async function FinanceCreditPage() {
   const supabase = await createClient();
 
-  const [tenantsRes, linesRes, chargesRes, awaitingTripsRes, tripChargesRes] = await Promise.all([
+  const [tenantsRes, linesRes, chargesRes, awaitingTripsRes, tripChargesRes, creditTripsRes] = await Promise.all([
     supabase
       .from("tenants")
-      .select("id, name, rfc, credit_limit, credit_days, status")
+      .select("id, name, rfc, payment_method, credit_limit, credit_used, credit_days, status")
       .order("name"),
     supabase.from("credit_lines").select("*").order("created_at", { ascending: false }),
     supabase
@@ -82,6 +95,18 @@ export default async function FinanceCreditPage() {
       .eq("type", "charge")
       .eq("status", "pending")
       .like("reference", "TRIP-%"),
+    // Sprint 2: cartera a crédito viva (sin pagar), vencimientos primero.
+    supabase
+      .from("trips")
+      .select(
+        `id, destination, credit_due_date, status,
+         tenants:tenant_id (name),
+         trip_options (final_price, is_selected)`
+      )
+      .eq("payment_method_snapshot", "credit")
+      .is("paid_at", null)
+      .in("status", ["confirmed", "pending_payment", "suspended"])
+      .order("credit_due_date", { ascending: true, nullsFirst: false }),
   ]);
 
   const tenants = (tenantsRes.data ?? []) as TenantRow[];
@@ -131,9 +156,55 @@ export default async function FinanceCreditPage() {
 
   const tenantNames = new Map(tenants.map((t) => [t.id, t.name]));
 
+  // ── Sprint 2: KPIs del modelo credit (tenants.payment_method = 'credit').
+  const creditTenants = tenants.filter((t) => t.payment_method === "credit");
+  const totalLimit = creditTenants.reduce((acc, t) => acc + Number(t.credit_limit), 0);
+  const totalUsed = creditTenants.reduce(
+    (acc, t) => acc + Math.min(Number(t.credit_used), Number(t.credit_limit)),
+    0
+  );
+
+  const creditTrips = ((creditTripsRes.data ?? []) as unknown as CreditTripRow[])
+    .map((t) => ({
+      id: t.id,
+      tenantName: t.tenants?.name ?? "—",
+      destination: t.destination,
+      dueDate: t.credit_due_date,
+      status: t.status,
+      amount:
+        (t.trip_options ?? []).find((o) => o.is_selected)?.final_price ?? null,
+    }))
+    .filter((t) => t.amount !== null);
+
+  const todayMs = Date.now();
+  const daysUntil = (date: string | null) =>
+    date
+      ? Math.round(
+          (new Date(`${date}T12:00:00Z`).getTime() - todayMs) / 86_400_000
+        )
+      : null;
+
   return (
     <div className="flex flex-col gap-8">
       <h1>Líneas de crédito</h1>
+
+      {creditTenants.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <KpiCard
+            label="Crédito otorgado"
+            value={formatMXN(Math.round(totalLimit * 100) / 100)}
+          />
+          <KpiCard
+            label="Crédito utilizado"
+            value={formatMXN(Math.round(totalUsed * 100) / 100)}
+          />
+          <KpiCard
+            label="Disponible"
+            value={formatMXN(Math.round((totalLimit - totalUsed) * 100) / 100)}
+            emphasis={totalLimit - totalUsed <= 0 ? "warning" : "default"}
+          />
+        </div>
+      )}
 
       <CreditApprovalBanner />
 
@@ -170,6 +241,109 @@ export default async function FinanceCreditPage() {
           </ul>
         </div>
       )}
+
+      {/* Sprint 2 — cartera a crédito por vencer/vencida, con liquidación. */}
+      <div className="rounded-lg border border-border bg-card p-6">
+        <h2 className="text-lg font-semibold text-foreground">Cartera a crédito</h2>
+        <p className="mt-1 text-sm text-foreground/75">
+          Trips confirmados sin pagar, por fecha de vencimiento. Al liquidar,
+          baja el crédito usado del cliente y su factura interna queda pagada.
+        </p>
+        {creditTrips.length === 0 ? (
+          <p className="mt-4 text-sm text-foreground/75">
+            Sin cartera activa a crédito.
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
+                  Cliente
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
+                  Destino
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
+                  Vence
+                </TableHead>
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
+                  Días
+                </TableHead>
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
+                  Monto
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
+                  Estado
+                </TableHead>
+                <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
+                  Acción
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {creditTrips.map((t) => {
+                const days = daysUntil(t.dueDate);
+                const overdue = days !== null && days < 0;
+                const daysOverdue = overdue ? Math.abs(days ?? 0) : 0;
+                return (
+                  <TableRow key={t.id} className="border-border">
+                    <TableCell className="text-sm font-semibold text-foreground">
+                      {t.tenantName}
+                    </TableCell>
+                    <TableCell className="text-sm text-foreground">
+                      {t.destination}
+                    </TableCell>
+                    <TableCell className="text-sm tabular-nums text-foreground">
+                      {t.dueDate ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right text-sm tabular-nums">
+                      <span
+                        className={cn(
+                          overdue
+                            ? "font-semibold text-destructive"
+                            : days !== null && days <= 2
+                              ? "font-bold text-foreground"
+                              : days !== null && days <= 7
+                                ? "font-semibold text-foreground"
+                                : "text-foreground/75"
+                        )}
+                      >
+                        {days === null ? "—" : overdue ? `${Math.abs(days)}d vencido` : `${days}d`}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right text-sm font-semibold tabular-nums text-foreground">
+                      {formatMXN(Number(t.amount))}
+                    </TableCell>
+                    <TableCell>
+                      {t.status === "suspended" ? (
+                        <Badge className="border-transparent bg-card font-medium text-destructive">
+                          Suspendido
+                        </Badge>
+                      ) : overdue ? (
+                        <Badge className="border-transparent bg-card font-medium text-destructive">
+                          Urgente
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-foreground/75">Vigente</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <SettleCreditDialog
+                        tripId={t.id}
+                        tenantName={t.tenantName}
+                        destination={t.destination}
+                        amount={Number(t.amount)}
+                        dueDate={t.dueDate ?? "—"}
+                        daysOverdue={daysOverdue}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </div>
 
       <Alert>
         <AlertDescription>

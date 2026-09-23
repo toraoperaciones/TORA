@@ -52,6 +52,8 @@ export interface UpdateTenantInput {
   payment_method: "cash" | "prepaid" | "credit";
   spei_clabe: string | null;
   spei_beneficiary: string | null;
+  credit_limit: number;
+  credit_days: number;
 }
 
 /**
@@ -67,7 +69,7 @@ export async function updateTenantAction(input: UpdateTenantInput): Promise<Ok |
 
   const { data: current } = await supabase
     .from("tenants")
-    .select("payment_method, spei_clabe, spei_beneficiary")
+    .select("payment_method, spei_clabe, spei_beneficiary, credit_limit, credit_days")
     .eq("id", input.tenant_id)
     .single();
   if (!current) return { ok: false, error: "Tenant no encontrado" };
@@ -78,6 +80,8 @@ export async function updateTenantAction(input: UpdateTenantInput): Promise<Ok |
       payment_method: input.payment_method,
       spei_clabe: input.spei_clabe,
       spei_beneficiary: input.spei_beneficiary,
+      credit_limit: input.credit_limit,
+      credit_days: input.credit_days,
     })
     .eq("id", input.tenant_id);
   if (error) return { ok: false, error: error.message };
@@ -102,6 +106,20 @@ export async function updateTenantAction(input: UpdateTenantInput): Promise<Ok |
       field: "spei_beneficiary",
       old_value: current.spei_beneficiary,
       new_value: input.spei_beneficiary,
+    });
+  }
+  if (Number(current.credit_limit) !== input.credit_limit) {
+    changes.push({
+      field: "credit_limit",
+      old_value: String(current.credit_limit),
+      new_value: String(input.credit_limit),
+    });
+  }
+  if (Number(current.credit_days) !== input.credit_days) {
+    changes.push({
+      field: "credit_days",
+      old_value: String(current.credit_days),
+      new_value: String(input.credit_days),
     });
   }
 

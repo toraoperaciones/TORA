@@ -56,6 +56,7 @@ export function OptionCard({
       const payload = (await res.json()) as {
         ok?: boolean;
         status?: string;
+        tripStatus?: string;
         error?: string;
       };
 
@@ -66,7 +67,7 @@ export function OptionCard({
         return;
       }
 
-      if (payload.status === "confirmed") {
+      if ((payload.status ?? payload.tripStatus) === "confirmed") {
         toast.success("Reserva confirmada.", { duration: 4000 });
         setJustConfirmed(true);
       } else {

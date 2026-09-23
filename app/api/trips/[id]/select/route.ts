@@ -13,7 +13,8 @@ import { createClient } from "@/lib/supabase/server";
  * - cash: `processTripCharge` crea el charge pendiente y produce
  *   instrucciones SPEI; el trip queda pending_payment hasta que FINANCE
  *   apruebe el depósito vinculado (approve_deposit v2).
- * - credit: Sprint 2 — se rechaza con 400.
+ * - credit: `processTripCharge` valida cupo, marca la opción, confirma
+ *   el trip con credit_due_date y suma credit_used (increment_credit_used).
  */
 export async function POST(
   request: Request,
@@ -68,10 +69,11 @@ export async function POST(
     "prepaid";
 
   if (method === "credit") {
-    return NextResponse.json(
-      { error: "Crédito disponible en Sprint 2" },
-      { status: 400 }
-    );
+    const result = await processTripCharge(tripId, body.option_id);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    return NextResponse.json(result);
   }
 
   if (method === "cash") {
