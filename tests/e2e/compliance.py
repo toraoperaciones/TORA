@@ -192,8 +192,15 @@ def main():
                 break
         check("4. ticket creado en BD", created)
         page.screenshot(path=f"{SHOTS}/05-soporte-page.png")
-        body = page.inner_text("body")
-        check("4b. ticket visible en lista propia", subject in body)
+        # La lista es server-rendered: dar tiempo al refresh RSC tras la action.
+        visible = False
+        for _i in range(15):
+            body = page.inner_text("body")
+            if subject in body:
+                visible = True
+                break
+            time.sleep(1)
+        check("4b. ticket visible en lista propia", visible)
 
         # ── 5. Export JSON ──
         print("[5] export JSON facturación")

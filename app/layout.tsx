@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 
+import { OfflineBanner } from "@/components/providers/offline-banner";
 import { QueryProvider } from "@/components/providers/query-provider";
 
 import "./globals.css";
@@ -52,6 +53,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="bg-background font-sans text-foreground antialiased">
+        <OfflineBanner />
         <QueryProvider>{children}</QueryProvider>
         <Toaster position="top-right" />
       </body>

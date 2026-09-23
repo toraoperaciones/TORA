@@ -51,7 +51,7 @@ pnpm dev                     # http://localhost:3000
 
 Scripts útiles: `pnpm build` · `pnpm lint` · `pnpm exec tsc --noEmit` · `pnpm db:migrate -- --force` (re-ejecuta migraciones para probar idempotencia).
 
-Documentación: [Arquitectura](docs/ARCHITECTURE.md) · [Migraciones](docs/MIGRATION.md) · [Deploy](docs/DEPLOY.md) · [Aceptación](docs/ACCEPTANCE.md)
+Documentación: [Arquitectura](docs/ARCHITECTURE.md) · [Migraciones](docs/MIGRATION.md) · [Deploy](docs/DEPLOY.md) · [Aceptación](docs/ACCEPTANCE.md) · [Operaciones](docs/OPERATIONS.md) · [Incidentes](docs/INCIDENTS.md) · [SLA](docs/SLA.md) · [CFDI](docs/CFDI.md) · [WhatsApp](docs/WHATSAPP.md)
 
 ## Deploy
 
@@ -81,6 +81,18 @@ Guía completa en [`docs/DEPLOY.md`](docs/DEPLOY.md): push a GitHub, import en V
 ├── scripts/               # seed, env:check, db:migrate, db:verify
 └── docs/                  # ARCHITECTURE · MIGRATION · DEPLOY · ACCEPTANCE · brand/
 ```
+
+## Estado del producto (roadmap cerrado)
+
+| Sprint | Alcance | Estado |
+|---|---|---|
+| 1 | Modelo de pago **cash + prepaid** | ✅ Cerrado |
+| 2 | Modelo de pago **credit** (liquidación + cron de mora) | ✅ Cerrado |
+| 3 | Notificaciones **WhatsApp** (WAHA + in-app híbrida) | ✅ Cerrado (QR pendiente del chip +1) |
+| 4 | **Compliance** LFPDPPP + facturación manual + soporte + backup | ✅ Cerrado |
+| 5 | **Robustez**: Sentry, error boundaries, resiliencia de red, runbooks | ✅ Cerrado |
+
+Producción: **https://tora-eta.vercel.app** · Health: [`/api/health`](https://tora-eta.vercel.app/api/health)
 
 ## Flujos end-to-end
 

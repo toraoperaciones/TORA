@@ -7,7 +7,9 @@ import type { ErrorEvent } from "@sentry/nextjs";
  */
 export function sentryOptions() {
   return {
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    // Server/edge pueden usar el Secret SENTRY_DSN; el cliente recibe el
+    // NEXT_PUBLIC en el bundle. Ambos son el mismo proyecto.
+    dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled: process.env.NODE_ENV === "production",
     tracesSampleRate: 0.1,
     beforeSend(event: ErrorEvent) {

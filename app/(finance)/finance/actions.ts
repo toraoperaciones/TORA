@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { rpcWithTimeout } from "@/lib/supabase/rpc-with-timeout";
 import { createClient } from "@/lib/supabase/server";
 import { notifyUser } from "@/lib/whatsapp/notify";
 import { templates } from "@/lib/whatsapp/templates";
@@ -27,9 +28,11 @@ export async function approveDepositAction(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "No autenticado" };
 
-  const { data, error } = await supabase.rpc("approve_deposit", {
-    p_transaction_id: transactionId,
-  });
+  const { data, error } = await rpcWithTimeout<{ confirmed_trips?: number }>(
+    supabase,
+    "approve_deposit",
+    { p_transaction_id: transactionId }
+  );
   if (error) return { ok: false, error: error.message };
 
   // Notificación al creador del depósito (in-app + WhatsApp si opt-in).
@@ -58,7 +61,7 @@ export async function approveDepositAction(
 
   return {
     ok: true,
-    confirmed_trips: (data as { confirmed_trips?: number })?.confirmed_trips ?? 0,
+    confirmed_trips: data?.confirmed_trips ?? 0,
   };
 }
 
@@ -178,7 +181,7 @@ export async function settleCreditTripAction(
     return { ok: false, error: "La referencia de pago es obligatoria (mín. 4 caracteres)" };
   }
 
-  const { error } = await supabase.rpc("settle_credit_trip", {
+  const { error } = await rpcWithTimeout(supabase, "settle_credit_trip", {
     p_trip_id: tripId,
     p_payment_reference: paymentReference.trim(),
   });

@@ -3,6 +3,10 @@
 import { revalidatePath } from "next/cache";
 
 import type { Role } from "@/lib/auth/roles";
+import {
+  calculateSeverity,
+  type IncidentType,
+} from "@/lib/business/incidents";
 import { createClient } from "@/lib/supabase/server";
 import { notifyUser } from "@/lib/whatsapp/notify";
 import { templates } from "@/lib/whatsapp/templates";
@@ -169,13 +173,17 @@ const INCIDENT_TYPES = [
   "other",
 ] as const;
 
-const INCIDENT_SEVERITIES = ["critical", "high", "medium", "low"] as const;
-
+/**
+ * Sprint 5: la severidad NO es manual — el server la calcula con las
+ * reglas fijas del CEO (lib/business/incidents). El dialog solo la
+ * muestra en vivo; esta action es la fuente de verdad en BD.
+ */
 export async function createIncidentAction(input: {
   tripId: string;
   type: string;
-  severity: string;
   description: string;
+  delayHours?: number;
+  checkInDenied?: boolean;
 }): Promise<ActionResult> {
   const { supabase, error: authErr } = await requireOpsRole();
   if (authErr) return { ok: false, error: authErr };
@@ -183,16 +191,23 @@ export async function createIncidentAction(input: {
   if (!INCIDENT_TYPES.includes(input.type as (typeof INCIDENT_TYPES)[number])) {
     return { ok: false, error: "Tipo de incidente inválido" };
   }
-  if (
-    !INCIDENT_SEVERITIES.includes(
-      input.severity as (typeof INCIDENT_SEVERITIES)[number]
-    )
-  ) {
-    return { ok: false, error: "Severidad inválida" };
-  }
   if (input.description.trim().length < 5) {
     return { ok: false, error: "Describe el incidente (mín. 5 caracteres)" };
   }
+
+  let delayHours: number | undefined;
+  if (input.type === "flight_delay") {
+    delayHours = Number(input.delayHours);
+    if (!Number.isFinite(delayHours) || delayHours! <= 0) {
+      return { ok: false, error: "Indica las horas de retraso (mayor a 0)" };
+    }
+  }
+
+  const severity = calculateSeverity({
+    type: input.type as IncidentType,
+    delayHours,
+    checkInDenied: input.checkInDenied,
+  });
 
   const {
     data: { user },
@@ -201,7 +216,7 @@ export async function createIncidentAction(input: {
   const { error } = await supabase.from("incidents").insert({
     trip_id: input.tripId,
     type: input.type,
-    severity: input.severity,
+    severity,
     description: input.description.trim(),
     status: "open",
     reported_by: user?.id ?? null,

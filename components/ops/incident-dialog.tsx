@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +25,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  calculateSeverity,
+  SEVERITY_LABEL,
+  type IncidentSeverity,
+} from "@/lib/business/incidents";
+import {
   createIncidentAction,
   resolveIncidentAction,
 } from "@/app/(ops)/ops/trips/actions";
@@ -37,12 +43,17 @@ const INCIDENT_TYPES = [
   { value: "other", label: "Otro" },
 ] as const;
 
-const SEVERITIES = [
-  { value: "critical", label: "Crítica" },
-  { value: "high", label: "Alta" },
-  { value: "medium", label: "Media" },
-  { value: "low", label: "Baja" },
-] as const;
+/**
+ * Sprint 5: la severidad es automática (reglas fijas) — el dialog la
+ * muestra en vivo y NO permite override manual. El server la recalcula
+ * como fuente de verdad al guardar.
+ */
+const SEVERITY_BADGE_CLASS: Record<IncidentSeverity, string> = {
+  critical: "bg-destructive text-destructive-foreground",
+  high: "bg-destructive/10 text-destructive",
+  medium: "bg-muted text-muted-foreground",
+  low: "bg-muted/50 text-muted-foreground",
+};
 
 export function NewIncidentDialog({
   activeTrips,
@@ -54,8 +65,22 @@ export function NewIncidentDialog({
   const [saving, setSaving] = useState(false);
   const [tripId, setTripId] = useState("");
   const [type, setType] = useState("flight_delay");
-  const [severity, setSeverity] = useState("medium");
+  const [delayHours, setDelayHours] = useState("");
+  const [checkInDenied, setCheckInDenied] = useState(false);
   const [description, setDescription] = useState("");
+
+  const severity = useMemo(
+    () =>
+      calculateSeverity({
+        type: type as Parameters<typeof calculateSeverity>[0]["type"],
+        delayHours:
+          type === "flight_delay" && Number(delayHours) > 0
+            ? Number(delayHours)
+            : 0,
+        checkInDenied,
+      }),
+    [type, delayHours, checkInDenied],
+  );
 
   async function handleCreate() {
     if (!tripId) {
@@ -66,8 +91,12 @@ export function NewIncidentDialog({
     const result = await createIncidentAction({
       tripId,
       type,
-      severity,
       description,
+      delayHours:
+        type === "flight_delay" && Number(delayHours) > 0
+          ? Number(delayHours)
+          : undefined,
+      checkInDenied: type === "hotel_issue" ? checkInDenied : undefined,
     });
     setSaving(false);
 
@@ -80,6 +109,9 @@ export function NewIncidentDialog({
     toast.success("Incidente creado.");
     setOpen(false);
     setTripId("");
+    setType("flight_delay");
+    setDelayHours("");
+    setCheckInDenied(false);
     setDescription("");
     router.refresh();
   }
@@ -95,7 +127,8 @@ export function NewIncidentDialog({
             Nuevo incidente
           </DialogTitle>
           <DialogDescription className="text-sm text-foreground/75">
-            Registra el problema para dar seguimiento.
+            Registra el problema para dar seguimiento. La severidad se asigna
+            automáticamente según el tipo.
           </DialogDescription>
         </DialogHeader>
 
@@ -133,21 +166,48 @@ export function NewIncidentDialog({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label>Severidad</Label>
-              <Select value={severity} onValueChange={setSeverity}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {SEVERITIES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Severidad (automática)</Label>
+              <div className="flex h-9 items-center">
+                <span
+                  data-severity="live"
+                  data-severity-value={severity}
+                  className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-semibold ${SEVERITY_BADGE_CLASS[severity]}`}
+                >
+                  {SEVERITY_LABEL[severity]}
+                </span>
+              </div>
             </div>
           </div>
+
+          {type === "flight_delay" && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="incident-delay-hours">Horas de retraso</Label>
+              <Input
+                id="incident-delay-hours"
+                type="number"
+                min="0"
+                step="0.5"
+                placeholder="Ej. 3.5"
+                value={delayHours}
+                onChange={(e) => setDelayHours(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Más de 2 horas se clasifica como alta; 2 horas o menos, media.
+              </p>
+            </div>
+          )}
+
+          {type === "hotel_issue" && (
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="mt-0.5 accent-[var(--primary)]"
+                checked={checkInDenied}
+                onChange={(e) => setCheckInDenied(e.target.checked)}
+              />
+              <span>Al cliente le negaron el check-in</span>
+            </label>
+          )}
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="incident-description">Descripción</Label>
