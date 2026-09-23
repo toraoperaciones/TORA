@@ -9,6 +9,7 @@ import {
   RiFocus3Line,
   RiInboxLine,
   RiReceiptLine,
+  RiShieldKeyholeLine,
   RiTeamLine,
   RiWalletLine,
 } from "@remixicon/react";
@@ -95,6 +96,7 @@ export const NAV_BY_ROLE: Record<Role, NavSectionDef[]> = {
             { href: "/admin/users", label: "Usuarios", icon: RiTeamLine },
             { href: "/admin/pipeline", label: "Pipeline", icon: RiFocus3Line },
             { href: "/admin/invoices", label: "Facturas", icon: RiFileTextLine },
+            { href: "/admin/issuers", label: "Empresas emisoras", icon: RiShieldKeyholeLine },
           ],
         },
         {

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { assignIssuerToTenant } from "@/lib/business/facturapi-orgs";
 import { createClient } from "@/lib/supabase/server";
 
 interface Ok {
@@ -43,8 +44,20 @@ export async function createTenantAction(input: CreateTenantInput): Promise<Ok |
     p_notes: input.notes,
   });
   if (error) return { ok: false, error: error.message };
+  const tenantId = (data as { tenant_id?: string })?.tenant_id;
+
+  // Sprint 6: asignación FIJA a una emisora (menor carga). Si el catálogo
+  // aún no existe (migración 0025 pendiente), la asignación ocurre al facturar.
+  if (tenantId) {
+    try {
+      await assignIssuerToTenant(tenantId);
+    } catch {
+      // No bloquea el alta del tenant por una emisora faltante.
+    }
+  }
+
   revalidatePath("/admin/tenants");
-  return { ok: true, tenant_id: (data as { tenant_id?: string })?.tenant_id };
+  return { ok: true, tenant_id: tenantId };
 }
 
 export interface UpdateTenantInput {

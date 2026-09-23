@@ -1,3 +1,4 @@
+import { BulkInvoiceDialog } from "@/components/finance/bulk-invoice-dialog";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,10 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { detectBillingPeriod } from "@/lib/business/cfdi";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatMXN } from "@/lib/utils";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
+
+// Costo por timbre (MXN) — actualizar cuando se contrate el plan de Facturapi.
+const FACTURAPI_COST_PER_STAMP_MXN = 3.5;
 
 const STATUS_CLASS: Record<string, string> = {
   draft: "border-border bg-transparent text-foreground/75",
@@ -36,6 +41,15 @@ const STATUS_TABS = [
   { value: "paid", label: "Pagadas" },
 ];
 
+const INVOICE_FULL_SELECT = `
+  id, period, subtotal, iva, total, status, cfdi_uuid, pdf_url, xml_url,
+  facturapi_invoice_id, tenant_id,
+  tenants (name), issuer_companies (internal_name)`;
+
+const INVOICE_BASE_SELECT = `
+  id, period, subtotal, iva, total, status, cfdi_uuid, pdf_url, xml_url,
+  tenant_id, tenants (name)`;
+
 interface SearchParams {
   status?: string;
   tenant?: string;
@@ -51,8 +65,10 @@ interface InvoiceRow {
   cfdi_uuid: string | null;
   pdf_url: string | null;
   xml_url: string | null;
+  facturapi_invoice_id?: string | null;
   tenant_id: string;
-  tenants: { name: string; rfc: string | null } | null;
+  tenants: { name: string } | null;
+  issuer_companies?: { internal_name: string } | null;
 }
 
 export const metadata: Metadata = pageMetadata("Facturas");
@@ -64,31 +80,188 @@ export default async function FinanceInvoicesPage({
 }) {
   const params = await searchParams;
   const statusFilter = params.status ?? "all";
+  const period = detectBillingPeriod();
   const supabase = await createClient();
 
-  let query = supabase
+  // Estado guardado: las columnas de emisora llegan con 0025. Si aún no
+  // están (42703 undefined_column), se usa el select base sin KPIs de emisor.
+  let setupPending = false;
+
+  const primary = await supabase
     .from("invoices")
-    .select(
-      `id, period, subtotal, iva, total, status, cfdi_uuid, pdf_url, xml_url,
-       tenant_id, tenants (name, rfc)`
-    )
+    .select(INVOICE_FULL_SELECT)
+    .gte("period", period.slice(0, 4) + "-01")
     .order("period", { ascending: false })
     .order("created_at", { ascending: false });
 
-  if (statusFilter !== "all") query = query.eq("status", statusFilter);
-  if (params.tenant) query = query.eq("tenant_id", params.tenant);
+  let allInvoices = (primary.data ?? []) as unknown as InvoiceRow[];
+  if (primary.error) {
+    setupPending = true;
+    const fallback = await supabase
+      .from("invoices")
+      .select(INVOICE_BASE_SELECT)
+      .order("period", { ascending: false })
+      .order("created_at", { ascending: false });
+    allInvoices = (fallback.data ?? []) as unknown as InvoiceRow[];
+  }
 
-  const { data } = await query;
-  const invoices = (data ?? []) as unknown as InvoiceRow[];
+  let filteredQuery = supabase
+    .from("invoices")
+    .select(INVOICE_FULL_SELECT)
+    .order("period", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (statusFilter !== "all") filteredQuery = filteredQuery.eq("status", statusFilter);
+  if (params.tenant) filteredQuery = filteredQuery.eq("tenant_id", params.tenant);
+
+  const filteredPrimary = await filteredQuery;  let invoices = (filteredPrimary.data ?? []) as unknown as InvoiceRow[];
+  if (filteredPrimary.error) {
+    let fallbackQuery = supabase
+      .from("invoices")
+      .select(INVOICE_BASE_SELECT)
+      .order("period", { ascending: false })
+      .order("created_at", { ascending: false });
+    if (statusFilter !== "all") fallbackQuery = fallbackQuery.eq("status", statusFilter);
+    if (params.tenant) fallbackQuery = fallbackQuery.eq("tenant_id", params.tenant);
+    const fallbackResult = await fallbackQuery;
+    invoices = (fallbackResult.data ?? []) as unknown as InvoiceRow[];
+  }
 
   const { data: tenants } = await supabase
     .from("tenants")
     .select("id, name")
     .order("name");
 
+  // ── KPIs del período ──
+  const periodInvoices = allInvoices.filter(
+    (i) => i.period === period && i.status !== "cancelled"
+  );
+  const stamps = periodInvoices.filter((i) => i.facturapi_invoice_id).length;
+  const issuedCount = periodInvoices.filter((i) =>
+    ["issued", "paid"].includes(i.status)
+  ).length;
+  const stampCost = stamps * FACTURAPI_COST_PER_STAMP_MXN;
+  const byIssuer = new Map<string, number>();
+  for (const invoice of periodInvoices) {
+    const key = invoice.issuer_companies?.internal_name ?? "Sin asignar";
+    byIssuer.set(key, (byIssuer.get(key) ?? 0) + 1);
+  }
+
+  // ── Candidatos para facturación masiva (viajes del período por tenant) ──
+  let candidates: Array<{ id: string; name: string; trips: number; amount: number }> = [];
+  if (!setupPending) {
+    const from = `${period}-01`;
+    const [year, month] = from.split("-").map(Number);
+    const next = month === 12 ? { y: year + 1, m: 1 } : { y: year, m: month + 1 };
+    const to = `${next.y}-${String(next.m).padStart(2, "0")}-01`;
+
+    const { data: periodTrips } = await supabase
+      .from("trips")
+      .select(
+        `id, tenant_id, tenants (name),
+         options:trip_options (final_price, is_selected)`
+      )
+      .gte("departure_date", from)
+      .lt("departure_date", to);
+
+    const acc = new Map<string, { name: string; trips: number; amount: number }>();
+    for (const trip of periodTrips ?? []) {
+      const row = trip as unknown as {
+        tenant_id: string;
+        tenants: { name: string } | null;
+        options: Array<{ final_price: number | null; is_selected: boolean | null }> | null;
+      };
+      const options = row.options ?? [];
+      const selected = options.find((o) => o.is_selected) ?? options[0];
+      const price = Number(selected?.final_price ?? 0);
+      const entry = acc.get(row.tenant_id) ?? {
+        name: row.tenants?.name ?? "Cliente",
+        trips: 0,
+        amount: 0,
+      };
+      entry.trips += 1;
+      entry.amount += price;
+      acc.set(row.tenant_id, entry);
+    }
+    candidates = Array.from(acc.entries())
+      .map(([id, v]) => ({ id, ...v, amount: Math.round(v.amount * 100) / 100 }))
+      .filter((c) => c.amount > 0)
+      .sort((a, b) => b.amount - a.amount);
+  }
+
   return (
     <div className="flex flex-col gap-8">
-      <h1>Facturas</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1>Facturas</h1>
+        {!setupPending && <BulkInvoiceDialog period={period} candidates={candidates} />}
+      </div>
+
+      {setupPending ? (
+        <div className="rounded-lg border border-dashed border-border bg-card px-6 py-8 text-center">
+          <h2 className="text-lg font-semibold text-foreground">
+            Timbrado automático en configuración
+          </h2>
+          <p className="mx-auto mt-2 max-w-[52ch] text-sm text-foreground/75">
+            La migración{" "}
+            <code className="font-mono text-xs">0025_issuer_companies</code> no
+            está aplicada aún: los KPIs de emisor y la facturación automática
+            aparecen al aplicarla. El export JSON manual sigue disponible en{" "}
+            <Link
+              href="/admin/invoices"
+              className="font-semibold text-foreground underline underline-offset-4"
+            >
+              Admin → Facturas
+            </Link>
+            .
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              label: `CFDIs emitidos · ${period}`,
+              value: String(issuedCount),
+              hint: `${periodInvoices.length} factura(s) del período`,
+            },
+            {
+              label: "Timbres consumidos",
+              value: String(stamps),
+              hint: "via Facturapi (test)",
+            },
+            {
+              label: "Costo estimado Facturapi",
+              value: formatMXN(stampCost),
+              hint: `${FACTURAPI_COST_PER_STAMP_MXN} MXN por timbre`,
+            },
+            {
+              label: "Distribución por empresa",
+              value:
+                byIssuer.size === 0
+                  ? "—"
+                  : `${byIssuer.size} emisora${byIssuer.size === 1 ? "" : "s"}`,
+              hint:
+                Array.from(byIssuer.entries())
+                  .map(([name, n]) => `${name}: ${n}`)
+                  .join(" · ") || "Sin facturas del período",
+            },
+          ].map((kpi) => (
+            <div
+              key={kpi.label}
+              className="rounded-lg border border-border bg-card px-5 py-4"
+            >
+              <p className="text-xs uppercase tracking-wider text-foreground/60">
+                {kpi.label}
+              </p>
+              <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
+                {kpi.value}
+              </p>
+              <p className="mt-1 truncate text-xs text-foreground/60" title={kpi.hint}>
+                {kpi.hint}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         {STATUS_TABS.map((tab) => (
@@ -113,9 +286,7 @@ export default async function FinanceInvoicesPage({
           size="sm"
           className="font-semibold"
         >
-          <Link
-            href={`/finance/invoices?status=${statusFilter}`}
-          >
+          <Link href={`/finance/invoices?status=${statusFilter}`}>
             Todos los clientes
           </Link>
         </Button>
@@ -149,6 +320,11 @@ export default async function FinanceInvoicesPage({
                 <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
                   Cliente
                 </TableHead>
+                {!setupPending && (
+                  <TableHead className="text-xs uppercase tracking-wider text-foreground/75">
+                    Empresa asignada
+                  </TableHead>
+                )}
                 <TableHead className="text-right text-xs uppercase tracking-wider text-foreground/75">
                   Subtotal
                 </TableHead>
@@ -180,6 +356,11 @@ export default async function FinanceInvoicesPage({
                   <TableCell className="text-sm text-foreground">
                     {invoice.tenants?.name ?? "—"}
                   </TableCell>
+                  {!setupPending && (
+                    <TableCell className="text-sm text-foreground/75">
+                      {invoice.issuer_companies?.internal_name ?? "—"}
+                    </TableCell>
+                  )}
                   <TableCell className="text-right text-sm tabular-nums text-foreground">
                     {formatMXN(Number(invoice.subtotal))}
                   </TableCell>

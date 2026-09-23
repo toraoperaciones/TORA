@@ -30,7 +30,12 @@ export async function listIssuers(): Promise<IssuerSummary[]> {
     .from("issuer_companies")
     .select("*")
     .order("created_at");
-  if (error) throw new Error(error.message);
+  if (error) {
+    // Preservar el código PostgREST (42P01/PGRST205) para estados guardados.
+    const err = new Error(error.message) as Error & { code?: string };
+    err.code = error.code;
+    throw err;
+  }
 
   const { count } = await admin
     .from("tenants")
