@@ -1,8 +1,8 @@
 "use client";
 
-import { RiLogoutBoxLine, RiSearchLine } from "@remixicon/react";
+import { RiCustomerService2Line, RiLogoutBoxLine, RiSearchLine } from "@remixicon/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Logo } from "@/components/brand/logo";
 import { NotificationBell } from "@/components/layout/notification-bell";
@@ -40,6 +40,7 @@ export function PortalSidebar({
   email: string;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { logout, loggingOut } = useLogout();
 
   return (
@@ -102,6 +103,16 @@ export function PortalSidebar({
             >
               <RiSearchLine aria-hidden />
               <span>Buscar</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Soporte"
+              onClick={() => router.push("/soporte")}
+              className="text-sm text-muted-foreground"
+            >
+              <RiCustomerService2Line aria-hidden />
+              <span>Soporte</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>

@@ -13,7 +13,8 @@
     "seed": "tsx scripts/seed.ts",
     "env:check": "tsx scripts/env-check.ts",
     "db:migrate": "tsx scripts/apply-migrations.ts",
-    "db:verify": "tsx scripts/verify-schema.ts"
+    "db:verify": "tsx scripts/verify-schema.ts",
+    "backup": "bash scripts/backup.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

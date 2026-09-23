@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { InvoiceExportDialog } from "@/components/admin/invoice-export-dialog";
 import { InvoiceUploadDialog } from "@/components/admin/invoice-upload-dialog";
 import { InvoiceStatusSelect } from "@/components/admin/invoice-status-select";
 import { formatMXN } from "@/lib/utils";
@@ -51,9 +52,12 @@ export default async function AdminInvoicesPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold text-foreground">Facturas</h1>
-        <InvoiceUploadDialog tenants={tenants} />
+        <div className="flex items-center gap-3">
+          <InvoiceExportDialog tenants={tenants} />
+          <InvoiceUploadDialog tenants={tenants} />
+        </div>
       </div>
 
       {periods.length > 0 && (

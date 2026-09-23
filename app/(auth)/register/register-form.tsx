@@ -26,9 +26,13 @@ const registerSchema = z.object({
   fullName: z.string().min(1, "El nombre es requerido"),
   email: z.string().email("Correo inválido"),
   password: passwordSchema,
+  acceptTerms: z.literal(true, {
+    message: "Debes aceptar los términos y condiciones",
+  }),
 });
 
-type RegisterForm = z.infer<typeof registerSchema>;
+type RegisterFormInput = z.input<typeof registerSchema>;
+type RegisterForm = z.output<typeof registerSchema>;
 
 export function RegisterForm() {
   const router = useRouter();
@@ -38,20 +42,26 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterForm>({
+  } = useForm<RegisterFormInput, unknown, RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: "", email: "", password: "" },
+    defaultValues: { fullName: "", email: "", password: "" } as RegisterFormInput,
   });
 
   async function onSubmit(values: RegisterForm) {
     setSubmitting(true);
     const supabase = createClient();
 
+    const acceptedAt = new Date().toISOString();
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
-        data: { full_name: values.fullName, role: "CLIENT_ADMIN" },
+        data: {
+          full_name: values.fullName,
+          role: "CLIENT_ADMIN",
+          accepted_terms_at: acceptedAt,
+          accepted_privacy_at: acceptedAt,
+        },
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
@@ -135,6 +145,42 @@ export function RegisterForm() {
             )}
             <p className="text-xs text-foreground/75">{PASSWORD_RULES_TEXT}</p>
           </div>
+
+          <div className="flex items-start gap-2">
+            <input
+              id="acceptTerms"
+              type="checkbox"
+              className="mt-0.5 h-4 w-4 accent-[var(--primary)]"
+              aria-label="Aceptar términos y condiciones"
+              {...register("acceptTerms")}
+            />
+            <label
+              htmlFor="acceptTerms"
+              className="text-xs leading-tight text-foreground/75"
+            >
+              Acepto los{" "}
+              <Link
+                href="/terminos"
+                target="_blank"
+                className="font-semibold text-foreground underline underline-offset-4"
+              >
+                Términos y Condiciones
+              </Link>{" "}
+              y el{" "}
+              <Link
+                href="/aviso-privacidad"
+                target="_blank"
+                className="font-semibold text-foreground underline underline-offset-4"
+              >
+                Aviso de Privacidad
+              </Link>
+            </label>
+          </div>
+          {errors.acceptTerms && (
+            <p className="text-xs font-semibold text-foreground">
+              {errors.acceptTerms.message}
+            </p>
+          )}
 
           <p className="max-w-[75ch] text-xs text-foreground/75">
             Tu cuenta será revisada por el equipo de TORA antes de activarse.

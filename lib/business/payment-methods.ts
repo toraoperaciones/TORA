@@ -130,13 +130,18 @@ export async function processTripCharge(
       };
     }
 
+    // Vencimiento = hoy (CDMX) + credit_days. Con new Date().toISOString()
+    // el límite del día sería UTC y vencería un día antes/depués según hora.
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + Number(tenantRow?.credit_days ?? 30));
+    const dueDateCdmx = dueDate.toLocaleDateString("en-CA", {
+      timeZone: "America/Mexico_City",
+    });
     const { error: updateError } = await supabase
       .from("trips")
       .update({
         status: "confirmed",
-        credit_due_date: dueDate.toISOString().slice(0, 10),
+        credit_due_date: dueDateCdmx,
         payment_method_snapshot: "credit",
       })
       .eq("id", tripId);
