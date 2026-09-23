@@ -11,6 +11,8 @@ export function sentryOptions() {
     // NEXT_PUBLIC en el bundle. Ambos son el mismo proyecto.
     dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled: process.env.NODE_ENV === "production",
+    // Diagnóstico del pipeline: SENTRY_DEBUG=1 loguea el envío de eventos.
+    debug: process.env.SENTRY_DEBUG === "1",
     tracesSampleRate: 0.1,
     beforeSend(event: ErrorEvent) {
       // Nunca enviar PII: correos, llaves ni URLs de recibos/facturas.

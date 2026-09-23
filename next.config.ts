@@ -12,7 +12,9 @@ export default withSentryConfig(nextConfig, {
   authToken: process.env.SENTRY_AUTH_TOKEN,
   // Mostrar progreso de subida de sourcemaps solo cuando hay token.
   silent: !process.env.SENTRY_AUTH_TOKEN,
-  disableLogger: true,
+  // SENTRY_DEBUG=1 conserva el logger del SDK para diagnosticar el pipeline
+  // (el build de producción normal va sin logging).
+  disableLogger: process.env.SENTRY_DEBUG !== "1",
   // No enviar telemetría del propio build a Sentry.
   telemetry: false,
 });
