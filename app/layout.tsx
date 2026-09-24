@@ -15,6 +15,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://tora-eta.vercel.app"
+  ),
   title: {
     default: "TORA — Infraestructura de viajes corporativos",
     template: "%s · TORA",
@@ -55,7 +58,7 @@ export default function RootLayout({
       <body className="bg-background font-sans text-foreground antialiased">
         <OfflineBanner />
         <QueryProvider>{children}</QueryProvider>
-        <Toaster position="top-right" />
+        <Toaster position="bottom-right" duration={Infinity} closeButton />
       </body>
     </html>
   );

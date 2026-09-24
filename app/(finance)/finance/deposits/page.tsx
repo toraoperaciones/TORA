@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 
 import { DepositRow, type DepositRowData } from "@/components/finance/deposit-row";
 import { EmptyWallet } from "@/components/illustrations/illustrations";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { MoneyHero } from "@/components/ui/money-hero";
 import {
   Table,
@@ -18,7 +20,13 @@ import { formatMXN } from "@/lib/utils";
 
 export const metadata: Metadata = pageMetadata("Depósitos");
 
-export default async function FinanceDepositsPage() {
+export default async function FinanceDepositsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const params = await searchParams;
+  const q = (params.q ?? "").trim();
   const supabase = await createClient();
 
   const today = cdmxDayStartIso();
@@ -44,7 +52,12 @@ export default async function FinanceDepositsPage() {
       .limit(10),
   ]);
 
-  const deposits = (pending.data ?? []) as unknown as DepositRowData[];
+  const deposits = ((pending.data ?? []) as unknown as DepositRowData[]).filter(
+    (d) =>
+      !q ||
+      d.tenants?.name?.toLowerCase().includes(q.toLowerCase()) ||
+      d.reference?.toLowerCase().includes(q.toLowerCase())
+  );
   const validated = (validatedToday.data ?? []) as unknown as Array<{
     id: string;
     amount: string;
@@ -71,6 +84,18 @@ export default async function FinanceDepositsPage() {
       </div>
 
       {/* Nivel 1 — HERO: total pendiente de validar. */}
+      <form action="/finance/deposits" className="flex max-w-md gap-2">
+        <Input
+          name="q"
+          placeholder="Buscar por cliente o referencia"
+          defaultValue={q}
+          aria-label="Buscar depósitos"
+        />
+        <Button type="submit" variant="outline" className="font-semibold">
+          Buscar
+        </Button>
+      </form>
+
       <MoneyHero
         label="Pendiente de validar"
         amount={pendingTotal}
@@ -90,6 +115,10 @@ export default async function FinanceDepositsPage() {
             <EmptyWallet className="h-28 w-28" />
             <p className="text-sm text-muted-foreground">
               No hay depósitos pendientes de validación. Buen trabajo.
+            </p>
+            <p className="max-w-[42ch] text-xs text-muted-foreground/70">
+              Los depósitos entran aquí cuando un cliente sube su comprobante
+              SPEI desde su billetera.
             </p>
           </div>
         ) : (

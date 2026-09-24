@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -53,6 +54,7 @@ const INVOICE_BASE_SELECT = `
 interface SearchParams {
   status?: string;
   tenant?: string;
+  q?: string;
 }
 
 interface InvoiceRow {
@@ -80,6 +82,7 @@ export default async function FinanceInvoicesPage({
 }) {
   const params = await searchParams;
   const statusFilter = params.status ?? "all";
+  const q = (params.q ?? "").trim().toLowerCase();
   const period = detectBillingPeriod();
   const supabase = await createClient();
 
@@ -114,7 +117,8 @@ export default async function FinanceInvoicesPage({
   if (statusFilter !== "all") filteredQuery = filteredQuery.eq("status", statusFilter);
   if (params.tenant) filteredQuery = filteredQuery.eq("tenant_id", params.tenant);
 
-  const filteredPrimary = await filteredQuery;  let invoices = (filteredPrimary.data ?? []) as unknown as InvoiceRow[];
+  const filteredPrimary = await filteredQuery;
+  let invoicesBeforeSearch = (filteredPrimary.data ?? []) as unknown as InvoiceRow[];
   if (filteredPrimary.error) {
     let fallbackQuery = supabase
       .from("invoices")
@@ -124,13 +128,22 @@ export default async function FinanceInvoicesPage({
     if (statusFilter !== "all") fallbackQuery = fallbackQuery.eq("status", statusFilter);
     if (params.tenant) fallbackQuery = fallbackQuery.eq("tenant_id", params.tenant);
     const fallbackResult = await fallbackQuery;
-    invoices = (fallbackResult.data ?? []) as unknown as InvoiceRow[];
+    invoicesBeforeSearch = (fallbackResult.data ?? []) as unknown as InvoiceRow[];
   }
 
   const { data: tenants } = await supabase
     .from("tenants")
     .select("id, name")
     .order("name");
+
+  // Búsqueda compartible por URL: cliente, periodo o UUID de CFDI.
+  const invoices = invoicesBeforeSearch.filter(
+    (inv) =>
+      !q ||
+      inv.tenants?.name?.toLowerCase().includes(q) ||
+      inv.period.toLowerCase().includes(q) ||
+      inv.cfdi_uuid?.toLowerCase().includes(q)
+  );
 
   // ── KPIs del período ──
   const periodInvoices = allInvoices.filter(
@@ -264,6 +277,19 @@ export default async function FinanceInvoicesPage({
       )}
 
       <div className="flex flex-wrap items-center gap-2">
+        <form action="/finance/invoices" className="mr-2 flex max-w-md gap-2">
+          <input type="hidden" name="status" value={statusFilter} />
+          {params.tenant && <input type="hidden" name="tenant" value={params.tenant} />}
+          <Input
+            name="q"
+            placeholder="Buscar cliente, periodo o UUID"
+            defaultValue={params.q ?? ""}
+            aria-label="Buscar facturas"
+          />
+          <Button type="submit" variant="outline" className="font-semibold">
+            Buscar
+          </Button>
+        </form>
         {STATUS_TABS.map((tab) => (
           <Button
             key={tab.value}
@@ -309,7 +335,13 @@ export default async function FinanceInvoicesPage({
 
       <div className="rounded-lg border border-border bg-card p-6">
         {invoices.length === 0 ? (
-          <p className="text-sm text-foreground/75">Aún no hay facturas emitidas.</p>
+          <div className="flex flex-col items-center gap-3 py-10 text-center">
+            <p className="text-sm text-foreground/75">
+              {q || params.tenant || statusFilter !== "all"
+                ? "Ninguna factura coincide con el filtro actual."
+                : "Aún no hay facturas emitidas. Usa «Facturar todo el mes» cuando cierres el período."}
+            </p>
+          </div>
         ) : (
           <Table>
             <TableHeader>

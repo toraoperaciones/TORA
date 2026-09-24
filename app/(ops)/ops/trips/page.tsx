@@ -40,6 +40,7 @@ interface SearchParams {
   from?: string;
   to?: string;
   page?: string;
+  q?: string;
 }
 
 interface OpsTrip {
@@ -86,7 +87,17 @@ export default async function OpsTripsPage({
 
   const { data, count } = await query;
 
-  const trips = (data ?? []) as unknown as OpsTrip[];
+  // Búsqueda server-side: PostgREST no OR-e ilike con joins — filtramos en JS
+  // sobre la página ya paginada por rango (volumen bajo: 20/page).
+  const q = (params.q ?? "").trim().toLowerCase();
+  const tripsRaw = (data ?? []) as unknown as OpsTrip[];
+  const trips = q
+    ? tripsRaw.filter(
+        (t) =>
+          t.destination?.toLowerCase().includes(q) ||
+          t.requester?.full_name?.toLowerCase().includes(q)
+      )
+    : tripsRaw;
   const totalCount = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 

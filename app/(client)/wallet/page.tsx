@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { MoneyHero } from "@/components/ui/money-hero";
 import { ReceiptUpload } from "@/components/wallet/receipt-upload";
 import { Badge } from "@/components/ui/badge";
@@ -107,21 +109,29 @@ export default async function WalletPage({
       <MoneyHero label="Saldo actual" amount={balance} scale="m" />
 
       {ctx.role === "CLIENT_ADMIN" && (
-        <ReceiptUpload
-          tenantId={tenantId}
-          cashTrips={cashTrips.map((t) => ({
-            id: t.id,
-            label: `${t.destination} · sale ${t.departure_date}`,
-          }))}
-          preselectedTripId={tripParam ?? null}
-        />
+        <div id="depositar">
+          <ReceiptUpload
+            tenantId={tenantId}
+            cashTrips={cashTrips.map((t) => ({
+              id: t.id,
+              label: `${t.destination} · sale ${t.departure_date}`,
+            }))}
+            preselectedTripId={tripParam ?? null}
+          />
+        </div>
       )}
 
       <div className="rounded-lg border border-border bg-card p-6">
         {transactions.length === 0 ? (
-          <p className="text-sm text-foreground/75">
-            Aún no hay transacciones registradas.
-          </p>
+          <div className="flex flex-col items-center gap-3 py-8 text-center">
+            <p className="text-sm text-foreground/75">
+              Tu billetera está vacía. Sube tu primer depósito SPEI para
+              fondearla.
+            </p>
+            <Button asChild size="sm" variant="secondary">
+              <Link href="#depositar">Ir a depositar</Link>
+            </Button>
+          </div>
         ) : (
           <>
             <Table>

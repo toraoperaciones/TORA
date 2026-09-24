@@ -36,6 +36,7 @@ export function TripsFilters({ tenants }: { tenants: TenantOption[] }) {
   const [tenant, setTenant] = useState(searchParams.get("tenant") ?? "all");
   const [from, setFrom] = useState(searchParams.get("from") ?? "");
   const [to, setTo] = useState(searchParams.get("to") ?? "");
+  const [q, setQ] = useState(searchParams.get("q") ?? "");
 
   function apply(next: { status?: string; tenant?: string; from?: string; to?: string }) {
     const params = new URLSearchParams(searchParams.toString());
@@ -54,8 +55,33 @@ export function TripsFilters({ tenants }: { tenants: TenantOption[] }) {
     router.push(`${pathname}?${params.toString()}`);
   }
 
+  /** Búsqueda por texto: Enter o botón → ?q= (compartible). */
+  function applySearch() {
+    const params = new URLSearchParams(searchParams.toString());
+    if (q.trim()) params.set("q", q.trim());
+    else params.delete("q");
+    params.delete("page");
+    router.push(`${pathname}?${params.toString()}`);
+  }
+
   return (
     <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-card p-4">
+      <form
+        className="flex flex-col gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          applySearch();
+        }}
+      >
+        <Label htmlFor="filter-q">Buscar</Label>
+        <Input
+          id="filter-q"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Destino o pasajero…"
+          className="w-56"
+        />
+      </form>
       <div className="flex flex-col gap-2">
         <Label htmlFor="filter-status">Estado</Label>
         <Select
@@ -129,7 +155,10 @@ export function TripsFilters({ tenants }: { tenants: TenantOption[] }) {
         />
       </div>
 
-      {(status !== "all" || tenant !== "all" || from || to) && (
+      <Button variant="outline" className="font-semibold" onClick={applySearch}>
+        Buscar
+      </Button>
+      {(status !== "all" || tenant !== "all" || from || to || q) && (
         <Button
           variant="ghost"
           className="font-semibold"
@@ -138,6 +167,7 @@ export function TripsFilters({ tenants }: { tenants: TenantOption[] }) {
             setTenant("all");
             setFrom("");
             setTo("");
+            setQ("");
             router.push(pathname);
           }}
         >

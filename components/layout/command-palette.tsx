@@ -181,9 +181,27 @@ export function CommandPalette({ role }: { role: Role }) {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null;
+      const inField =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable);
       if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((prev) => !prev);
+        return;
+      }
+      // «/» abre la paleta (si no se está escribiendo en un campo).
+      if (e.key === "/" && !inField) {
+        e.preventDefault();
+        setOpen(true);
+      }
+      // «?» abre la paleta en la ayuda de atajos.
+      if (e.key === "?" && !inField) {
+        e.preventDefault();
+        setOpen(true);
+        setQuery("?");
       }
     }
     function onOpen() {
@@ -252,6 +270,7 @@ export function CommandPalette({ role }: { role: Role }) {
   );
   const isEmpty =
     !hasEntities && navMatches.length === 0 && actionMatches.length === 0;
+  const showingHelp = query === "?";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -291,12 +310,35 @@ export function CommandPalette({ role }: { role: Role }) {
             )}
 
             <Command.Empty className="px-3 py-6 text-center text-sm text-muted-foreground">
-              {isEmpty
+              {showingHelp
+                ? ""
+                : isEmpty
                 ? query.trim().length >= 2
                   ? "Sin resultados."
                   : "Escribe para buscar o elige un destino."
                 : ""}
             </Command.Empty>
+
+            {showingHelp && (
+              <Command.Group
+                heading="Atajos de teclado"
+                className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
+              >
+                {[
+                  ["⌘K · /", "Abrir esta paleta"],
+                  ["⌘B", "Colapsar o expandir el menú"],
+                  ["Esc", "Cerrar"],
+                  ["?", "Mostrar atajos"],
+                ].map(([keys, label]) => (
+                  <Item key={keys} onSelect={() => setQuery("")}>
+                    <span className="w-16 shrink-0 font-mono text-xs text-muted-foreground">
+                      {keys}
+                    </span>
+                    <span className="flex-1">{label}</span>
+                  </Item>
+                ))}
+              </Command.Group>
+            )}
 
             {hasEntities && (
               <Command.Group
@@ -319,6 +361,7 @@ export function CommandPalette({ role }: { role: Role }) {
               </Command.Group>
             )}
 
+            {query !== "?" && (
             <Command.Group
               heading="Navegación"
               className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
@@ -335,8 +378,9 @@ export function CommandPalette({ role }: { role: Role }) {
                 </Item>
               ))}
             </Command.Group>
+            )}
 
-            {actionMatches.length > 0 && (
+            {query !== "?" && actionMatches.length > 0 && (
               <Command.Group
                 heading="Acciones"
                 className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-muted-foreground/70"
@@ -357,6 +401,8 @@ export function CommandPalette({ role }: { role: Role }) {
           <div className="flex items-center gap-4 border-t border-border px-4 py-2.5 text-xs text-muted-foreground/70">
             <span>↑↓ navegar</span>
             <span>↵ seleccionar</span>
+            <span>/ buscar</span>
+            <span>? atajos</span>
             <span>esc cerrar</span>
           </div>
         </Command>

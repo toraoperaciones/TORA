@@ -5,6 +5,7 @@ import Link from "next/link";
 import { EmptyInvoices } from "@/components/illustrations/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/server";
 import { cdmxDayStartIso } from "@/lib/dates";
 import { pageMetadata } from "@/lib/seo";
@@ -14,6 +15,7 @@ export const metadata: Metadata = pageMetadata("Bandeja");
 
 interface SearchParams {
   filter?: string;
+  q?: string;
 }
 
 /** "hace 2h" / "hace 3d" — relativo simple para la bandeja. */
@@ -120,7 +122,7 @@ export default async function OpsInboxPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { filter = "all" } = await searchParams;
+  const { filter = "all", q } = await searchParams;
   const supabase = await createClient();
   const dayStart = cdmxDayStartIso();
 
@@ -151,6 +153,16 @@ export default async function OpsInboxPage({
 
   if (filter === "urgent" || filter === "normal") {
     trips = trips.filter((t) => t.urgency === filter);
+  }
+  // Búsqueda por texto (compartible via ?q=): destino, pasajero o cliente.
+  const qNorm = (q ?? "").trim().toLowerCase();
+  if (qNorm) {
+    trips = trips.filter(
+      (t) =>
+        t.destination?.toLowerCase().includes(qNorm) ||
+        t.requester?.full_name?.toLowerCase().includes(qNorm) ||
+        t.tenants?.name?.toLowerCase().includes(qNorm)
+    );
   }
 
   // Urgentes primero, luego por antigüedad.
@@ -187,6 +199,23 @@ export default async function OpsInboxPage({
             : ""}
         </p>
       </div>
+
+      <form
+        action="/ops/inbox"
+        className="flex max-w-md gap-2"
+        aria-label="Buscar solicitudes"
+      >
+        {filter !== "all" && <input type="hidden" name="filter" value={filter} />}
+        <Input
+          name="q"
+          placeholder="Buscar destino, pasajero o cliente"
+          defaultValue={q ?? ""}
+          aria-label="Buscar solicitudes"
+        />
+        <Button type="submit" variant="outline" className="font-semibold">
+          Buscar
+        </Button>
+      </form>
 
       {/* Métricas del día (spec A4): los tres números que definen el turno. */}
       <div className="grid grid-cols-3 gap-3">
@@ -230,6 +259,9 @@ export default async function OpsInboxPage({
           <p className="text-sm text-muted-foreground">
             No hay solicitudes pendientes. Buen trabajo.
           </p>
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/ops/trips">Ver viajes en curso</Link>
+          </Button>
         </div>
       ) : (
         <div className="flex flex-col gap-3">

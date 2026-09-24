@@ -77,9 +77,16 @@ export default async function TripsPage({
 
       <div className="rounded-lg border border-border bg-card p-6">
         {trips.length === 0 ? (
-          <p className="text-sm text-foreground/75">
-            Aún no tienes viajes. Solicita el primero en 3 clics.
-          </p>
+          <div className="flex flex-col items-center gap-3 py-8 text-center">
+            <p className="text-sm text-foreground/75">
+              Aún no tienes viajes. Solicita el primero en 3 clics.
+            </p>
+            {ctx.role === "CLIENT_ADMIN" && (
+              <Button asChild size="sm">
+                <Link href="/trips/new">Solicitar viaje</Link>
+              </Button>
+            )}
+          </div>
         ) : (
           <>
             <Table>

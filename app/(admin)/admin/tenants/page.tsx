@@ -8,9 +8,16 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata("Tenants");
 
-export default async function TenantsPage() {
+export default async function TenantsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const params = await searchParams;
+  // Sanitizado: .or() usa , ( ) como sintaxis; % y _ son comodines de ilike.
+  const q = (params.q ?? "").trim().replace(/[%_,()]/g, "");
   const supabase = await createClient();
-  const { data: tenants } = await supabase
+  let query = supabase
     .from("tenants")
     .select(
       `id, name, rfc, razon_social, credit_limit, credit_days, credit_used,
@@ -19,6 +26,9 @@ export default async function TenantsPage() {
        credit_lines (approved_limit, used_amount, status)`
     )
     .order("created_at", { ascending: false });
+  // Búsqueda compartible por URL: nombre, RFC o razón social.
+  if (q) query = query.or(`name.ilike.%${q}%,rfc.ilike.%${q}%,razon_social.ilike.%${q}%`);
+  const { data: tenants } = await query;
 
   const rows = (tenants ?? []) as TenantRow[];
 
@@ -36,11 +46,18 @@ export default async function TenantsPage() {
         <TenantFormDialog />
       </div>
 
-      {rows.length === 0 ? (
+      {rows.length === 0 && !q ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-14 text-center">
           <EmptySearch className="h-28 w-28" />
           <p className="text-sm text-muted-foreground">
             No hay tenants aún. Crea el primero.
+          </p>
+        </div>
+      ) : rows.length === 0 && q ? (
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card py-14 text-center">
+          <EmptySearch className="h-28 w-28" />
+          <p className="text-sm text-muted-foreground">
+            Ningún cliente coincide con «{q}».
           </p>
         </div>
       ) : (

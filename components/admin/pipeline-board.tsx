@@ -107,7 +107,6 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
                             (e.currentTarget as HTMLElement).click();
                           }
                         }}
-                        disabled={moving === lead.id}
                         className="w-full cursor-pointer rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-foreground/30"
                       >
                         <p className="text-lg font-semibold text-foreground">{lead.company_name}</p>
@@ -151,7 +150,7 @@ export function PipelineBoard({ initialLeads }: { initialLeads: BoardLead[] }) {
                             →
                           </Button>
                         </div>
-                      </button>
+                      </div>
                     }
                   />
                 ))

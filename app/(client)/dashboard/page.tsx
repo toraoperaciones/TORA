@@ -28,7 +28,7 @@ import {
 } from "@/lib/business/wallet";
 import { createClient } from "@/lib/supabase/server";
 import { pageMetadata } from "@/lib/seo";
-import { formatMXN } from "@/lib/utils";
+import { cn, formatDate, formatMXN } from "@/lib/utils";
 
 const TX_TYPE_LABEL: Record<string, string> = {
   deposit: "Depósito",
@@ -75,11 +75,14 @@ export default async function DashboardPage() {
     categories,
     upcoming,
     recentTxs,
+    nextDue,
   ] = await Promise.all([
     tenantId
       ? supabase
           .from("tenants")
-          .select("payment_method, credit_limit, credit_used")
+          .select(
+            "payment_method, credit_limit, credit_used, spei_clabe, spei_beneficiary"
+          )
           .eq("id", tenantId)
           .single()
       : Promise.resolve({ data: null }),
@@ -104,11 +107,27 @@ export default async function DashboardPage() {
           .order("created_at", { ascending: false })
           .limit(5)
       : Promise.resolve({ data: [] }),
+    tenantId
+      ? supabase
+          .from("trips")
+          .select("id, credit_due_date")
+          .eq("tenant_id", tenantId)
+          .not("credit_due_date", "is", null)
+          .gte("credit_due_date", today)
+          .order("credit_due_date", { ascending: true })
+          .limit(1)
+      : Promise.resolve({ data: [] }),
   ]);
 
   const tenantData =
     (tenantRow.data as
-      | { payment_method?: PaymentMethod; credit_limit?: string | number; credit_used?: string | number }
+      | {
+          payment_method?: PaymentMethod;
+          credit_limit?: string | number;
+          credit_used?: string | number;
+          spei_clabe?: string | null;
+          spei_beneficiary?: string | null;
+        }
       | null) ?? null;
   const paymentMethod: PaymentMethod = tenantData?.payment_method ?? "prepaid";
 
@@ -117,6 +136,16 @@ export default async function DashboardPage() {
   const creditUsed = Number(tenantData?.credit_used ?? 0);
   const creditAvailable = Math.max(0, creditLimit - creditUsed);
   const creditUsage = creditLimit > 0 ? creditUsed / creditLimit : 0;
+
+  // Próximo vencimiento de crédito (trips confirmados a crédito).
+  const dueRow = ((nextDue.data ?? []) as Array<{ credit_due_date: string }>)[0];
+  const dueInDays = dueRow
+    ? Math.ceil(
+        (new Date(`${dueRow.credit_due_date}T12:00:00-06:00`).getTime() -
+          new Date(`${today}T12:00:00-06:00`).getTime()) /
+          86_400_000
+      )
+    : null;
 
   const upcomingTrips = (upcoming.data ?? []) as Array<{
     id: string;
@@ -236,16 +265,67 @@ export default async function DashboardPage() {
                   </p>
                 </div>
               </div>
-              {paymentMethod === "credit" &&
-                (creditUsage >= 1 ? (
-                  <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm font-semibold text-destructive">
-                    Sin crédito disponible. Contacta a TORA.
-                  </p>
-                ) : creditUsage > 0.8 ? (
-                  <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm font-semibold text-foreground">
-                    Estás cerca del límite de tu línea.
-                  </p>
-                ) : null)}
+
+              {paymentMethod === "credit" && creditLimit > 0 && (
+                <div className="flex flex-col gap-2">
+                  {/* Barra de uso: proporción usada del límite. */}
+                  <div
+                    role="progressbar"
+                    aria-valuenow={Math.round(creditUsage * 100)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label="Porcentaje de línea de crédito usada"
+                    className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+                  >
+                    <div
+                      className={cn(
+                        "h-full rounded-full transition-all",
+                        creditUsage >= 0.95 ? "bg-destructive" : "bg-foreground"
+                      )}
+                      style={{ width: `${Math.min(100, creditUsage * 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                    <span className="tabular-nums">
+                      Usado: {formatMXN(creditUsed)} · Disponible:{" "}
+                      {formatMXN(creditAvailable)}
+                    </span>
+                    {dueRow && dueInDays !== null && (
+                      <span className="font-semibold text-foreground">
+                        Próximo pago: {formatDate(dueRow.credit_due_date)} · en{" "}
+                        {dueInDays === 1 ? "1 día" : `${dueInDays} días`}
+                      </span>
+                    )}
+                  </div>
+                  {creditUsage >= 1 ? (
+                    <p
+                      role="status"
+                      className="rounded-md border border-border bg-muted px-3 py-2 text-sm font-semibold text-destructive"
+                    >
+                      Sin crédito disponible. Contacta a TORA.
+                    </p>
+                  ) : creditUsage > 0.8 ? (
+                    <p
+                      role="status"
+                      className="rounded-md border border-border bg-muted px-3 py-2 text-sm font-semibold text-foreground"
+                    >
+                      Estás cerca del límite de tu línea.
+                    </p>
+                  ) : null}
+                </div>
+              )}
+
+              {paymentMethod === "cash" && tenantData?.spei_clabe && (
+                <p className="text-xs text-muted-foreground">
+                  CLABE para tus pagos:{" "}
+                  <span className="font-mono font-semibold tabular-nums text-foreground">
+                    {tenantData.spei_clabe}
+                  </span>
+                  {tenantData.spei_beneficiary
+                    ? ` · ${tenantData.spei_beneficiary}`
+                    : ""}
+                </p>
+              )}
             </div>
           )}
         </StaggerItem>
